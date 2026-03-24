@@ -19,6 +19,7 @@ import {
   Menu,
   X,
 } from 'lucide-react';
+import Sidebar from './Sidebar';
 
 const NavbarLayout = () => {
   const [selectedCategory, setSelectedCategory] = useState('All Departments');
@@ -41,7 +42,7 @@ const NavbarLayout = () => {
 
   return (
     <>
-      <div className="bg-teal px-4 py-2 text-center text-[0.78rem] font-medium tracking-[0.05em] text-navy max-[580px]:hidden">
+      <div className="bg-teal px-4 py-2 text-center text-[0.6rem] lg:text-[0.78rem] font-medium tracking-[0.05em] text-navy max-[580px]:hidden">
         Free shipping on orders over $50 | New merchants welcome | Download our app coming soon
       </div>
 
@@ -116,33 +117,15 @@ const NavbarLayout = () => {
       </nav>
 
       {/* Mobile Sidebar Menu */}
-      <div
-        className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-navy2 border-r border-white/10 overflow-y-auto transition-transform duration-300 z-50 min-[900px]:hidden ${
-          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        {categories.map((cat) => {
-          const IconComponent = cat.icon;
-          return (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => {
-                setSelectedCategory(cat.name);
-                setMobileMenuOpen(false);
-              }}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-[0.9rem] tracking-[0.04em] transition-colors border-l-4 ${
-                selectedCategory === cat.name
-                  ? 'border-teal bg-[rgba(0,201,167,0.1)] text-teal'
-                  : 'border-transparent text-gray2 hover:bg-[rgba(0,201,167,0.05)] hover:text-teal'
-              }`}
-            >
-              <IconComponent size={20} />
-              {cat.name}
-            </button>
-          );
-        })}
-      </div>
+      <Sidebar
+        categories={categories}
+        selectedCategory={selectedCategory}
+        mobileMenuOpen={mobileMenuOpen}
+        onSelectCategory={(name) => {
+          setSelectedCategory(name);
+          setMobileMenuOpen(false);
+        }}
+      />
 
       {/* Desktop Category Nav */}
       <div className="cat-nav hidden items-center overflow-x-auto border-b border-white/10 bg-navy2 px-4 scrollbar-hide min-[900px]:flex min-[900px]:px-8">

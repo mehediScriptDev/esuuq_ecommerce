@@ -13,7 +13,8 @@ const FlashDealsSection = () => {
   ];
 
   return (
-    <section id="featured" className="container mx-auto px-3 py-8 min-[640px]:px-4 min-[900px]:px-8 min-[900px]:py-12">
+    <section id="featured" className="px-3 py-8 min-[640px]:px-4 min-[900px]:px-8 min-[900px]:py-12">
+      <div className="container mx-auto">
       <div className="mb-6 flex flex-col gap-3 rounded-sm border border-[rgba(255,77,77,0.25)] bg-[linear-gradient(90deg,#FF4D4D22,#FF4D4D11)] px-4 py-2.5 min-[640px]:flex-row min-[640px]:items-center min-[640px]:gap-4">
         <span className="font-['Syne'] text-[0.7rem] font-bold uppercase tracking-widest text-[#FF6B6B] min-[640px]:text-[0.8rem]">{'\u26A1'} Flash Deals</span>
         <CountdownTimer />
@@ -29,6 +30,7 @@ const FlashDealsSection = () => {
         {products.map((product, index) => (
           <div key={index}><ProductCard product={product} inScroll={true} /></div>
         ))}
+      </div>
       </div>
     </section>
   );

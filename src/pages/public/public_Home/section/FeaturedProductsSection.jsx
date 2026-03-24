@@ -14,13 +14,15 @@ const FeaturedProductsSection = () => {
   ];
 
   return (
-    <section className="container mx-auto px-3 py-8 min-[640px]:px-4 min-[900px]:px-8 min-[900px]:py-12">
+    <section className="px-3 py-8 min-[640px]:px-4 min-[900px]:px-8 min-[900px]:py-12">
+      <div className="container mx-auto">
       <div className="mb-6 flex items-baseline justify-between gap-2 min-[640px]:mb-7 min-[640px]:gap-4">
         <h2 className="font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">Featured <span className="text-teal">Products</span></h2>
         <a href="#" className="whitespace-nowrap text-[0.8rem] font-medium text-teal hover:opacity-70 min-[640px]:text-[0.8rem]">View all {'\u2192'}</a>
       </div>
       <div className="grid grid-cols-1 gap-2 min-[375px]:grid-cols-2 min-[375px]:gap-2 min-[640px]:gap-3 min-[768px]:grid-cols-3 min-[768px]:gap-4 min-[1024px]:grid-cols-4 min-[1280px]:grid-cols-6">
         {products.map((product, index) => <ProductCard key={index} product={product} />)}
+      </div>
       </div>
     </section>
   );
