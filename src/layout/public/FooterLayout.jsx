@@ -3,9 +3,9 @@ import { Facebook, Twitter, Instagram, Linkedin, CreditCard } from 'lucide-react
 
 const FooterLayout = () => {
   return (
-    <footer className="mt-12 border-t border-white/10 bg-navy2 px-4 py-12 min-[900px]:px-8 min-[900px]:py-12">
+    <footer className="mt-12 border-t border-white/10 bg-navy2 px-4 pt-12 pb-2.5 sm:pb-6 min-[900px]:px-8 min-[900px]:py-12">
       <div className="container mx-auto">
-        <div className="mb-10 grid grid-cols-1 gap-8 min-[900px]:grid-cols-4">
+        <div className="mb-10 grid grid-cols-1 min-[450px]:grid-cols-2 gap-8  min-[900px]:grid-cols-4">
           <div>
             <a href="#" className="font-['Syne'] text-[1.4rem] font-extrabold tracking-[-0.02em] text-white no-underline">
               ES<span className="text-teal">UUQ</span>
@@ -30,7 +30,7 @@ const FooterLayout = () => {
           </div>
 
           <div>
-            <h4 className="mb-4 font-['Syne'] text-[0.85rem] font-bold uppercase tracking-[0.08em] text-white">Shop</h4>
+            <h4 className="mt-4 lg:mt-0 mb-4 font-['Syne'] text-[0.85rem] font-bold uppercase tracking-[0.08em] text-white">Shop</h4>
             <ul className="space-y-2">
               <li><a href="#" className="footer-link">Today's Deals</a></li>
               <li><a href="#" className="footer-link">New Arrivals</a></li>
@@ -63,8 +63,8 @@ const FooterLayout = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
-          <p className="text-[0.75rem] text-gray">@copyright 2026 ESUUQ Marketplace. All rights reserved.</p>
+        <div className="flex flex-wrap-reverse items-center justify-center md:justify-between gap-3 border-t border-white/10 pt-5">
+          <p className="text-[0.75rem] text-gray ">@copyright 2026 ESUUQ Marketplace. All rights reserved.</p>
           <div className="flex items-center gap-2">
             <span className="mr-1.5 flex items-center gap-1 text-[0.72rem] text-gray">
               <CreditCard size={14} />

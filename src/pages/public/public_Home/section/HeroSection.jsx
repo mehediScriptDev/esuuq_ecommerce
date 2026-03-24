@@ -36,8 +36,8 @@ const HeroSection = () => {
           <div className="col-span-2 flex items-center gap-4 rounded-sm border border-[rgba(0,201,167,0.2)] bg-[rgba(0,201,167,0.07)] p-5">
             <div className="text-3xl">{'\u26A1'}</div>
             <div>
-              <div className="text-[0.82rem] font-medium text-white">Flash Deals Today</div>
-              <div className="text-[0.72rem] text-teal">Up to 60% off {'\u00B7'} Ends in 4h</div>
+              <div className="text-[0.82rem] lg:text-[1rem] font-medium text-white">Flash Deals Today</div>
+              <div className="text-[0.72rem] lg:text-[0.87rem] text-teal">Up to 60% off {'\u00B7'} Ends in 4h</div>
             </div>
           </div>
           {[
@@ -48,8 +48,8 @@ const HeroSection = () => {
           ].map(([icon, title, desc]) => (
             <div key={title} className="rounded-sm border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-teal">
               <div className="text-3xl">{icon}</div>
-              <div className="mt-2 text-[0.82rem] font-medium text-white">{title}</div>
-              <div className="text-[0.72rem] text-teal">{desc}</div>
+              <div className="mt-2 text-[0.82rem] lg:text-[1rem] font-medium text-white">{title}</div>
+              <div className="text-[0.72rem] lg:text-[0.87rem] text-teal">{desc}</div>
             </div>
           ))}
         </div>
