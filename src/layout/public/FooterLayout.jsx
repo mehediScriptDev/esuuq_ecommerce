@@ -1,63 +1,79 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Linkedin, CreditCard } from 'lucide-react';
 
 const FooterLayout = () => {
   return (
-    <footer className="bg-[#0d1832] text-white">
-      <div className="mx-auto max-w-7xl px-4 py-14">
-        {/* Brand */}
-        <div className="flex flex-col items-center">
-          <div className="flex items-center gap-2">
-            {/* simple droplet mark */}
-            <img src="/img/logo.png" alt="Deal Hunter Logo" />
-          </div>
-
-          {/* Socials */}
-          <div className="mt-6 flex flex-col items-center gap-3">
-            <span className="text-sm text-blue-200/90">Social Media</span>
-            <div className="flex items-center gap-5 text-blue-200">
-              <a href="#" aria-label="Facebook" className="transition hover:text-white">
-                <Facebook className="h-5 w-5" />
+    <footer className="mt-12 border-t border-white/10 bg-navy2 px-4 py-12 min-[900px]:px-8 min-[900px]:py-12">
+      <div className="container mx-auto">
+        <div className="mb-10 grid grid-cols-1 gap-8 min-[900px]:grid-cols-4">
+          <div>
+            <a href="#" className="font-['Syne'] text-[1.4rem] font-extrabold tracking-[-0.02em] text-white no-underline">
+              ES<span className="text-teal">UUQ</span>
+            </a>
+            <p className="mt-3 max-w-[260px] text-[0.85rem] leading-[1.7] text-gray">
+              Your one-stop marketplace for everything you need � delivered fast, securely, and at the best prices.
+            </p>
+            <div className="mt-5 flex gap-2.5">
+              <a href="#" className="social-btn" title="Facebook">
+                <Facebook size={18} />
               </a>
-              <a href="#" aria-label="Twitter" className="transition hover:text-white">
-                <Twitter className="h-5 w-5" />
+              <a href="#" className="social-btn" title="Twitter">
+                <Twitter size={18} />
               </a>
-              <a href="#" aria-label="LinkedIn" className="transition hover:text-white">
-                <Linkedin className="h-5 w-5" />
+              <a href="#" className="social-btn" title="Instagram">
+                <Instagram size={18} />
               </a>
-              <a href="#" aria-label="Instagram" className="transition hover:text-white">
-                <Instagram className="h-5 w-5" />
+              <a href="#" className="social-btn" title="LinkedIn">
+                <Linkedin size={18} />
               </a>
             </div>
           </div>
 
-          {/* thin divider */}
-          <div className="mt-10 w-full border-t border-white/10" />
+          <div>
+            <h4 className="mb-4 font-['Syne'] text-[0.85rem] font-bold uppercase tracking-[0.08em] text-white">Shop</h4>
+            <ul className="space-y-2">
+              <li><a href="#" className="footer-link">Today's Deals</a></li>
+              <li><a href="#" className="footer-link">New Arrivals</a></li>
+              <li><a href="#" className="footer-link">Best Sellers</a></li>
+              <li><a href="#" className="footer-link">Gift Cards</a></li>
+              <li><a href="#" className="footer-link">Coupons</a></li>
+            </ul>
+          </div>
 
-          {/* Bottom row */}
-          <div className="mt-8 flex w-full flex-col items-center justify-between gap-6 text-sm text-blue-100/90 md:flex-row">
-            <nav className="flex flex-wrap items-center gap-x-8 gap-y-3 tracking-wide uppercase">
-              <Link to="/about" className="text-white hover:text-gray-500">
-                About Us
-              </Link>
-              <Link to="/contact" className="text-white hover:text-gray-500">
-                Contact Us
-              </Link>
-              <Link to="/help" className="text-white hover:text-gray-500">
-                Help
-              </Link>
-              <Link to="/privacy" className="text-white hover:text-gray-500">
-                Privacy Policy
-              </Link>
-              <Link to="/terms" className="text-white hover:text-gray-500">
-                Terms & Condition
-              </Link>
-            </nav>
+          <div>
+            <h4 className="mb-4 font-['Syne'] text-[0.85rem] font-bold uppercase tracking-[0.08em] text-white">Sell</h4>
+            <ul className="space-y-2">
+              <li><a href="#" className="footer-link">Start Selling</a></li>
+              <li><a href="#" className="footer-link">Merchant Portal</a></li>
+              <li><a href="#" className="footer-link">Merchant App</a></li>
+              <li><a href="#" className="footer-link">Commission Info</a></li>
+              <li><a href="#" className="footer-link">Seller Support</a></li>
+            </ul>
+          </div>
 
-            <p className="text-blue-100/90">
-              Copyright © 2026 • <span className="font-semibold">Deal Hunter</span>
-            </p>
+          <div>
+            <h4 className="mb-4 font-['Syne'] text-[0.85rem] font-bold uppercase tracking-[0.08em] text-white">Help</h4>
+            <ul className="space-y-2">
+              <li><a href="#" className="footer-link">Track Order</a></li>
+              <li><a href="#" className="footer-link">Returns</a></li>
+              <li><a href="#" className="footer-link">FAQ</a></li>
+              <li><a href="#" className="footer-link">Contact Us</a></li>
+              <li><a href="#" className="footer-link">Privacy Policy</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
+          <p className="text-[0.75rem] text-gray">� 2026 ESUUQ Marketplace. All rights reserved.</p>
+          <div className="flex items-center gap-2">
+            <span className="mr-1.5 flex items-center gap-1 text-[0.72rem] text-gray">
+              <CreditCard size={14} />
+              We accept:
+            </span>
+            <span className="pay-icon">VISA</span>
+            <span className="pay-icon">MC</span>
+            <span className="pay-icon">Stripe</span>
+            <span className="pay-icon">PayPal</span>
           </div>
         </div>
       </div>

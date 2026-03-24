@@ -5,7 +5,7 @@ import RootLayout from '../layout/public/RootLayout';
 import LoadingFallback from './components/LoadingFallback';
 
 // Lazy load page components for code splitting
-const HomeView = lazy(() => import('../pages/public/public_Home/HomeView'));
+const Home = lazy(() => import('../pages/public/public_Home/Home'));
 const AboutView = lazy(() => import('../pages/public/public_about/AboutView'));
 const ContactView = lazy(() => import('../pages/public/public_contact/ContactView'));
 const NotFound = lazy(() => import('../pages/error/NotFound'));
@@ -17,7 +17,7 @@ const router = createBrowserRouter(
         index
         element={
           <Suspense fallback={<LoadingFallback />}>
-            <HomeView />
+            <Home />
           </Suspense>
         }
       />

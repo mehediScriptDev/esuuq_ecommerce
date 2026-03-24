@@ -1,4 +1,3 @@
-import ReadySection from '../public_Home/section/ReadySection';
 import DealHunterSection from './section/DealHunterSection';
 import DecisionSection from './section/DecisionSection';
 import HeroSection from './section/HeroSection';
