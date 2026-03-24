@@ -42,12 +42,12 @@ const NavbarLayout = () => {
         Free shipping on orders over $50 | New merchants welcome | Download our app coming soon
       </div>
 
-      <nav className="sticky top-0 z-[300] grid h-16 grid-cols-[auto_1fr_auto] items-center gap-6 border-b border-white/10 bg-[rgba(10,15,30,0.97)] px-4 backdrop-blur-[16px] min-[900px]:grid-cols-[auto_1fr_auto_auto] min-[900px]:px-8">
+      <nav className="sticky top-0 z-300 grid h-16 grid-cols-[auto_1fr_auto] items-center gap-6 border-b border-white/10 bg-[rgba(10,15,30,0.97)] px-4 backdrop-blur-lg min-[900px]:grid-cols-[auto_1fr_auto_auto] min-[900px]:px-8">
         <Link to="/" className="font-['Syne'] text-[1.6rem] font-extrabold tracking-[-0.02em] text-white no-underline">
           ES<span className="text-teal">UUQ</span>
         </Link>
 
-        <div className="search-bar hidden items-center overflow-hidden rounded-[4px] border border-white/10 bg-navy3 min-[900px]:flex">
+        <div className="search-bar hidden items-center overflow-hidden rounded-sm border border-white/10 bg-navy3 min-[900px]:flex">
           <select className="h-full cursor-pointer border-l border-white/10 bg-navy3 px-3 text-[0.8rem] text-gray2 outline-none">
             <option>All</option>
             <option>Electronics</option>
@@ -67,20 +67,20 @@ const NavbarLayout = () => {
         </div>
 
         <div className="nav-icons flex items-center gap-2">
-          <a href="#" className="icon-btn hidden items-center rounded-[4px] px-[0.7rem] py-2 text-gray2 transition hover:bg-[rgba(0,201,167,0.15)] hover:text-teal no-underline min-[900px]:flex" title="Account">
+          <a href="#" className="icon-btn hidden items-center rounded-sm px-[0.7rem] py-2 text-gray2 transition hover:bg-[rgba(0,201,167,0.15)] hover:text-teal no-underline min-[900px]:flex" title="Account">
             <User size={20} className="text-[1.1rem]" />
             <div className="ml-1 text-[0.7rem]">
               <div className="text-[0.65rem] text-gray">Hello, Sign in</div>
               <div className="text-[0.82rem] font-medium text-white">Account</div>
             </div>
           </a>
-          <a href="#" className="icon-btn relative rounded-[4px] px-[0.7rem] py-2 text-gray2 transition hover:bg-[rgba(0,201,167,0.15)] hover:text-teal no-underline" title="Wishlist">
+          <a href="#" className="icon-btn relative rounded-sm px-[0.7rem] py-2 text-gray2 transition hover:bg-[rgba(0,201,167,0.15)] hover:text-teal no-underline" title="Wishlist">
             <Heart size={20} />
-            <span className="absolute right-[2px] top-[2px] flex h-4 min-w-4 items-center justify-center rounded-full bg-teal text-[0.6rem] font-bold text-navy">3</span>
+            <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-teal text-[0.6rem] font-bold text-navy">3</span>
           </a>
-          <a href="#" className="icon-btn relative rounded-[4px] px-[0.7rem] py-2 text-gray2 transition hover:bg-[rgba(0,201,167,0.15)] hover:text-teal no-underline" title="Cart">
+          <a href="#" className="icon-btn relative rounded-sm px-[0.7rem] py-2 text-gray2 transition hover:bg-[rgba(0,201,167,0.15)] hover:text-teal no-underline" title="Cart">
             <ShoppingCart size={20} />
-            <span className="absolute right-[2px] top-[2px] flex h-4 min-w-4 items-center justify-center rounded-full bg-teal text-[0.6rem] font-bold text-navy">5</span>
+            <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-teal text-[0.6rem] font-bold text-navy">5</span>
           </a>
         </div>
       </nav>

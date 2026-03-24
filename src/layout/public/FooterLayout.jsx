@@ -10,7 +10,7 @@ const FooterLayout = () => {
             <a href="#" className="font-['Syne'] text-[1.4rem] font-extrabold tracking-[-0.02em] text-white no-underline">
               ES<span className="text-teal">UUQ</span>
             </a>
-            <p className="mt-3 max-w-[260px] text-[0.85rem] leading-[1.7] text-gray">
+            <p className="mt-3 max-w-65 text-[0.85rem] leading-[1.7] text-gray">
               Your one-stop marketplace for everything you need � delivered fast, securely, and at the best prices.
             </p>
             <div className="mt-5 flex gap-2.5">

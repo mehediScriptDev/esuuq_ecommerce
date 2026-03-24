@@ -1,0 +1,33 @@
+import React from 'react';
+import CategoryCard from '../../../../components/marketplace/CategoryCard';
+
+const ShopByCategorySection = () => {
+  const categories = [
+    { icon: '\u{1F4F1}', name: 'Electronics', items: '2,400' },
+    { icon: '\u{1F457}', name: 'Fashion', items: '3,800' },
+    { icon: '\u{1F3E1}', name: 'Home & Garden', items: '1,900' },
+    { icon: '\u{1F484}', name: 'Beauty', items: '1,200' },
+    { icon: '\u{1F34E}', name: 'Grocery', items: '850' },
+    { icon: '\u26BD', name: 'Sports', items: '1,100' },
+    { icon: '\u{1F4DA}', name: 'Books', items: '5,000' },
+    { icon: '\u{1F9F8}', name: 'Toys & Kids', items: '700' },
+    { icon: '\u{1F527}', name: 'Tools & DIY', items: '600' },
+    { icon: '\u{1F43E}', name: 'Pet Supplies', items: '450' },
+    { icon: '\u{1F48A}', name: 'Health', items: '900' },
+    { icon: '\u{1F697}', name: 'Automotive', items: '380' },
+  ];
+
+  return (
+    <section className="container mx-auto px-4 py-12 min-[900px]:px-8">
+      <div className="mb-7 flex items-baseline justify-between">
+        <h2 className="font-['Syne'] text-[1.3rem] font-bold text-white">Shop by <span className="text-teal">Category</span></h2>
+        <a href="#" className="text-[0.8rem] font-medium text-teal hover:opacity-70">All categories {'\u2192'}</a>
+      </div>
+      <div className="grid grid-cols-2 gap-4 min-[700px]:grid-cols-3 min-[900px]:grid-cols-6">
+        {categories.map((cat, index) => <CategoryCard key={index} icon={cat.icon} name={cat.name} itemCount={cat.items} />)}
+      </div>
+    </section>
+  );
+};
+
+export default ShopByCategorySection;

@@ -29,7 +29,7 @@ const ProductCard = ({ product, inScroll = false }) => {
   return (
     <div
       className={`bg-card border border-white/10 rounded overflow-hidden transition-all duration-200 hover:border-teal/50 hover:shadow-lg hover:-translate-y-1 cursor-pointer ${
-        inScroll ? 'shrink-0 w-52' : 'w-full'
+        inScroll ? 'shrink-0  w-52' : 'w-full'
       }`}
     >
       {/* IMAGE SECTION */}

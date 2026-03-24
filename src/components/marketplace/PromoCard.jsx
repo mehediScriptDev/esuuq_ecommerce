@@ -36,7 +36,7 @@ const PromoCard = ({ tag, title, subtitle, icon, variant = 'big', buttonText = '
 
   return (
     <div
-      className={`rounded overflow-hidden relative p-8 flex flex-col justify-end min-h-40 border ${getGradient()} ${getBorderColor()}`}
+      className={`rounded overflow-hidden relative p-8 flex flex-col justify-end min-h-40  border ${getGradient()} ${getBorderColor()}`}
     >
       {/* BACKGROUND ICON */}
       <span className="absolute -top-4 -right-2 text-9xl opacity-10">{icon}</span>
