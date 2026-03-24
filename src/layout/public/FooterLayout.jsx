@@ -11,7 +11,7 @@ const FooterLayout = () => {
               ES<span className="text-teal">UUQ</span>
             </a>
             <p className="mt-3 max-w-65 text-[0.85rem] leading-[1.7] text-gray">
-              Your one-stop marketplace for everything you need � delivered fast, securely, and at the best prices.
+              Your one-stop marketplace for everything you need - delivered fast, securely, and at the best prices.
             </p>
             <div className="mt-5 flex gap-2.5">
               <a href="#" className="social-btn" title="Facebook">
@@ -64,7 +64,7 @@ const FooterLayout = () => {
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
-          <p className="text-[0.75rem] text-gray">� 2026 ESUUQ Marketplace. All rights reserved.</p>
+          <p className="text-[0.75rem] text-gray">@copyright 2026 ESUUQ Marketplace. All rights reserved.</p>
           <div className="flex items-center gap-2">
             <span className="mr-1.5 flex items-center gap-1 text-[0.72rem] text-gray">
               <CreditCard size={14} />

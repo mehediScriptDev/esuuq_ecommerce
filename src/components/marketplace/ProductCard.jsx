@@ -70,7 +70,7 @@ const ProductCard = ({ product, inScroll = false }) => {
         <div className="text-xs font-bold text-teal uppercase tracking-wide mb-2">{product.store}</div>
 
         {/* PRODUCT NAME */}
-        <h3 className="text-sm font-medium text-white mb-2 line-clamp-2">{product.name}</h3>
+        <h3 className="text-sm font-medium text-white mb-2 line-clamp-1">{product.name}</h3>
 
         {/* RATING */}
         <div className="flex items-center gap-2 mb-3">

@@ -13,16 +13,16 @@ const FlashDealsSection = () => {
   ];
 
   return (
-    <section id="featured" className="container mx-auto px-4 py-12 min-[900px]:px-8">
-      <div className="mb-6 flex items-center gap-4 rounded-sm border border-[rgba(255,77,77,0.25)] bg-[linear-gradient(90deg,#FF4D4D22,#FF4D4D11)] px-5 py-2.5">
-        <span className="font-['Syne'] text-[0.8rem] font-bold uppercase tracking-widest text-[#FF6B6B]">{'\u26A1'} Flash Deals</span>
+    <section id="featured" className="container mx-auto px-3 py-8 min-[640px]:px-4 min-[900px]:px-8 min-[900px]:py-12">
+      <div className="mb-6 flex flex-col gap-3 rounded-sm border border-[rgba(255,77,77,0.25)] bg-[linear-gradient(90deg,#FF4D4D22,#FF4D4D11)] px-4 py-2.5 min-[640px]:flex-row min-[640px]:items-center min-[640px]:gap-4">
+        <span className="font-['Syne'] text-[0.7rem] font-bold uppercase tracking-widest text-[#FF6B6B] min-[640px]:text-[0.8rem]">{'\u26A1'} Flash Deals</span>
         <CountdownTimer />
-        <span className="ml-auto text-[0.78rem] text-gray">Hurry! Limited stock</span>
+        <span className="text-[0.7rem] text-gray min-[640px]:ml-auto min-[640px]:text-[0.78rem]">Hurry! Limited stock</span>
       </div>
 
-      <div className="mb-7 flex items-baseline justify-between">
-        <h2 className="font-['Syne'] text-[1.3rem] font-bold text-white">Today's <span className="text-teal">Best Deals</span></h2>
-        <a href="#" className="text-[0.8rem] font-medium text-teal hover:opacity-70">See all deals {'\u2192'}</a>
+      <div className="mb-6 flex justify-between items-center gap-2 min-[640px]:flex-row min-[640px]:items-baseline min-[640px]:justify-between min-[640px]:gap-4">
+        <h2 className="font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">Today's <span className="text-teal">Best Deals</span></h2>
+        <a href="#" className="text-[0.8rem] font-medium text-teal hover:opacity-70 min-[640px]:text-[0.8rem]">See all deals {'\u2192'}</a>
       </div>
 
       <div className="scrollbar-hide flex gap-4 overflow-x-auto pb-2">

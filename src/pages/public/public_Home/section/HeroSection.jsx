@@ -2,7 +2,7 @@ import React from 'react';
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-105 overflow-hidden bg-[linear-gradient(120deg,#0A1628_0%,#0D2137_40%,#091520_100%)] px-4 py-12 min-[900px]:px-8 min-[900px]:py-16">
+    <section className="relative min-h-105 overflow-hidden bg-[linear-gradient(120deg,#0A1628_0%,#0D2137_40%,#091520_100%)] px-3 py-8 min-[640px]:px-4 min-[900px]:px-8 min-[900px]:py-16">
       <div className="pointer-events-none absolute inset-0 opacity-8 bg-[radial-gradient(circle_at_20%_50%,var(--color-teal)_0%,transparent_40%),radial-gradient(circle_at_80%_20%,#3B82F6_0%,transparent_40%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-4 bg-[radial-gradient(circle,var(--color-white)_1px,transparent_1px)] bg-size-[32px_32px]" />
 
