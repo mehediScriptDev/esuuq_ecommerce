@@ -97,7 +97,7 @@ const AdminCoupons = () => (
             {coupons.map((c) => (
               <tr
                 key={c.code}
-                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/[0.02]"
+                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/2"
               >
                 <td className="text-teal px-4 py-3 text-[0.82rem] font-bold">{c.code}</td>
                 <td className="text-gray px-4 py-3 text-[0.82rem]">{c.type}</td>
