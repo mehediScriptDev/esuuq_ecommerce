@@ -156,7 +156,7 @@ const MerchantAddProduct = ({ onNav }) => (
                   <div className="text-gray text-[0.7rem]">{item.d}</div>
                 </div>
                 <button className="bg-teal relative h-5 w-9 rounded-full">
-                  <span className="absolute top-[3px] right-[3px] h-3.5 w-3.5 rounded-full bg-white" />
+                  <span className="absolute top-0.75 right-0.75 h-3.5 w-3.5 rounded-full bg-white" />
                 </button>
               </div>
             ))}

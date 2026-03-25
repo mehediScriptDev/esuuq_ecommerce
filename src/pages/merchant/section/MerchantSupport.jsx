@@ -42,7 +42,7 @@ const MerchantSupport = () => (
             ].map((q) => (
               <div
                 key={q}
-                className="bg-card flex cursor-pointer items-center justify-between rounded-md border border-white/[0.07] px-5 py-4 hover:bg-white/[0.02]"
+                className="bg-card flex cursor-pointer items-center justify-between rounded-md border border-white/[0.07] px-5 py-4 hover:bg-white/2"
               >
                 <span className="text-[0.85rem] text-white">{q}</span>
                 <Plus size={16} className="text-gray" />

@@ -81,14 +81,7 @@ const MerchantLayout = ({ children }) => {
             Merchant
           </sub>
         </Link>
-        {/* Store Status */}
-        <div className="border-teal/20 bg-teal/10 hidden items-center gap-2 rounded border px-3 py-1.5 min-[700px]:flex">
-          <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
-          <div>
-            <div className="text-[0.8rem] font-medium text-white">TechZone MN</div>
-            <div className="text-teal text-[0.68rem]">Store Online</div>
-          </div>
-        </div>
+        {/* Store Status removed per request */}
         <div className="flex items-center gap-3">
           <button
             className="text-gray hover:bg-teal/10 hover:text-teal relative rounded p-1.5 transition-colors"
@@ -97,12 +90,7 @@ const MerchantLayout = ({ children }) => {
             <Bell size={18} />
             <div className="bg-red absolute top-1 right-1 h-2 w-2 rounded-full" />
           </button>
-          <button
-            className="text-gray hover:bg-teal/10 hover:text-teal rounded p-1.5 transition-colors"
-            title="View Store"
-          >
-            <Globe size={18} />
-          </button>
+          {/* Globe (View Store) button removed per request */}
           <div className="flex cursor-pointer items-center gap-2.5">
             <div className="from-teal text-navy flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br to-blue-500 text-[0.8rem] font-bold">
               T
