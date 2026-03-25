@@ -1,15 +1,18 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-const CategoryCard = ({ icon, name, itemCount, onClick }) => {
+const CategoryCard = ({ icon, name, itemCount, path }) => {
+  const Wrapper = path ? Link : 'div';
+  const wrapperProps = path ? { to: path, className: 'no-underline' } : {};
+
   return (
-    <div
-      onClick={onClick}
-      className="bg-card border border-white/10 rounded p-6 text-center cursor-pointer transition-all hover:border-teal hover:bg-teal/5 hover:-translate-y-1"
-    >
-      <div className="text-4xl mb-3 mx-auto">{icon}</div>
-      <h3 className="text-sm font-semibold text-white mb-1">{name}</h3>
-      <p className="text-xs text-gray">{itemCount} items</p>
-    </div>
+    <Wrapper {...wrapperProps}>
+      <div className="bg-card hover:border-teal hover:bg-teal/5 cursor-pointer rounded border border-white/10 p-6 text-center transition-all hover:-translate-y-1">
+        <div className="mx-auto mb-3 text-4xl">{icon}</div>
+        <h3 className="mb-1 text-sm font-semibold text-white">{name}</h3>
+        <p className="text-gray text-xs">{itemCount} items</p>
+      </div>
+    </Wrapper>
   );
 };
 

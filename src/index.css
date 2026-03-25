@@ -15,6 +15,35 @@
   --color-yellow: #fbbf24;
   --color-red: #ff4d4d;
   --color-red-light: #ff6b6b;
+  --color-green: #22c55e;
+
+  --animate-fadeUp: fadeUp 0.6s ease both;
+  --animate-pop: pop 0.6s ease both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @layer base {
@@ -61,7 +90,9 @@
     font-size: 0.9rem;
     cursor: pointer;
     text-decoration: none;
-    transition: color 0.2s, border-color 0.2s;
+    transition:
+      color 0.2s,
+      border-color 0.2s;
   }
 
   .social-btn:hover {

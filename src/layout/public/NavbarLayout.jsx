@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   ShoppingBag,
   Smartphone,
@@ -22,31 +22,36 @@ import {
 import Sidebar from './Sidebar';
 
 const NavbarLayout = () => {
-  const [selectedCategory, setSelectedCategory] = useState('All Departments');
+  const navigate = useNavigate();
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const categories = [
-    { id: 1, name: 'All Departments', icon: ShoppingBag },
-    { id: 2, name: 'Electronics', icon: Smartphone },
-    { id: 3, name: 'Fashion', icon: Shirt },
-    { id: 4, name: 'Home & Garden', icon: Home },
-    { id: 5, name: 'Beauty', icon: Sparkles },
-    { id: 6, name: 'Food & Grocery', icon: Apple },
-    { id: 7, name: 'Sports', icon: Dumbbell },
-    { id: 8, name: 'Books', icon: BookOpen },
-    { id: 9, name: 'Toys & Kids', icon: Baby },
-    { id: 10, name: 'Tools & DIY', icon: Wrench },
-    { id: 11, name: 'Pet Supplies', icon: Dog },
-    { id: 12, name: 'Health', icon: Heart },
+    { id: 1, name: 'All Departments', icon: ShoppingBag, path: '/' },
+    { id: 2, name: 'Electronics', icon: Smartphone, path: '/electronics' },
+    { id: 3, name: 'Fashion', icon: Shirt, path: '/fashion' },
+    { id: 4, name: 'Home & Garden', icon: Home, path: '/home-garden' },
+    { id: 5, name: 'Beauty', icon: Sparkles, path: '/beauty' },
+    { id: 6, name: 'Food & Grocery', icon: Apple, path: '/food-grocery' },
+    { id: 7, name: 'Sports', icon: Dumbbell, path: '/sports' },
+    { id: 8, name: 'Books', icon: BookOpen, path: '/books' },
+    { id: 9, name: 'Toys & Kids', icon: Baby, path: '/toys-kids' },
+    { id: 10, name: 'Tools & DIY', icon: Wrench, path: '/tools-diy' },
+    { id: 11, name: 'Pet Supplies', icon: Dog, path: '/pet-supplies' },
+    { id: 12, name: 'Health', icon: Heart, path: '/health' },
   ];
+
+  const getActiveCategory = () => {
+    const cat = categories.find((c) => c.path === location.pathname);
+    return cat ? cat.name : 'All Departments';
+  };
 
   return (
     <>
-      <div className="bg-teal px-4 py-2 text-center text-[0.6rem] lg:text-[0.78rem] font-medium tracking-[0.05em] text-navy max-[580px]:hidden">
+      <div className="bg-teal text-navy px-4 py-2 text-center text-[0.6rem] font-medium tracking-[0.05em] max-[580px]:hidden lg:text-[0.78rem]">
         Free shipping on orders over $50 | New merchants welcome | Download our app coming soon
       </div>
 
-      {/* Mobile Overlay */}
       {mobileMenuOpen && (
         <div
           className="fixed inset-0 top-16 z-40 bg-black/50 min-[900px]:hidden"
@@ -54,31 +59,33 @@ const NavbarLayout = () => {
         />
       )}
 
-      {/* Main Navbar */}
       <nav className="sticky top-0 z-300 flex h-16 items-center justify-between border-b border-white/10 bg-[rgba(10,15,30,0.97)] px-3 backdrop-blur-lg min-[640px]:px-4 min-[900px]:grid min-[900px]:grid-cols-[auto_1fr_auto_auto] min-[900px]:gap-6 min-[900px]:px-8">
-        
-        {/* Left Section: Menu + Search (Mobile) */}
         <div className="flex items-center gap-2 min-[900px]:hidden">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="icon-btn rounded-sm px-2 py-2 text-gray2 transition hover:bg-[rgba(0,201,167,0.15)] hover:text-teal"
+            className="icon-btn text-gray2 hover:text-teal rounded-sm px-2 py-2 transition hover:bg-[rgba(0,201,167,0.15)]"
             title="Menu"
           >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-          <a href="#" className="icon-btn rounded-sm px-2 py-2 text-gray2 transition hover:bg-[rgba(0,201,167,0.15)] hover:text-teal no-underline" title="Search">
+          <a
+            href="#"
+            className="icon-btn text-gray2 hover:text-teal rounded-sm px-2 py-2 no-underline transition hover:bg-[rgba(0,201,167,0.15)]"
+            title="Search"
+          >
             <Search size={18} />
           </a>
         </div>
 
-        {/* Center: Logo */}
-        <Link to="/" className="font-['Syne'] text-[1.2rem] font-extrabold tracking-[-0.02em] text-white no-underline min-[640px]:text-[1.6rem] min-[900px]:col-start-1">
+        <Link
+          to="/"
+          className="font-['Syne'] text-[1.2rem] font-extrabold tracking-[-0.02em] text-white no-underline min-[640px]:text-[1.6rem] min-[900px]:col-start-1"
+        >
           ES<span className="text-teal">UUQ</span>
         </Link>
 
-        {/* Desktop Search Bar */}
-        <div className="relative search-bar hidden items-center overflow-hidden rounded-sm border border-white/10 bg-navy3 min-[900px]:flex">
-          <select className="h-full cursor-pointer border-r border-white/10 bg-navy3 px-3 text-[0.8rem] text-gray2 outline-none">
+        <div className="search-bar bg-navy3 relative hidden items-center overflow-hidden rounded-sm border border-white/10 min-[900px]:flex">
+          <select className="bg-navy3 text-gray2 h-full cursor-pointer border-r border-white/10 px-3 text-[0.8rem] outline-none">
             <option>All</option>
             <option>Electronics</option>
             <option>Fashion</option>
@@ -89,62 +96,76 @@ const NavbarLayout = () => {
           <input
             type="text"
             placeholder="Search products, brands, categories..."
-            className="flex-1 bg-transparent px-4 py-[0.6rem] text-[0.9rem] text-white outline-none placeholder:text-gray"
+            className="placeholder:text-gray flex-1 bg-transparent px-4 py-[0.6rem] text-[0.9rem] text-white outline-none"
           />
-          <button type="button" className="h-full absolute right-0 bg-teal px-5 text-navy transition-colors hover:bg-teal2">
+          <button
+            type="button"
+            className="bg-teal text-navy hover:bg-teal2 absolute right-0 h-full px-5 transition-colors"
+          >
             <Search size={18} />
           </button>
         </div>
 
-        {/* Right Section: Account (Desktop only) + Wishlist + Cart */}
         <div className="flex items-center gap-1.5 min-[640px]:gap-2">
-          <a href="#" className="icon-btn hidden items-center rounded-sm px-1.5 py-2 text-gray2 transition hover:bg-[rgba(0,201,167,0.15)] hover:text-teal no-underline min-[900px]:flex min-[900px]:px-[0.7rem]" title="Account">
+          <a
+            href="#"
+            className="icon-btn text-gray2 hover:text-teal hidden items-center rounded-sm px-1.5 py-2 no-underline transition hover:bg-[rgba(0,201,167,0.15)] min-[900px]:flex min-[900px]:px-[0.7rem]"
+            title="Account"
+          >
             <User size={20} className="text-[1.1rem]" />
             <div className="ml-1 text-[0.7rem]">
-              <div className="text-[0.65rem] text-gray">Hello, Sign in</div>
+              <div className="text-gray text-[0.65rem]">Hello, Sign in</div>
               <div className="text-[0.82rem] font-medium text-white">Account</div>
             </div>
           </a>
-          <a href="#" className="icon-btn relative rounded-sm px-1.5 py-2 text-gray2 transition hover:bg-[rgba(0,201,167,0.15)] hover:text-teal no-underline min-[640px]:px-[0.7rem]" title="Wishlist">
+          <a
+            href="#"
+            className="icon-btn text-gray2 hover:text-teal relative rounded-sm px-1.5 py-2 no-underline transition hover:bg-[rgba(0,201,167,0.15)] min-[640px]:px-[0.7rem]"
+            title="Wishlist"
+          >
             <Heart size={18} className="min-[640px]:size-5" />
-            <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-teal text-[0.6rem] font-bold text-navy">3</span>
+            <span className="bg-teal text-navy absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full text-[0.6rem] font-bold">
+              3
+            </span>
           </a>
-          <a href="#" className="icon-btn relative rounded-sm px-1.5 py-2 text-gray2 transition hover:bg-[rgba(0,201,167,0.15)] hover:text-teal no-underline min-[640px]:px-[0.7rem]" title="Cart">
+          <Link
+            to="/cart"
+            className="icon-btn text-gray2 hover:text-teal relative rounded-sm px-1.5 py-2 no-underline transition hover:bg-[rgba(0,201,167,0.15)] min-[640px]:px-[0.7rem]"
+            title="Cart"
+          >
             <ShoppingCart size={18} className="min-[640px]:size-5" />
-            <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-teal text-[0.6rem] font-bold text-navy">5</span>
-          </a>
+            <span className="bg-teal text-navy absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full text-[0.6rem] font-bold">
+              5
+            </span>
+          </Link>
         </div>
       </nav>
 
-      {/* Mobile Sidebar Menu */}
       <Sidebar
         categories={categories}
-        selectedCategory={selectedCategory}
+        selectedCategory={getActiveCategory()}
         mobileMenuOpen={mobileMenuOpen}
-        onSelectCategory={(name) => {
-          setSelectedCategory(name);
+        onSelectCategory={(cat) => {
+          navigate(cat.path);
           setMobileMenuOpen(false);
         }}
       />
 
-      {/* Desktop Category Nav */}
-      <div className="cat-nav hidden items-center overflow-x-auto border-b border-white/10 bg-navy2 px-4 scrollbar-hide min-[900px]:flex min-[900px]:px-8">
+      <div className="cat-nav bg-navy2 scrollbar-hide hidden items-center overflow-x-auto border-b border-white/10 px-4 min-[900px]:flex min-[900px]:px-8">
         {categories.map((cat) => {
           const IconComponent = cat.icon;
+          const isActive = location.pathname === cat.path;
           return (
-            <button
+            <Link
               key={cat.id}
-              type="button"
-              onClick={() => setSelectedCategory(cat.name)}
-              className={`whitespace-nowrap border-b-2 px-[1.1rem] py-3 text-[0.8rem] tracking-[0.04em] transition-colors inline-flex items-center gap-1.5 ${
-                selectedCategory === cat.name
-                  ? 'border-teal text-teal'
-                  : 'border-transparent text-gray2 hover:text-teal'
+              to={cat.path}
+              className={`inline-flex items-center gap-1.5 border-b-2 px-[1.1rem] py-3 text-[0.8rem] tracking-[0.04em] whitespace-nowrap no-underline transition-colors ${
+                isActive ? 'border-teal text-teal' : 'text-gray2 hover:text-teal border-transparent'
               }`}
             >
               <IconComponent size={16} />
               {cat.name}
-            </button>
+            </Link>
           );
         })}
       </div>
