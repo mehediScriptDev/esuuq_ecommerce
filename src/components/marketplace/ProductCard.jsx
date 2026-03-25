@@ -1,16 +1,27 @@
 import React, { useState } from 'react';
-import { Heart, ShoppingCart } from 'lucide-react';
+import { Heart, ShoppingCart, Eye } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ProductCard = ({ product, inScroll = false }) => {
   const [isWishlisted, setIsWishlisted] = useState(product.wishlist || false);
   const [isAdded, setIsAdded] = useState(false);
 
-  const handleAddToCart = () => {
+  // Simple slugify for demo purposes
+  const slug =
+    product.name
+      ?.toLowerCase()
+      .replace(/ /g, '-')
+      .replace(/[^\w-]+/g, '') || 'product';
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 1800);
   };
 
   const handleWishlist = (e) => {
+    e.preventDefault();
     e.stopPropagation();
     setIsWishlisted(!isWishlisted);
   };
@@ -27,23 +38,30 @@ const ProductCard = ({ product, inScroll = false }) => {
   };
 
   return (
-    <div
-      className={`bg-card border border-white/10 rounded overflow-hidden transition-all duration-200 hover:border-teal/50 hover:shadow-lg hover:-translate-y-1 cursor-pointer ${
-        inScroll ? 'shrink-0  w-52' : 'w-full'
+    <Link
+      to={`/product/${slug}`}
+      className={`bg-card hover:border-teal/50 group block overflow-hidden rounded border border-white/10 no-underline transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgb(0,201,167,0.1)] ${
+        inScroll ? 'w-52 shrink-0' : 'w-full'
       }`}
     >
       {/* IMAGE SECTION */}
-      <div className="relative bg-navy3 h-44 flex items-center justify-center overflow-hidden group">
+      <div className="relative flex h-48 items-center justify-center overflow-hidden bg-[#0F172A]">
         {/* PRODUCT ICON */}
-        <span className="text-6xl group-hover:scale-110 transition-transform">{product.icon}</span>
+        <span className="transform-gpu text-6xl transition-transform duration-500 group-hover:scale-110">
+          {product.icon}
+        </span>
 
-        {/* BACKGROUND GRADIENT */}
-        <div className="absolute inset-0 bg-linear-to-b from-transparent to-navy/30 opacity-0 group-hover:opacity-100 transition" />
+        {/* OVERLAY ON HOVER */}
+        <div className="bg-navy/40 absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          <div className="translate-y-4 transform rounded-full border border-white/20 bg-white/10 p-2 backdrop-blur-md transition-transform duration-300 group-hover:translate-y-0">
+            <Eye size={20} className="text-white" />
+          </div>
+        </div>
 
         {/* BADGE */}
         {product.badge && (
           <span
-            className={`absolute top-2 left-2 text-xs font-bold px-2 py-1 rounded uppercase tracking-wide ${getBadgeClass(
+            className={`absolute top-3 left-3 rounded px-2 py-1 text-[0.6rem] font-black tracking-[0.1em] uppercase shadow-lg ${getBadgeClass(
               product.badge
             )}`}
           >
@@ -54,51 +72,68 @@ const ProductCard = ({ product, inScroll = false }) => {
         {/* WISHLIST BUTTON */}
         <button
           onClick={handleWishlist}
-          className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center text-lg transition ${
+          className={`absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-lg transition-all duration-300 ${
             isWishlisted
-              ? 'text-red-light bg-red/20'
-              : 'text-gray2 bg-navy/70 hover:text-red-light hover:bg-red/20'
+              ? 'bg-red text-white shadow-lg'
+              : 'text-gray2 bg-navy/60 hover:text-red border border-white/5 backdrop-blur-md hover:bg-white'
           }`}
         >
-          ❤
+          {isWishlisted ? '❤' : '♡'}
         </button>
       </div>
 
       {/* INFO SECTION */}
-      <div className="p-3">
+      <div className="bg-card p-4">
         {/* STORE NAME */}
-        <div className="text-xs font-bold text-teal uppercase tracking-wide mb-2">{product.store}</div>
+        <div className="text-teal mb-1.5 text-[0.65rem] font-bold tracking-widest uppercase">
+          {product.store}
+        </div>
 
         {/* PRODUCT NAME */}
-        <h3 className="text-sm font-medium text-white mb-2 line-clamp-1">{product.name}</h3>
+        <h3 className="group-hover:text-teal mb-2 line-clamp-1 text-[0.9rem] font-bold text-white transition-colors">
+          {product.name}
+        </h3>
 
         {/* RATING */}
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-yellow text-xs">★★★★★</span>
-          <span className="text-xs font-semibold text-white">{product.rating}</span>
-          <span className="text-xs text-gray">({product.reviews})</span>
+        <div className="mb-3 flex items-center gap-1.5">
+          <div className="flex gap-0.5">
+            {[...Array(5)].map((_, i) => (
+              <span key={i} className={`text-[0.65rem] ${i < 4 ? 'text-yellow' : 'text-gray/30'}`}>
+                ★
+              </span>
+            ))}
+          </div>
+          <span className="text-[0.7rem] font-bold text-white/90">{product.rating || '4.8'}</span>
+          <span className="text-gray/60 text-[0.7rem]">({product.reviews || '120'})</span>
         </div>
 
         {/* PRICE */}
-        <div className="flex items-baseline gap-2 mb-3">
-          <span className="text-lg font-bold text-white">{product.price}</span>
-          <span className="text-sm text-gray line-through">{product.old}</span>
-          <span className="text-xs font-medium text-red-light">{product.off}</span>
+        <div className="mb-4 flex items-center gap-2">
+          <span className="text-lg font-black text-white">{product.price}</span>
+          <span className="text-gray/50 text-[0.8rem] line-through">{product.old}</span>
         </div>
 
         {/* ADD TO CART BUTTON */}
         <button
           onClick={handleAddToCart}
-          className={`w-full text-sm font-medium py-2 rounded border transition-all ${
+          className={`group/btn relative w-full overflow-hidden rounded py-2.5 text-[0.75rem] font-black tracking-widest uppercase transition-all duration-300 ${
             isAdded
-              ? 'bg-teal text-navy border-teal'
-              : 'border-teal/30 text-teal hover:bg-teal hover:text-navy hover:border-teal'
+              ? 'bg-teal text-navy border-teal translate-y-[-2px]'
+              : 'bg-navy3/50 hover:border-teal hover:text-teal border border-white/10 text-white'
           }`}
         >
-          {isAdded ? '✓ Added!' : '+ Add to Cart'}
+          <span className="flex items-center justify-center gap-2">
+            {isAdded ? (
+              <>✓ Added to Bag</>
+            ) : (
+              <>
+                <ShoppingCart size={14} className="group-hover/btn:animate-bounce" /> Add to Cart
+              </>
+            )}
+          </span>
         </button>
       </div>
-    </div>
+    </Link>
   );
 };
 
