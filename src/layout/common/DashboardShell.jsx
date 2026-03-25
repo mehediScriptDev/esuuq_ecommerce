@@ -54,7 +54,7 @@ const DashboardShell = ({
           })}
 
           <div className="flex items-center gap-2.5">
-            <div className="from-teal text-navy flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br to-blue-500 text-[0.8rem] font-bold">
+            <div className="from-teal text-navy flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br to-blue-500 text-[0.8rem] font-bold">
               {user.initials}
             </div>
             <div className="hidden flex-col min-[700px]:flex">
@@ -74,7 +74,7 @@ const DashboardShell = ({
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <aside
-          className={`scrollbar-hide fixed top-14 bottom-0 left-0 z-50 w-[230px] overflow-y-auto border-r border-white/[0.07] bg-[#0D1626] transition-transform duration-300 min-[700px]:static min-[700px]:translate-x-0 ${
+          className={`scrollbar-hide fixed top-14 bottom-0 left-0 z-50 w-57.5 overflow-y-auto border-r border-white/[0.07] bg-[#0D1626] transition-transform duration-300 min-[700px]:static min-[700px]:translate-x-0 ${
             mobileOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
@@ -94,7 +94,7 @@ const DashboardShell = ({
                       `mb-0.5 flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition-all ${
                         isActive
                           ? 'bg-teal/10 text-teal'
-                          : 'text-gray bg-transparent hover:bg-white/[0.04] hover:text-white'
+                          : 'text-gray bg-transparent hover:bg-white/4 hover:text-white'
                       }`
                     }
                   >

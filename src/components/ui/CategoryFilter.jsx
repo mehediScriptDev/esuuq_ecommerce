@@ -32,7 +32,7 @@ const CategoryFilter = ({ filters, onFilterChange }) => {
 
   return (
     <aside className="w-full shrink-0 min-[900px]:w-60 min-[1100px]:w-64">
-      <div className="sticky top-[8.5rem] space-y-3">
+      <div className="sticky top-34 space-y-3">
         {/* Price Range */}
         <div className="bg-card overflow-hidden rounded border border-white/10">
           <button

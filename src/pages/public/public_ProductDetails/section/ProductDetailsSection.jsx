@@ -150,7 +150,7 @@ const ProductDetailsSection = () => {
         <div className="grid grid-cols-1 gap-8 min-[900px]:gap-12 min-[1100px]:grid-cols-[1fr_450px]">
           {/* LEFT: Image Gallery */}
           <div className="space-y-4">
-            <div className="group relative flex h-[320px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0F172A] shadow-inner min-[480px]:h-[400px] min-[640px]:h-[500px]">
+            <div className="group relative flex h-80 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0F172A] shadow-inner min-[480px]:h-100 min-[640px]:h-125">
               <div className="text-[6rem] transition-transform duration-700 group-hover:scale-105 min-[640px]:text-[8rem]">
                 {product.images[selectedImage]}
               </div>
@@ -257,7 +257,7 @@ const ProductDetailsSection = () => {
             {/* Qty & Add to Cart */}
             <div className="mb-8 space-y-4">
               <div className="flex flex-col items-stretch gap-4 min-[480px]:flex-row min-[480px]:items-center">
-                <div className="bg-navy3 flex min-h-[52px] items-center rounded-lg border border-white/5 p-1">
+                <div className="bg-navy3 flex min-h-13 items-center rounded-lg border border-white/5 p-1">
                   <button
                     onClick={() => setQty(Math.max(1, qty - 1))}
                     className="flex flex-1 items-center justify-center rounded-md py-2 text-white transition-all hover:bg-white/5 min-[480px]:w-10"
@@ -272,11 +272,11 @@ const ProductDetailsSection = () => {
                     <Plus size={18} />
                   </button>
                 </div>
-                <button className="bg-teal hover:bg-teal2 text-navy shadow-teal/20 flex h-[52px] flex-1 transform items-center justify-center gap-3 rounded-lg text-[0.9rem] font-black tracking-widest uppercase shadow-lg transition-all hover:-translate-y-1 active:translate-y-0 min-[640px]:text-[0.95rem]">
+                <button className="bg-teal hover:bg-teal2 text-navy shadow-teal/20 flex h-13 flex-1 transform items-center justify-center gap-3 rounded-lg text-[0.9rem] font-black tracking-widest uppercase shadow-lg transition-all hover:-translate-y-1 active:translate-y-0 min-[640px]:text-[0.95rem]">
                   <ShoppingCart size={20} /> Add To Cart
                 </button>
               </div>
-              <button className="h-[52px] w-full rounded-lg border border-white/10 text-[0.9rem] font-bold text-white transition-all hover:bg-white/5">
+              <button className="h-13 w-full rounded-lg border border-white/10 text-[0.9rem] font-bold text-white transition-all hover:bg-white/5">
                 Buy It Now
               </button>
             </div>
@@ -333,7 +333,7 @@ const ProductDetailsSection = () => {
 
           <div className="p-6 min-[640px]:p-10 min-[900px]:p-12">
             {activeTab === 'description' && (
-              <div className="animate-fadeUp max-w-[800px]">
+              <div className="animate-fadeUp max-w-200">
                 <h3 className="mb-4 font-['Syne'] text-[1.2rem] font-black text-white min-[640px]:text-[1.4rem]">
                   Product Overview
                 </h3>
@@ -392,7 +392,7 @@ const ProductDetailsSection = () => {
                       Global Score
                     </div>
                   </div>
-                  <div className="w-full max-w-[400px] flex-1 space-y-2.5">
+                  <div className="w-full max-w-100 flex-1 space-y-2.5">
                     {[5, 4, 3, 2, 1].map((s) => (
                       <div key={s} className="flex items-center gap-4">
                         <span className="w-2 text-[0.7rem] font-bold text-white">{s}</span>

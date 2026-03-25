@@ -5,7 +5,6 @@ import RootLayout from '../layout/public/RootLayout';
 import LoadingFallback from './components/LoadingFallback';
 
 const Home = lazy(() => import('../pages/public/public_Home/Home'));
-const AboutView = lazy(() => import('../pages/public/public_about/AboutView'));
 const ContactView = lazy(() => import('../pages/public/public_contact/ContactView'));
 const ElectronicsView = lazy(() => import('../pages/public/public_Electronics/ElectronicsView'));
 const FashionView = lazy(() => import('../pages/public/public_Fashion/FashionView'));
@@ -116,7 +115,6 @@ const router = createBrowserRouter(
     <>
       <Route path="/" element={<RootLayout />}>
         <Route index element={<Home />} />
-        <Route path="about" element={wrap(AboutView)} />
         <Route path="contact" element={wrap(ContactView)} />
         <Route path="electronics" element={wrap(ElectronicsView)} />
         <Route path="fashion" element={wrap(FashionView)} />

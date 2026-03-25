@@ -3,7 +3,7 @@ import PromoCard from '../../../../components/marketplace/PromoCard';
 
 const PromoSection = () => {
   return (
-    <section className="px-3 py-8 min-[640px]:px-4 min-[900px]:px-8 min-[900px]:py-12">
+    <section className="px-3 py-8 min-[640px]:px-4 min-[900px]:px-8 min-[900px]:py-10">
       <div className="container mx-auto">
       <div className="grid grid-cols-1 gap-4 min-[768px]:grid-cols-[2fr_1fr]">
         <PromoCard 
