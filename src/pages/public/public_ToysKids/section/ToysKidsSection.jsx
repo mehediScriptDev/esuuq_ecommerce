@@ -4,6 +4,7 @@ import CategoryPageLayout from '../../../../components/ui/CategoryPageLayout';
 const products = [
   {
     icon: '\u{1F9F8}',
+    image: 'https://loremflickr.com/300/300/toys?seed=1',
     name: 'LEGO Star Wars Millennium Falcon',
     store: 'BrickWorld',
     price: '$79.99',
@@ -16,6 +17,7 @@ const products = [
   },
   {
     icon: '\u{1F3A8}',
+    image: 'https://loremflickr.com/300/300/toys?seed=2',
     name: 'Kids Art Supply Set 150pc',
     store: 'CreativeKids',
     price: '$29.99',
@@ -28,6 +30,7 @@ const products = [
   },
   {
     icon: '\u{1F9E9}',
+    image: 'https://loremflickr.com/300/300/toys?seed=3',
     name: 'Wooden Puzzle Set 6-in-1',
     store: 'SmartPlay',
     price: '$24.99',
@@ -40,6 +43,7 @@ const products = [
   },
   {
     icon: '\u{1F680}',
+    image: 'https://loremflickr.com/300/300/toys?seed=4',
     name: 'Remote Control Space Shuttle',
     store: 'ToyGalaxy',
     price: '$44.99',
@@ -52,6 +56,7 @@ const products = [
   },
   {
     icon: '\u{1F3B9}',
+    image: 'https://loremflickr.com/300/300/toys?seed=5',
     name: 'Kids Piano Mat Musical',
     store: 'MusicFun',
     price: '$19.99',
@@ -64,6 +69,7 @@ const products = [
   },
   {
     icon: '\u{1F4A7}',
+    image: 'https://loremflickr.com/300/300/toys?seed=6',
     name: 'Water Gun Super Soaker Set',
     store: 'SummerFun',
     price: '$16.99',
@@ -76,6 +82,7 @@ const products = [
   },
   {
     icon: '\u{1F52C}',
+    image: 'https://loremflickr.com/300/300/toys?seed=7',
     name: 'Kids Science Experiment Kit',
     store: 'SmartPlay',
     price: '$34.99',
@@ -88,6 +95,7 @@ const products = [
   },
   {
     icon: '\u{1F999}',
+    image: 'https://loremflickr.com/300/300/toys?seed=8',
     name: 'Giant Stuffed Llama 3ft',
     store: 'CuddlePals',
     price: '$29.99',
@@ -100,6 +108,7 @@ const products = [
   },
   {
     icon: '\u{1F9E9}',
+    image: 'https://loremflickr.com/300/300/toys?seed=9',
     name: 'Magnetic Building Blocks 100pc',
     store: 'BuildGenius',
     price: '$39.99',
@@ -112,6 +121,7 @@ const products = [
   },
   {
     icon: '\u{1F3A2}',
+    image: 'https://loremflickr.com/300/300/toys?seed=10',
     name: 'Racing Track Set Electric',
     store: 'SpeedRacer',
     price: '$54.99',
@@ -124,6 +134,7 @@ const products = [
   },
   {
     icon: '\u{1F3AD}',
+    image: 'https://loremflickr.com/300/300/toys?seed=11',
     name: 'Puppet Theater Playset',
     store: 'ImaginePlay',
     price: '$39.99',
@@ -136,6 +147,7 @@ const products = [
   },
   {
     icon: '\u{1F916}',
+    image: 'https://loremflickr.com/300/300/toys?seed=12',
     name: 'Coding Robot Kit for Kids',
     store: 'TechKids',
     price: '$59.99',

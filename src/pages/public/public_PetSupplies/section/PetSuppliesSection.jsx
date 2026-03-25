@@ -4,6 +4,7 @@ import CategoryPageLayout from '../../../../components/ui/CategoryPageLayout';
 const products = [
   {
     icon: '\u{1F436}',
+    image: 'https://loremflickr.com/300/300/pets?seed=1',
     name: 'Premium Dog Food 15lb Bag',
     store: 'PawsFirst',
     price: '$34.99',
@@ -16,6 +17,7 @@ const products = [
   },
   {
     icon: '\u{1F431}',
+    image: 'https://loremflickr.com/300/300/pets?seed=2',
     name: 'Cat Tree Tower 5-Level',
     store: 'MeowHaven',
     price: '$69.99',
@@ -28,6 +30,7 @@ const products = [
   },
   {
     icon: '\u{1F9B4}',
+    image: 'https://loremflickr.com/300/300/pets?seed=3',
     name: 'Indestructible Dog Chew Toy',
     store: 'ToughPup',
     price: '$12.99',
@@ -40,6 +43,7 @@ const products = [
   },
   {
     icon: '\u{1F41F}',
+    image: 'https://loremflickr.com/300/300/pets?seed=4',
     name: 'Aquarium Starter Kit 20gal',
     store: 'AquaLife',
     price: '$89.99',
@@ -52,6 +56,7 @@ const products = [
   },
   {
     icon: '\u{1F43E}',
+    image: 'https://loremflickr.com/300/300/pets?seed=5',
     name: 'Pet Grooming Kit 8-in-1',
     store: 'PetSpa',
     price: '$29.99',
@@ -64,6 +69,7 @@ const products = [
   },
   {
     icon: '\u{1F436}',
+    image: 'https://loremflickr.com/300/300/pets?seed=6',
     name: 'Orthopedic Dog Bed Large',
     store: 'PawsFirst',
     price: '$44.99',
@@ -76,6 +82,7 @@ const products = [
   },
   {
     icon: '\u{1F426}',
+    image: 'https://loremflickr.com/300/300/pets?seed=7',
     name: 'Bird Cage Deluxe with Stand',
     store: 'WingHome',
     price: '$59.99',
@@ -88,6 +95,7 @@ const products = [
   },
   {
     icon: '\u{1F431}',
+    image: 'https://loremflickr.com/300/300/pets?seed=8',
     name: 'Automated Cat Feeder Smart',
     store: 'TechPet',
     price: '$49.99',
@@ -100,6 +108,7 @@ const products = [
   },
   {
     icon: '\u{1F43E}',
+    image: 'https://loremflickr.com/300/300/pets?seed=9',
     name: 'Pet Carrier Airline Approved',
     store: 'TravelPet',
     price: '$39.99',
@@ -112,6 +121,7 @@ const products = [
   },
   {
     icon: '\u{1F436}',
+    image: 'https://loremflickr.com/300/300/pets?seed=10',
     name: 'Dog Harness No-Pull Padded',
     store: 'WalkMate',
     price: '$24.99',
@@ -124,6 +134,7 @@ const products = [
   },
   {
     icon: '\u{1F422}',
+    image: 'https://loremflickr.com/300/300/pets?seed=11',
     name: 'Reptile Terrarium Kit Complete',
     store: 'ExoticPets',
     price: '$79.99',
@@ -136,6 +147,7 @@ const products = [
   },
   {
     icon: '\u{1F431}',
+    image: 'https://loremflickr.com/300/300/pets?seed=12',
     name: 'Interactive Cat Laser Toy',
     store: 'PlayPaws',
     price: '$14.99',

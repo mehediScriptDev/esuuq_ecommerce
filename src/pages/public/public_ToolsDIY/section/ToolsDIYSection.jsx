@@ -4,6 +4,7 @@ import CategoryPageLayout from '../../../../components/ui/CategoryPageLayout';
 const products = [
   {
     icon: '\u{1F527}',
+    image: 'https://loremflickr.com/300/300/tools?seed=1',
     name: 'Cordless Drill Driver 20V',
     store: 'ToolMaster',
     price: '$79.99',
@@ -16,6 +17,7 @@ const products = [
   },
   {
     icon: '\u{1FA9A}',
+    image: 'https://loremflickr.com/300/300/tools?seed=2',
     name: 'Professional Tool Set 256pc',
     store: 'CraftPro',
     price: '$149.00',
@@ -28,6 +30,7 @@ const products = [
   },
   {
     icon: '\u{1FA93}',
+    image: 'https://loremflickr.com/300/300/tools?seed=3',
     name: 'Circular Saw 7¼" 15A',
     store: 'PowerCut',
     price: '$89.99',
@@ -40,6 +43,7 @@ const products = [
   },
   {
     icon: '\u{1F4CF}',
+    image: 'https://loremflickr.com/300/300/tools?seed=4',
     name: 'Laser Level Self-Leveling',
     store: 'PrecisionPro',
     price: '$34.99',
@@ -52,6 +56,7 @@ const products = [
   },
   {
     icon: '\u{1FA9B}',
+    image: 'https://loremflickr.com/300/300/tools?seed=5',
     name: 'Screwdriver Bit Set 100pc',
     store: 'ToolMaster',
     price: '$19.99',
@@ -64,6 +69,7 @@ const products = [
   },
   {
     icon: '\u{1F3A8}',
+    image: 'https://loremflickr.com/300/300/tools?seed=6',
     name: 'Paint Sprayer HVLP 800W',
     store: 'PaintPro',
     price: '$69.99',
@@ -76,6 +82,7 @@ const products = [
   },
   {
     icon: '\u{1F6E0}',
+    image: 'https://loremflickr.com/300/300/tools?seed=7',
     name: 'Workbench Portable Folding',
     store: 'ShopSetup',
     price: '$99.99',
@@ -88,6 +95,7 @@ const products = [
   },
   {
     icon: '\u{1F50A}',
+    image: 'https://loremflickr.com/300/300/tools?seed=8',
     name: 'Air Compressor Portable 6gal',
     store: 'AirForce',
     price: '$119.00',
@@ -100,6 +108,7 @@ const products = [
   },
   {
     icon: '\u{1F9F0}',
+    image: 'https://loremflickr.com/300/300/tools?seed=9',
     name: 'Home Repair Tool Kit 65pc',
     store: 'FixIt',
     price: '$39.99',
@@ -112,6 +121,7 @@ const products = [
   },
   {
     icon: '\u{1FA9C}',
+    image: 'https://loremflickr.com/300/300/tools?seed=10',
     name: 'Electric Sander Orbital',
     store: 'SmoothFinish',
     price: '$44.99',
@@ -124,6 +134,7 @@ const products = [
   },
   {
     icon: '\u{1F4A1}',
+    image: 'https://loremflickr.com/300/300/tools?seed=11',
     name: 'LED Work Light Rechargeable',
     store: 'BrightWork',
     price: '$24.99',
@@ -136,6 +147,7 @@ const products = [
   },
   {
     icon: '\u{1F4CF}',
+    image: 'https://loremflickr.com/300/300/tools?seed=12',
     name: 'Digital Measuring Tape 25ft',
     store: 'PrecisionPro',
     price: '$14.99',

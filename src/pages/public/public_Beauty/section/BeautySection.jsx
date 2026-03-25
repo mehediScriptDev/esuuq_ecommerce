@@ -4,6 +4,7 @@ import CategoryPageLayout from '../../../../components/ui/CategoryPageLayout';
 const products = [
   {
     icon: '\u{1F484}',
+    image: 'https://loremflickr.com/300/300/beauty?seed=1',
     name: 'Matte Lipstick Collection 6pk',
     store: 'GlowUp',
     price: '$24.99',
@@ -16,6 +17,7 @@ const products = [
   },
   {
     icon: '\u{1F9F4}',
+    image: 'https://loremflickr.com/300/300/beauty?seed=2',
     name: 'Hyaluronic Acid Serum 30ml',
     store: 'SkinScience',
     price: '$19.99',
@@ -28,6 +30,7 @@ const products = [
   },
   {
     icon: '\u{1F489}',
+    image: 'https://loremflickr.com/300/300/beauty?seed=3',
     name: 'Retinol Night Cream',
     store: 'DermaGlow',
     price: '$34.99',
@@ -40,6 +43,7 @@ const products = [
   },
   {
     icon: '\u{1F338}',
+    image: 'https://loremflickr.com/300/300/beauty?seed=4',
     name: 'Rose Petal Face Mist',
     store: 'FloralBeauty',
     price: '$14.99',
@@ -52,6 +56,7 @@ const products = [
   },
   {
     icon: '\u{1F485}',
+    image: 'https://loremflickr.com/300/300/beauty?seed=5',
     name: 'Gel Nail Kit Professional',
     store: 'NailArt',
     price: '$29.99',
@@ -64,6 +69,7 @@ const products = [
   },
   {
     icon: '\u{1F9F4}',
+    image: 'https://loremflickr.com/300/300/beauty?seed=6',
     name: 'Vitamin C Brightening Set',
     store: 'SkinScience',
     price: '$44.99',
@@ -76,6 +82,7 @@ const products = [
   },
   {
     icon: '\u{1F48E}',
+    image: 'https://loremflickr.com/300/300/beauty?seed=7',
     name: 'Crystal Facial Roller Jade',
     store: 'ZenBeauty',
     price: '$12.99',
@@ -88,6 +95,7 @@ const products = [
   },
   {
     icon: '\u{2728}',
+    image: 'https://loremflickr.com/300/300/beauty?seed=8',
     name: 'Highlighter Palette Shimmer',
     store: 'GlowUp',
     price: '$18.99',
@@ -100,6 +108,7 @@ const products = [
   },
   {
     icon: '\u{1F338}',
+    image: 'https://loremflickr.com/300/300/beauty?seed=9',
     name: 'Organic Hair Oil Argan',
     store: 'HairBliss',
     price: '$16.99',
@@ -112,6 +121,7 @@ const products = [
   },
   {
     icon: '\u{1F9FC}',
+    image: 'https://loremflickr.com/300/300/beauty?seed=10',
     name: 'Charcoal Detox Face Wash',
     store: 'CleanSkin',
     price: '$11.99',
@@ -124,6 +134,7 @@ const products = [
   },
   {
     icon: '\u{1F484}',
+    image: 'https://loremflickr.com/300/300/beauty?seed=11',
     name: 'Eyeshadow Palette 18 Colors',
     store: 'ColorPop',
     price: '$22.99',
@@ -136,6 +147,7 @@ const products = [
   },
   {
     icon: '\u{1F338}',
+    image: 'https://loremflickr.com/300/300/beauty?seed=12',
     name: 'Lavender Bath Bomb Set 6pk',
     store: 'SpaLux',
     price: '$17.99',

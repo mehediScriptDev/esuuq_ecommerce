@@ -4,6 +4,7 @@ import CategoryPageLayout from '../../../../components/ui/CategoryPageLayout';
 const products = [
   {
     icon: '\u{1F3C0}',
+    image: 'https://loremflickr.com/300/300/sports?seed=1',
     name: 'Indoor/Outdoor Basketball',
     store: 'CourtKing',
     price: '$29.99',
@@ -16,6 +17,7 @@ const products = [
   },
   {
     icon: '\u{1F3CB}',
+    image: 'https://loremflickr.com/300/300/sports?seed=2',
     name: 'Adjustable Dumbbell Set 50lb',
     store: 'FitGear',
     price: '$149.00',
@@ -28,6 +30,7 @@ const products = [
   },
   {
     icon: '\u{1F6B4}',
+    image: 'https://loremflickr.com/300/300/sports?seed=3',
     name: 'Mountain Bike 21-Speed',
     store: 'TrailRider',
     price: '$399.00',
@@ -40,6 +43,7 @@ const products = [
   },
   {
     icon: '\u{1F3BE}',
+    image: 'https://loremflickr.com/300/300/sports?seed=4',
     name: 'Pro Tennis Racket Carbon',
     store: 'AceSport',
     price: '$89.99',
@@ -52,6 +56,7 @@ const products = [
   },
   {
     icon: '\u{26BD}',
+    image: 'https://loremflickr.com/300/300/sports?seed=5',
     name: 'FIFA Match Soccer Ball',
     store: 'GoalZone',
     price: '$34.99',
@@ -64,6 +69,7 @@ const products = [
   },
   {
     icon: '\u{1F9D8}',
+    image: 'https://loremflickr.com/300/300/sports?seed=6',
     name: 'Premium Yoga Mat 6mm',
     store: 'ZenFit',
     price: '$24.99',
@@ -76,6 +82,7 @@ const products = [
   },
   {
     icon: '\u{1F3CA}',
+    image: 'https://loremflickr.com/300/300/sports?seed=7',
     name: 'Competition Swim Goggles',
     store: 'AquaPro',
     price: '$19.99',
@@ -88,6 +95,7 @@ const products = [
   },
   {
     icon: '\u{1F94A}',
+    image: 'https://loremflickr.com/300/300/sports?seed=8',
     name: 'Boxing Gloves Pro 12oz',
     store: 'FightGear',
     price: '$44.99',
@@ -100,6 +108,7 @@ const products = [
   },
   {
     icon: '\u{26F3}',
+    image: 'https://loremflickr.com/300/300/sports?seed=9',
     name: 'Golf Club Set Complete',
     store: 'FairwayPro',
     price: '$299.00',
@@ -112,6 +121,7 @@ const products = [
   },
   {
     icon: '\u{1F3C3}',
+    image: 'https://loremflickr.com/300/300/sports?seed=10',
     name: 'Running Shoes Ultra Boost',
     store: 'PaceSetter',
     price: '$79.99',
@@ -124,6 +134,7 @@ const products = [
   },
   {
     icon: '\u{1F3D3}',
+    image: 'https://loremflickr.com/300/300/sports?seed=11',
     name: 'Table Tennis Set Pro',
     store: 'PingPong+',
     price: '$34.99',
@@ -136,6 +147,7 @@ const products = [
   },
   {
     icon: '\u{1F3BF}',
+    image: 'https://loremflickr.com/300/300/sports?seed=12',
     name: 'Ski Jacket Waterproof',
     store: 'AlpineGear',
     price: '$129.00',

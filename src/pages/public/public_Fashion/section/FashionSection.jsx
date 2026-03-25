@@ -4,6 +4,7 @@ import CategoryPageLayout from '../../../../components/ui/CategoryPageLayout';
 const products = [
   {
     icon: '\u{1F457}',
+    image: 'https://loremflickr.com/300/300/fashion?seed=1',
     name: 'Silk Evening Dress',
     store: 'GlamourFit',
     price: '$89.99',
@@ -16,6 +17,7 @@ const products = [
   },
   {
     icon: '\u{1F45F}',
+    image: 'https://loremflickr.com/300/300/fashion?seed=2',
     name: 'Urban Runner Sneakers',
     store: 'SoleStyle',
     price: '$64.99',
@@ -28,6 +30,7 @@ const products = [
   },
   {
     icon: '\u{1F454}',
+    image: 'https://loremflickr.com/300/300/fashion?seed=3',
     name: 'Slim Fit Business Shirt',
     store: 'ProWear',
     price: '$39.99',
@@ -40,6 +43,7 @@ const products = [
   },
   {
     icon: '\u{1F45C}',
+    image: 'https://loremflickr.com/300/300/fashion?seed=4',
     name: 'Leather Crossbody Bag',
     store: 'LuxeCarry',
     price: '$54.99',
@@ -52,6 +56,7 @@ const products = [
   },
   {
     icon: '\u{1F576}',
+    image: 'https://loremflickr.com/300/300/fashion?seed=5',
     name: 'Premium Polarized Sunglasses',
     store: 'VisionX',
     price: '$28.99',
@@ -64,6 +69,7 @@ const products = [
   },
   {
     icon: '\u{1F9E3}',
+    image: 'https://loremflickr.com/300/300/fashion?seed=6',
     name: 'Cashmere Winter Scarf',
     store: 'CozyKnit',
     price: '$34.99',
@@ -76,6 +82,7 @@ const products = [
   },
   {
     icon: '\u{1F45E}',
+    image: 'https://loremflickr.com/300/300/fashion?seed=7',
     name: 'Classic Leather Boots',
     store: 'BootCraft',
     price: '$119.00',
@@ -88,6 +95,7 @@ const products = [
   },
   {
     icon: '\u{1F392}',
+    image: 'https://loremflickr.com/300/300/fashion?seed=8',
     name: 'Canvas Travel Backpack',
     store: 'PackLight',
     price: '$44.99',
@@ -100,6 +108,7 @@ const products = [
   },
   {
     icon: '\u{1F458}',
+    image: 'https://loremflickr.com/300/300/fashion?seed=9',
     name: 'Floral Summer Blouse',
     store: 'BloomStyle',
     price: '$29.99',
@@ -112,6 +121,7 @@ const products = [
   },
   {
     icon: '\u{1F9E4}',
+    image: 'https://loremflickr.com/300/300/fashion?seed=10',
     name: 'Merino Wool Gloves',
     store: 'WinterGear',
     price: '$19.99',
@@ -124,6 +134,7 @@ const products = [
   },
   {
     icon: '\u{1F455}',
+    image: 'https://loremflickr.com/300/300/fashion?seed=11',
     name: 'Graphic Print T-Shirt',
     store: 'StreetWave',
     price: '$24.99',
@@ -136,6 +147,7 @@ const products = [
   },
   {
     icon: '\u{1FA73}',
+    image: 'https://loremflickr.com/300/300/fashion?seed=12',
     name: 'High-Waist Denim Jeans',
     store: 'DenimCo',
     price: '$49.99',

@@ -46,10 +46,18 @@ const ProductCard = ({ product, inScroll = false }) => {
     >
       {/* IMAGE SECTION */}
       <div className="relative flex h-48 items-center justify-center overflow-hidden bg-[#0F172A]">
-        {/* PRODUCT ICON */}
-        <span className="transform-gpu text-6xl transition-transform duration-500 group-hover:scale-110">
-          {product.icon}
-        </span>
+        {/* PRODUCT IMAGE */}
+        {product.image ? (
+          <img
+            src={product.image}
+            alt={product.name}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+        ) : (
+          <span className="transform-gpu text-6xl transition-transform duration-500 group-hover:scale-110">
+            {product.icon}
+          </span>
+        )}
 
         {/* OVERLAY ON HOVER */}
         <div className="bg-navy/40 absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
@@ -61,7 +69,7 @@ const ProductCard = ({ product, inScroll = false }) => {
         {/* BADGE */}
         {product.badge && (
           <span
-            className={`absolute top-3 left-3 rounded px-2 py-1 text-[0.6rem] font-black tracking-[0.1em] uppercase shadow-lg ${getBadgeClass(
+            className={`absolute top-3 left-3 rounded px-2 py-1 text-[0.6rem] font-black tracking-widest uppercase shadow-lg ${getBadgeClass(
               product.badge
             )}`}
           >
@@ -118,7 +126,7 @@ const ProductCard = ({ product, inScroll = false }) => {
           onClick={handleAddToCart}
           className={`group/btn relative w-full overflow-hidden rounded py-2.5 text-[0.75rem] font-black tracking-widest uppercase transition-all duration-300 ${
             isAdded
-              ? 'bg-teal text-navy border-teal translate-y-[-2px]'
+              ? 'bg-teal text-navy border-teal -translate-y-0.5'
               : 'bg-navy3/50 hover:border-teal hover:text-teal border border-white/10 text-white'
           }`}
         >

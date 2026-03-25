@@ -4,6 +4,7 @@ import CategoryPageLayout from '../../../../components/ui/CategoryPageLayout';
 const products = [
   {
     icon: '\u{1F4DA}',
+    image: 'https://loremflickr.com/300/300/books?seed=1',
     name: 'Atomic Habits - James Clear',
     store: 'BookNest',
     price: '$11.99',
@@ -16,6 +17,7 @@ const products = [
   },
   {
     icon: '\u{1F4D6}',
+    image: 'https://loremflickr.com/300/300/books?seed=2',
     name: 'The Psychology of Money',
     store: 'ReadMore',
     price: '$13.99',
@@ -28,6 +30,7 @@ const products = [
   },
   {
     icon: '\u{1F4D5}',
+    image: 'https://loremflickr.com/300/300/books?seed=3',
     name: 'Dune - Frank Herbert',
     store: 'SciFiBooks',
     price: '$9.99',
@@ -40,6 +43,7 @@ const products = [
   },
   {
     icon: '\u{1F4D8}',
+    image: 'https://loremflickr.com/300/300/books?seed=4',
     name: 'Clean Code - Robert Martin',
     store: 'TechBooks',
     price: '$29.99',
@@ -52,6 +56,7 @@ const products = [
   },
   {
     icon: '\u{1F4D3}',
+    image: 'https://loremflickr.com/300/300/books?seed=5',
     name: 'Bullet Journal Dotted 200pg',
     store: 'WriteWell',
     price: '$14.99',
@@ -64,6 +69,7 @@ const products = [
   },
   {
     icon: '\u{1F4DA}',
+    image: 'https://loremflickr.com/300/300/books?seed=6',
     name: 'Harry Potter Box Set 7 Books',
     store: 'WizardReads',
     price: '$49.99',
@@ -76,6 +82,7 @@ const products = [
   },
   {
     icon: '\u{1F4D7}',
+    image: 'https://loremflickr.com/300/300/books?seed=7',
     name: 'Sapiens - Yuval Harari',
     store: 'HistoryHub',
     price: '$12.99',
@@ -88,6 +95,7 @@ const products = [
   },
   {
     icon: '\u{1F4D9}',
+    image: 'https://loremflickr.com/300/300/books?seed=8',
     name: 'The Lean Startup',
     store: 'BizBooks',
     price: '$15.99',
@@ -100,6 +108,7 @@ const products = [
   },
   {
     icon: '\u{1F4D4}',
+    image: 'https://loremflickr.com/300/300/books?seed=9',
     name: 'Moleskin Classic Notebook',
     store: 'WriteWell',
     price: '$17.99',
@@ -112,6 +121,7 @@ const products = [
   },
   {
     icon: '\u{1F4DA}',
+    image: 'https://loremflickr.com/300/300/books?seed=10',
     name: 'Lord of the Rings Trilogy',
     store: 'FantasyReads',
     price: '$34.99',
@@ -124,6 +134,7 @@ const products = [
   },
   {
     icon: '\u{1F4D6}',
+    image: 'https://loremflickr.com/300/300/books?seed=11',
     name: 'Thinking Fast and Slow',
     store: 'MindBooks',
     price: '$14.99',
@@ -136,6 +147,7 @@ const products = [
   },
   {
     icon: '\u{1F4D5}',
+    image: 'https://loremflickr.com/300/300/books?seed=12',
     name: 'Project Hail Mary',
     store: 'SciFiBooks',
     price: '$11.99',

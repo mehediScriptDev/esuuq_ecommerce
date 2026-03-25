@@ -36,8 +36,7 @@ const CategoryPageLayout = ({ title, icon, description, products }) => {
         {/* Header */}
         <div className="mb-6 flex flex-col gap-2 min-[640px]:flex-row min-[640px]:items-center min-[640px]:justify-between">
           <div>
-            <h1 className="flex items-center gap-3 font-['Syne'] text-[1.4rem] font-bold text-white min-[640px]:text-[1.8rem]">
-              <span className="text-3xl">{icon}</span>
+            <h1 className="font-['Syne'] text-[1.4rem] font-bold text-white min-[640px]:text-[1.8rem]">
               {title}
             </h1>
             <p className="text-gray mt-1 text-[0.82rem]">{description}</p>

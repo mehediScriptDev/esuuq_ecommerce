@@ -4,6 +4,7 @@ import CategoryPageLayout from '../../../../components/ui/CategoryPageLayout';
 const products = [
   {
     icon: '\u{1F48A}',
+    image: 'https://loremflickr.com/300/300/health?seed=1',
     name: 'Multivitamin Complex 90ct',
     store: 'VitaWell',
     price: '$19.99',
@@ -16,6 +17,7 @@ const products = [
   },
   {
     icon: '\u{1F9D8}',
+    image: 'https://loremflickr.com/300/300/health?seed=2',
     name: 'Yoga Block Set Cork 2-Pack',
     store: 'ZenFit',
     price: '$14.99',
@@ -28,6 +30,7 @@ const products = [
   },
   {
     icon: '\u{1FA7A}',
+    image: 'https://loremflickr.com/300/300/health?seed=3',
     name: 'Digital Blood Pressure Monitor',
     store: 'MedTech',
     price: '$39.99',
@@ -40,6 +43,7 @@ const products = [
   },
   {
     icon: '\u{1F4AA}',
+    image: 'https://loremflickr.com/300/300/health?seed=4',
     name: 'Whey Protein Isolate 2lb',
     store: 'MuscleFuel',
     price: '$29.99',
@@ -52,6 +56,7 @@ const products = [
   },
   {
     icon: '\u{1F9C2}',
+    image: 'https://loremflickr.com/300/300/health?seed=5',
     name: 'Omega-3 Fish Oil 120 Softgels',
     store: 'PureHealth',
     price: '$16.99',
@@ -64,6 +69,7 @@ const products = [
   },
   {
     icon: '\u{1F33F}',
+    image: 'https://loremflickr.com/300/300/health?seed=6',
     name: 'Organic Turmeric Capsules',
     store: 'HerbLife',
     price: '$12.99',
@@ -76,6 +82,7 @@ const products = [
   },
   {
     icon: '\u{2696}',
+    image: 'https://loremflickr.com/300/300/health?seed=7',
     name: 'Smart Body Scale WiFi',
     store: 'FitTrack',
     price: '$34.99',
@@ -88,6 +95,7 @@ const products = [
   },
   {
     icon: '\u{1F6CC}',
+    image: 'https://loremflickr.com/300/300/health?seed=8',
     name: 'Melatonin Sleep Gummies 60ct',
     store: 'DreamWell',
     price: '$11.99',
@@ -100,6 +108,7 @@ const products = [
   },
   {
     icon: '\u{1F489}',
+    image: 'https://loremflickr.com/300/300/health?seed=9',
     name: 'Collagen Peptides Powder 300g',
     store: 'GlowHealth',
     price: '$24.99',
@@ -112,6 +121,7 @@ const products = [
   },
   {
     icon: '\u{1F9B7}',
+    image: 'https://loremflickr.com/300/300/health?seed=10',
     name: 'Electric Toothbrush Sonic Pro',
     store: 'OralCare',
     price: '$44.99',
@@ -124,6 +134,7 @@ const products = [
   },
   {
     icon: '\u{1F3CB}',
+    image: 'https://loremflickr.com/300/300/health?seed=11',
     name: 'Resistance Bands Set 5-Level',
     store: 'FlexFit',
     price: '$14.99',
@@ -136,6 +147,7 @@ const products = [
   },
   {
     icon: '\u{1F9EA}',
+    image: 'https://loremflickr.com/300/300/health?seed=12',
     name: 'Probiotic 50 Billion CFU',
     store: 'GutHealth',
     price: '$22.99',

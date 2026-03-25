@@ -4,6 +4,7 @@ import CategoryPageLayout from '../../../../components/ui/CategoryPageLayout';
 const products = [
   {
     icon: '\u{1F6CB}',
+    image: 'https://loremflickr.com/300/300/furniture?seed=1',
     name: 'Modern Sectional Sofa L-Shape',
     store: 'ComfortLiving',
     price: '$799.00',
@@ -16,6 +17,7 @@ const products = [
   },
   {
     icon: '\u{1F33F}',
+    image: 'https://loremflickr.com/300/300/furniture?seed=2',
     name: 'Indoor Plant Collection 3-Pack',
     store: 'GreenHome',
     price: '$39.99',
@@ -28,6 +30,7 @@ const products = [
   },
   {
     icon: '\u{1F6BF}',
+    image: 'https://loremflickr.com/300/300/furniture?seed=3',
     name: 'Rain Shower Head Stainless',
     store: 'BathLux',
     price: '$54.99',
@@ -40,6 +43,7 @@ const products = [
   },
   {
     icon: '\u{1F56F}',
+    image: 'https://loremflickr.com/300/300/furniture?seed=4',
     name: 'Scented Soy Candle Set 4pk',
     store: 'AromaHome',
     price: '$24.99',
@@ -52,6 +56,7 @@ const products = [
   },
   {
     icon: '\u{1FA91}',
+    image: 'https://loremflickr.com/300/300/furniture?seed=5',
     name: 'Ergonomic Office Chair',
     store: 'DeskMate',
     price: '$249.00',
@@ -64,6 +69,7 @@ const products = [
   },
   {
     icon: '\u{1F3A8}',
+    image: 'https://loremflickr.com/300/300/furniture?seed=6',
     name: 'Abstract Wall Art Canvas',
     store: 'ArtVibe',
     price: '$34.99',
@@ -76,6 +82,7 @@ const products = [
   },
   {
     icon: '\u{1F373}',
+    image: 'https://loremflickr.com/300/300/furniture?seed=7',
     name: 'Non-Stick Cookware Set 5pc',
     store: 'HomeChef',
     price: '$89.00',
@@ -88,6 +95,7 @@ const products = [
   },
   {
     icon: '\u{1F343}',
+    image: 'https://loremflickr.com/300/300/furniture?seed=8',
     name: 'Garden Tool Set 12-Piece',
     store: 'GreenThumb',
     price: '$44.99',
@@ -100,6 +108,7 @@ const products = [
   },
   {
     icon: '\u{1F4A1}',
+    image: 'https://loremflickr.com/300/300/furniture?seed=9',
     name: 'Smart LED Light Strip 5m',
     store: 'BrightLife',
     price: '$19.99',
@@ -112,6 +121,7 @@ const products = [
   },
   {
     icon: '\u{1F6CF}',
+    image: 'https://loremflickr.com/300/300/furniture?seed=10',
     name: 'Memory Foam Pillow Set',
     store: 'SleepWell',
     price: '$39.99',
@@ -124,6 +134,7 @@ const products = [
   },
   {
     icon: '\u{1FA9F}',
+    image: 'https://loremflickr.com/300/300/furniture?seed=11',
     name: 'Ceramic Planter Set 3pk',
     store: 'GreenHome',
     price: '$29.99',
@@ -136,6 +147,7 @@ const products = [
   },
   {
     icon: '\u{1F9F9}',
+    image: 'https://loremflickr.com/300/300/furniture?seed=12',
     name: 'Robot Vacuum Smart Cleaner',
     store: 'CleanTech',
     price: '$199.00',

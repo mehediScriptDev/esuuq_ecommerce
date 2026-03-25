@@ -124,7 +124,7 @@ const NavbarLayout = () => {
             <div className="invisible absolute top-full right-0 z-400 pt-2 group-hover:visible">
               <div className="w-56 overflow-hidden rounded-md border border-white/10 bg-[#0D1626] shadow-2xl backdrop-blur-xl">
                 <div className="border-b border-white/10 p-4">
-                  <div className="text-[0.88rem] leading-none font-bold text-white">Guest User</div>
+                  <div className="text-[0.88rem] leading-none font-bold text-white">Dummy User</div>
                   <div className="text-gray mt-1 text-[0.7rem] leading-none tracking-widest uppercase">
                     Role Based Access
                   </div>

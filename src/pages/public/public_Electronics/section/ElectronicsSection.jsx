@@ -4,6 +4,7 @@ import CategoryPageLayout from '../../../../components/ui/CategoryPageLayout';
 const products = [
   {
     icon: '\u{1F4F1}',
+    image: 'https://loremflickr.com/300/300/electronics?seed=1',
     name: 'Wireless Earbuds Pro Max',
     store: 'TechZone MN',
     price: '$49.99',
@@ -16,6 +17,7 @@ const products = [
   },
   {
     icon: '\u{1F4BB}',
+    image: 'https://loremflickr.com/300/300/electronics?seed=2',
     name: 'MacBook Air M3 15"',
     store: 'AppleWorld',
     price: '$1,199.00',
@@ -28,6 +30,7 @@ const products = [
   },
   {
     icon: '\u{1F3A7}',
+    image: 'https://loremflickr.com/300/300/electronics?seed=3',
     name: 'Studio Headphones - Deep Bass',
     store: 'AudioPro',
     price: '$79.99',
@@ -40,6 +43,7 @@ const products = [
   },
   {
     icon: '\u{1F4F7}',
+    image: 'https://loremflickr.com/300/300/electronics?seed=4',
     name: 'Mirrorless Camera 4K',
     store: 'SnapGear',
     price: '$649.00',
@@ -52,6 +56,7 @@ const products = [
   },
   {
     icon: '\u{1F50B}',
+    image: 'https://loremflickr.com/300/300/electronics?seed=5',
     name: 'Portable Power Bank 20000mAh',
     store: 'ChargeUp',
     price: '$29.99',
@@ -64,6 +69,7 @@ const products = [
   },
   {
     icon: '\u{1F4FA}',
+    image: 'https://loremflickr.com/300/300/electronics?seed=6',
     name: 'Smart TV 55" 4K OLED',
     store: 'ViewMax',
     price: '$699.00',
@@ -76,6 +82,7 @@ const products = [
   },
   {
     icon: '\u{2328}',
+    image: 'https://loremflickr.com/300/300/electronics?seed=7',
     name: 'Mechanical Gaming Keyboard',
     store: 'GamerEdge',
     price: '$89.99',
@@ -88,6 +95,7 @@ const products = [
   },
   {
     icon: '\u{1F5A5}',
+    image: 'https://loremflickr.com/300/300/electronics?seed=8',
     name: '27" 144Hz Gaming Monitor',
     store: 'DisplayPro',
     price: '$349.00',
@@ -100,6 +108,7 @@ const products = [
   },
   {
     icon: '\u{1F4F1}',
+    image: 'https://loremflickr.com/300/300/electronics?seed=9',
     name: 'Smartphone Case MagSafe',
     store: 'CaseCraft',
     price: '$24.99',
@@ -112,6 +121,7 @@ const products = [
   },
   {
     icon: '\u{1F50C}',
+    image: 'https://loremflickr.com/300/300/electronics?seed=10',
     name: 'USB-C Hub 8-in-1',
     store: 'ConnectAll',
     price: '$34.99',
@@ -124,6 +134,7 @@ const products = [
   },
   {
     icon: '\u{1F3AE}',
+    image: 'https://loremflickr.com/300/300/electronics?seed=11',
     name: 'Wireless Gaming Controller',
     store: 'GamerEdge',
     price: '$54.99',
@@ -136,6 +147,7 @@ const products = [
   },
   {
     icon: '\u{1F4BB}',
+    image: 'https://loremflickr.com/300/300/electronics?seed=12',
     name: 'Laptop Stand Adjustable',
     store: 'DeskMate',
     price: '$34.99',

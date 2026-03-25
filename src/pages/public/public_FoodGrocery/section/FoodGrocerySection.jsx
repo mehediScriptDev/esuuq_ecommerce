@@ -4,6 +4,7 @@ import CategoryPageLayout from '../../../../components/ui/CategoryPageLayout';
 const products = [
   {
     icon: '\u{1F34E}',
+    image: 'https://loremflickr.com/300/300/food?seed=1',
     name: 'Organic Fruit Basket Mix',
     store: 'FreshFarm',
     price: '$24.99',
@@ -16,6 +17,7 @@ const products = [
   },
   {
     icon: '\u{1F950}',
+    image: 'https://loremflickr.com/300/300/food?seed=2',
     name: 'Artisan Bread Box Set',
     store: 'BakeHouse',
     price: '$18.99',
@@ -28,6 +30,7 @@ const products = [
   },
   {
     icon: '\u{1F9C0}',
+    image: 'https://loremflickr.com/300/300/food?seed=3',
     name: 'Premium Cheese Platter Kit',
     store: 'DairyBest',
     price: '$34.99',
@@ -40,6 +43,7 @@ const products = [
   },
   {
     icon: '\u{2615}',
+    image: 'https://loremflickr.com/300/300/food?seed=4',
     name: 'Single Origin Coffee Beans 1kg',
     store: 'BrewMaster',
     price: '$19.99',
@@ -52,6 +56,7 @@ const products = [
   },
   {
     icon: '\u{1F36B}',
+    image: 'https://loremflickr.com/300/300/food?seed=5',
     name: 'Dark Chocolate Collection 12pc',
     store: 'CocoaCraft',
     price: '$14.99',
@@ -64,6 +69,7 @@ const products = [
   },
   {
     icon: '\u{1F954}',
+    image: 'https://loremflickr.com/300/300/food?seed=6',
     name: 'Organic Veggie Box Weekly',
     store: 'FreshFarm',
     price: '$29.99',
@@ -76,6 +82,7 @@ const products = [
   },
   {
     icon: '\u{1F375}',
+    image: 'https://loremflickr.com/300/300/food?seed=7',
     name: 'Japanese Green Tea Set',
     store: 'TeaLeaf',
     price: '$22.99',
@@ -88,6 +95,7 @@ const products = [
   },
   {
     icon: '\u{1F36F}',
+    image: 'https://loremflickr.com/300/300/food?seed=8',
     name: 'Raw Manuka Honey 500g',
     store: 'BeeNatural',
     price: '$39.99',
@@ -100,6 +108,7 @@ const products = [
   },
   {
     icon: '\u{1F951}',
+    image: 'https://loremflickr.com/300/300/food?seed=9',
     name: 'Superfood Smoothie Pack 10ct',
     store: 'HealthBlend',
     price: '$27.99',
@@ -112,6 +121,7 @@ const products = [
   },
   {
     icon: '\u{1F969}',
+    image: 'https://loremflickr.com/300/300/food?seed=10',
     name: 'Premium Wagyu Beef Pack',
     store: 'MeatCraft',
     price: '$89.99',
@@ -124,6 +134,7 @@ const products = [
   },
   {
     icon: '\u{1F35D}',
+    image: 'https://loremflickr.com/300/300/food?seed=11',
     name: 'Italian Pasta Collection 6pk',
     store: 'PastaWorks',
     price: '$16.99',
@@ -136,6 +147,7 @@ const products = [
   },
   {
     icon: '\u{1F96C}',
+    image: 'https://loremflickr.com/300/300/food?seed=12',
     name: 'Organic Spice Rack Set 12',
     store: 'SpiceTrail',
     price: '$32.99',
