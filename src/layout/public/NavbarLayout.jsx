@@ -107,19 +107,61 @@ const NavbarLayout = () => {
         </div>
 
         <div className="flex items-center gap-1.5 min-[640px]:gap-2">
-          <a
-            href="#"
-            className="icon-btn text-gray2 hover:text-teal hidden items-center rounded-sm px-1.5 py-2 no-underline transition hover:bg-[rgba(0,201,167,0.15)] min-[900px]:flex min-[900px]:px-[0.7rem]"
-            title="Account"
-          >
-            <User size={20} className="text-[1.1rem]" />
-            <div className="ml-1 text-[0.7rem]">
-              <div className="text-gray text-[0.65rem]">Hello, Sign in</div>
-              <div className="text-[0.82rem] font-medium text-white">Account</div>
+          <div className="group relative">
+            <Link
+              to="/login"
+              className="icon-btn text-gray2 hover:text-teal flex items-center rounded-sm px-1.5 py-2 no-underline transition hover:bg-[rgba(0,201,167,0.15)] min-[900px]:px-[0.7rem]"
+              title="Account"
+            >
+              <User size={20} className="text-[1.1rem]" />
+              <div className="ml-1 hidden text-[0.7rem] min-[900px]:block">
+                <div className="text-gray text-[0.65rem]">Hello, Sign in</div>
+                <div className="text-[0.82rem] font-medium text-white">Account</div>
+              </div>
+            </Link>
+
+            {/* Account Dropdown */}
+            <div className="invisible absolute top-full right-0 z-400 pt-2 group-hover:visible">
+              <div className="w-56 overflow-hidden rounded-md border border-white/10 bg-[#0D1626] shadow-2xl backdrop-blur-xl">
+                <div className="border-b border-white/10 p-4">
+                  <div className="text-[0.88rem] leading-none font-bold text-white">Guest User</div>
+                  <div className="text-gray mt-1 text-[0.7rem] leading-none tracking-widest uppercase">
+                    Role Based Access
+                  </div>
+                </div>
+                <div className="space-y-0.5 p-2">
+                  {/* <Link
+                    to="/dashboard"
+                    className="text-gray2 hover:bg-teal/10 hover:text-teal flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition"
+                  >
+                    <User size={14} /> My Dashboard
+                  </Link> */}
+                  <Link
+                    to="/admin"
+                    className="text-gray2 hover:bg-teal/10 hover:text-teal flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition"
+                  >
+                    <Smartphone size={14} /> Admin Portal
+                  </Link>
+                  <Link
+                    to="/merchant"
+                    className="text-gray2 hover:bg-teal/10 hover:text-teal flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition"
+                  >
+                    <ShoppingBag size={14} /> Merchant Portal
+                  </Link>
+                  <div className="my-1 h-px bg-white/10" />
+                  <Link
+                    to="/login"
+                    className="bg-teal/10 hover:bg-teal hover:text-navy flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] font-bold text-white no-underline transition"
+                  >
+                    Sign In / Register
+                  </Link>
+                </div>
+              </div>
             </div>
-          </a>
-          <a
-            href="#"
+          </div>
+
+          <Link
+            to="/wishlist"
             className="icon-btn text-gray2 hover:text-teal relative rounded-sm px-1.5 py-2 no-underline transition hover:bg-[rgba(0,201,167,0.15)] min-[640px]:px-[0.7rem]"
             title="Wishlist"
           >
@@ -127,7 +169,7 @@ const NavbarLayout = () => {
             <span className="bg-teal text-navy absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full text-[0.6rem] font-bold">
               3
             </span>
-          </a>
+          </Link>
           <Link
             to="/cart"
             className="icon-btn text-gray2 hover:text-teal relative rounded-sm px-1.5 py-2 no-underline transition hover:bg-[rgba(0,201,167,0.15)] min-[640px]:px-[0.7rem]"

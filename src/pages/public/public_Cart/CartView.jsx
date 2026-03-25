@@ -159,7 +159,7 @@ const CartView = () => {
     <div className="min-h-screen">
       {/* Progress Bar */}
       <div className="bg-navy2 border-b border-white/[0.07] px-4 py-4 min-[640px]:px-8">
-        <div className="mx-auto flex max-w-[500px] items-center">
+        <div className=" flex container mx-auto items-center">
           {steps.map((step, i) => (
             <React.Fragment key={step.num}>
               <div className="flex items-center gap-2">
@@ -196,7 +196,7 @@ const CartView = () => {
 
       {/* Main Layout */}
       <div
-        className={`mx-auto max-w-[1200px] gap-8 px-4 py-8 min-[640px]:px-8 ${
+        className={`mx-auto container gap-8 px-4 py-8 min-[640px]:px-8 ${
           currentStep === 4
             ? 'block'
             : 'grid grid-cols-1 items-start min-[900px]:grid-cols-[1fr_380px]'
@@ -206,7 +206,7 @@ const CartView = () => {
         <div>
           {/* Step 1: Cart */}
           {currentStep === 1 && (
-            <div className="animate-[fadeUp_0.6s_ease_both]">
+            <div className="animate-fadeUp">
               <div className="bg-card mb-5 overflow-hidden rounded-md border border-white/[0.07]">
                 <div className="flex items-center justify-between border-b border-white/[0.07] px-5 py-4">
                   <h2 className="font-['Syne'] text-base font-bold text-white">
@@ -225,7 +225,7 @@ const CartView = () => {
                       key={item.id}
                       className="grid grid-cols-[72px_1fr_auto] gap-4 border-b border-white/[0.07] py-4 first:pt-0 last:border-b-0 last:pb-0"
                     >
-                      <div className="bg-navy3 flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded text-[2rem]">
+                      <div className="bg-navy3 flex h-18 w-18 shrink-0 items-center justify-center rounded text-[2rem]">
                         {item.icon}
                       </div>
                       <div>
@@ -325,7 +325,7 @@ const CartView = () => {
 
           {/* Step 2: Shipping */}
           {currentStep === 2 && (
-            <div className="animate-[fadeUp_0.6s_ease_both]">
+            <div className="animate-fadeUp">
               <div className="bg-card mb-5 overflow-hidden rounded-md border border-white/[0.07]">
                 <div className="border-b border-white/[0.07] px-5 py-4">
                   <h2 className="font-['Syne'] text-base font-bold text-white">
@@ -481,7 +481,7 @@ const CartView = () => {
 
           {/* Step 3: Payment */}
           {currentStep === 3 && (
-            <div className="animate-[fadeUp_0.6s_ease_both]">
+            <div className="animate-fadeUp">
               <div className="bg-card mb-5 overflow-hidden rounded-md border border-white/[0.07]">
                 <div className="flex items-center justify-between border-b border-white/[0.07] px-5 py-4">
                   <h2 className="font-['Syne'] text-base font-bold text-white">
@@ -619,12 +619,12 @@ const CartView = () => {
 
           {/* Step 4: Success */}
           {currentStep === 4 && (
-            <div className="col-span-full animate-[fadeUp_0.6s_ease_both] py-16 text-center">
-              <div className="animate-[pop_0.6s_ease_both] text-[5rem]">✅</div>
+            <div className="col-span-full animate-fadeUp py-16 text-center">
+              <div className="animate-pop text-[5rem]">✅</div>
               <h1 className="mb-3 font-['Syne'] text-[2rem] font-extrabold text-white">
                 Order Placed!
               </h1>
-              <p className="text-gray mx-auto mb-8 max-w-[480px] text-base leading-relaxed">
+              <p className="text-gray mx-auto mb-8 max-w-120 text-base leading-relaxed">
                 Thank you for shopping with ESUUQ. Your order has been confirmed and is being
                 processed by our merchants.
               </p>
@@ -644,7 +644,7 @@ const CartView = () => {
               </div>
 
               {/* Timeline */}
-              <div className="mx-auto mt-12 max-w-[400px] text-left">
+              <div className="mx-auto mt-12 max-w-100 text-left">
                 <h3 className="mb-4 text-center font-['Syne'] text-[0.85rem] font-bold tracking-widest text-white uppercase">
                   Order Timeline
                 </h3>
@@ -662,7 +662,7 @@ const CartView = () => {
                         }`}
                       />
                       {i < arr.length - 1 && (
-                        <div className="min-h-[24px] w-px flex-1 bg-white/[0.07]" />
+                        <div className="min-h-6 w-px flex-1 bg-white/[0.07]" />
                       )}
                     </div>
                     <div>
