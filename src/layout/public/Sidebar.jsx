@@ -47,7 +47,7 @@ const Sidebar = ({ categories, selectedCategory, mobileMenuOpen, onSelectCategor
             key={item.path}
             to={item.path}
             onClick={() => onSelectCategory({ path: item.path })}
-            className={`mt-4 flex w-full items-center gap-3 border-l-4 px-4 py-3 text-[0.85rem] tracking-[0.04em] no-underline transition-colors ${
+            className={`mt-4 flex w-full items-center gap-3 border-l-4 px-4 py-3 text-[0.85rem] lg:text-[0.875rem] tracking-[0.04em] no-underline transition-colors ${
               isActive
                 ? 'border-teal text-teal bg-[rgba(0,201,167,0.1)]'
                 : 'text-gray2 hover:text-teal border-transparent hover:bg-[rgba(0,201,167,0.05)]'
