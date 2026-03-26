@@ -120,7 +120,30 @@ const AdminMerchants = () => (
           ⏳ Pending Approvals (3)
         </h3>
       </div>
-      <div className="overflow-x-auto">
+      <div className="space-y-3 p-4 md:hidden">
+        {pending.map((p) => (
+          <div key={p.biz} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="text-[0.82rem] font-semibold text-white">{p.biz}</div>
+              <Pill c={p.dc}>{p.docs}</Pill>
+            </div>
+            <div className="space-y-1 text-[0.76rem]">
+              <div className="text-gray">Owner: <span className="text-white">{p.owner}</span></div>
+              <div className="text-gray">Category: <span className="text-white">{p.cat}</span></div>
+              <div className="text-gray">Applied: <span className="text-white">{p.date}</span></div>
+            </div>
+            <div className="mt-3 flex gap-1.5">
+              <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1 rounded px-3 py-1 text-[0.75rem] font-medium">
+                <Check size={12} /> Approve
+              </button>
+              <button className="border-red/20 bg-red/10 text-red hover:bg-red/20 flex items-center gap-1 rounded border px-3 py-1 text-[0.75rem]">
+                <X size={12} /> Reject
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
           <thead>
             <tr className="bg-navy3">
@@ -176,7 +199,27 @@ const AdminMerchants = () => (
           </select>
         </div>
       </div>
-      <div className="overflow-x-auto">
+      <div className="space-y-3 p-4 md:hidden">
+        {merchants.map((m) => (
+          <div key={m.name} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="text-[0.82rem] font-semibold text-white">{m.name}</div>
+              <Pill c={m.sc}>{m.status}</Pill>
+            </div>
+            <div className="space-y-1 text-[0.76rem]">
+              <div className="text-gray">Category: <span className="text-white">{m.cat}</span></div>
+              <div className="text-gray">Products: <span className="text-white">{m.prods}</span></div>
+              <div className="text-gray">Revenue: <span className="text-teal font-medium">{m.rev}</span></div>
+              <div className="text-gray">Commission: <span className="text-white">{m.comm}</span></div>
+              <div className="text-gray">Rating: <span className="text-white">{m.rating}</span></div>
+            </div>
+            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+              Manage
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
           <thead>
             <tr className="bg-navy3">

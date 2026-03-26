@@ -74,7 +74,27 @@ const AdminDelivery = () => (
       <div className="border-b border-white/[0.07] px-5 py-3.5">
         <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">All Delivery Partners</h3>
       </div>
-      <div className="overflow-x-auto">
+      <div className="space-y-3 p-4 md:hidden">
+        {drivers.map((d) => (
+          <div key={d.name} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="text-[0.82rem] font-semibold text-white">{d.name}</div>
+              <Pill c={d.sc}>{d.status}</Pill>
+            </div>
+            <div className="space-y-1 text-[0.76rem]">
+              <div className="text-gray">Phone: <span className="text-white">{d.phone}</span></div>
+              <div className="text-gray">Zone: <span className="text-white">{d.zone}</span></div>
+              <div className="text-gray">Deliveries: <span className="text-white">{d.deliveries}</span></div>
+              <div className="text-gray">Rating: <span className="text-white">{d.rating}</span></div>
+              <div className="text-gray">Earnings: <span className="text-teal font-medium">{d.earnings}</span></div>
+            </div>
+            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+              View
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
           <thead>
             <tr className="bg-navy3">

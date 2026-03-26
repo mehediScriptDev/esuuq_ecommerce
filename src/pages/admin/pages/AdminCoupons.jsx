@@ -76,7 +76,27 @@ const AdminCoupons = () => (
       <div className="border-b border-white/[0.07] px-5 py-3.5">
         <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">All Coupons</h3>
       </div>
-      <div className="overflow-x-auto">
+      <div className="space-y-3 p-4 md:hidden">
+        {coupons.map((c) => (
+          <div key={c.code} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="text-teal text-[0.82rem] font-bold">{c.code}</div>
+              <Pill c={c.sc}>{c.status}</Pill>
+            </div>
+            <div className="space-y-1 text-[0.76rem]">
+              <div className="text-gray">Type: <span className="text-white">{c.type}</span></div>
+              <div className="text-gray">Value: <span className="text-white">{c.val}</span></div>
+              <div className="text-gray">Min Order: <span className="text-white">{c.min}</span></div>
+              <div className="text-gray">Used: <span className="text-white">{c.used}</span></div>
+              <div className="text-gray">Expires: <span className="text-white">{c.exp}</span></div>
+            </div>
+            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+              Edit
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
           <thead>
             <tr className="bg-navy3">

@@ -101,7 +101,33 @@ const AdminCustomers = () => (
           </select>
         </div>
       </div>
-      <div className="overflow-x-auto">
+      <div className="space-y-3 p-4 md:hidden">
+        {customers.map((c) => (
+          <div key={c.name} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5">
+                <div
+                  className={`flex h-7 w-7 items-center justify-center rounded-full bg-linear-to-br ${c.grad} text-navy text-[0.65rem] font-bold`}
+                >
+                  {c.initial}
+                </div>
+                <span className="text-[0.82rem] font-medium text-white">{c.name}</span>
+              </div>
+              <Pill c={c.sc}>{c.status}</Pill>
+            </div>
+            <div className="space-y-1 text-[0.76rem]">
+              <div className="text-gray">{c.email}</div>
+              <div className="text-gray">Orders: <span className="text-white">{c.orders}</span></div>
+              <div className="text-gray">Spent: <span className="text-teal font-medium">{c.spent}</span></div>
+              <div className="text-gray">Joined: <span className="text-white">{c.joined}</span></div>
+            </div>
+            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+              View
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
           <thead>
             <tr className="bg-navy3">

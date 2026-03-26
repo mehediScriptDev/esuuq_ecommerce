@@ -87,7 +87,27 @@ const AdminProducts = () => (
           </select>
         </div>
       </div>
-      <div className="overflow-x-auto">
+      <div className="space-y-3 p-4 md:hidden">
+        {products.map((p) => (
+          <div key={p.name} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="text-[0.82rem] font-medium text-white">{p.name}</div>
+              <Pill c={p.sc}>{p.status}</Pill>
+            </div>
+            <div className="space-y-1 text-[0.76rem]">
+              <div className="text-gray">Merchant: <span className="text-white">{p.merchant}</span></div>
+              <div className="text-gray">Category: <span className="text-white">{p.cat}</span></div>
+              <div className="text-gray">Price: <span className="text-white">{p.price}</span></div>
+              <div className="text-gray">Stock: <span className="text-white">{p.stock}</span></div>
+              <div className="text-gray">Sales: <span className="text-white">{p.sales}</span></div>
+            </div>
+            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+              Edit
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
           <thead>
             <tr className="bg-navy3">

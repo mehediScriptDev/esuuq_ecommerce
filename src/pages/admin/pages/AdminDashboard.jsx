@@ -341,7 +341,27 @@ const AdminDashboard = ({ onNav }) => (
             View All
           </button>
         </div>
-        <div className="overflow-x-auto">
+        <div className="space-y-3 p-4 md:hidden">
+          {recentOrders.map((o) => (
+            <div key={o.id} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <div className="text-teal text-[0.82rem] font-medium">{o.id}</div>
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${o.statusColor}`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                  {o.status}
+                </span>
+              </div>
+              <div className="space-y-1 text-[0.76rem]">
+                <div className="text-gray">Customer: <span className="text-white">{o.customer}</span></div>
+                <div className="text-gray">Amount: <span className="text-white font-semibold">{o.amount}</span></div>
+                <div className="text-gray">Date: <span className="text-white">{o.date}</span></div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full">
             <thead>
               <tr className="bg-navy3">

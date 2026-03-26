@@ -84,7 +84,23 @@ const AdminRevenue = () => (
       <div className="border-b border-white/[0.07] px-5 py-3.5">
         <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">Revenue by Merchant</h3>
       </div>
-      <div className="overflow-x-auto">
+      <div className="space-y-3 p-4 md:hidden">
+        {rows.map((r) => (
+          <div key={r.merchant} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="text-[0.82rem] font-semibold text-white">{r.merchant}</div>
+              <Pill c={r.sc}>{r.status}</Pill>
+            </div>
+            <div className="space-y-1 text-[0.76rem]">
+              <div className="text-gray">Gross Sales: <span className="text-white">{r.gross}</span></div>
+              <div className="text-gray">Commission %: <span className="text-white">{r.pct}</span></div>
+              <div className="text-gray">Commission: <span className="text-teal font-medium">{r.comm}</span></div>
+              <div className="text-gray">Net Payout: <span className="text-white">{r.net}</span></div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
           <thead>
             <tr className="bg-navy3">
