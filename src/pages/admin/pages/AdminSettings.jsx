@@ -28,7 +28,7 @@ const AdminSettings = () => (
     <div className="grid grid-cols-1 gap-4 min-[900px]:grid-cols-2">
       {/* General */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
-        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[0.88rem] font-bold text-white">
+        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[1rem] font-bold text-white">
           <Settings size={16} className="text-teal" /> General Settings
         </h3>
         {[
@@ -66,7 +66,7 @@ const AdminSettings = () => (
       </div>
       {/* Commission */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
-        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[0.88rem] font-bold text-white">
+        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[1rem] font-bold text-white">
           <DollarSign size={16} className="text-teal" /> Commission Settings
         </h3>
         {[
@@ -98,7 +98,7 @@ const AdminSettings = () => (
       </div>
       {/* Notifications */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
-        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[0.88rem] font-bold text-white">
+        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[1rem] font-bold text-white">
           <Bell size={16} className="text-teal" /> Notification Settings
         </h3>
         {[
@@ -121,7 +121,7 @@ const AdminSettings = () => (
       </div>
       {/* Security */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
-        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[0.88rem] font-bold text-white">
+        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[1rem] font-bold text-white">
           <Lock size={16} className="text-teal" /> Security Settings
         </h3>
         {[

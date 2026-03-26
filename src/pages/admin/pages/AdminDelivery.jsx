@@ -72,7 +72,21 @@ const AdminDelivery = () => (
     <AdminStats stats={stats} />
     <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
       <div className="border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">All Delivery Partners</h3>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h3 className="font-['Syne'] text-[1rem] font-bold text-white">All Delivery Partners</h3>
+          <div className="flex min-[400px]:flex-row flex-col gap-2 w-full lg:w-auto lg:ml-auto">
+            <input
+              className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none w-full lg:w-auto"
+              placeholder="Search drivers..."
+            />
+            <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none w-full lg:w-auto">
+              <option>All Status</option>
+              <option>Online</option>
+              <option>Offline</option>
+              <option>Busy</option>
+            </select>
+          </div>
+        </div>
       </div>
       <div className="space-y-3 p-4 md:hidden">
         {drivers.map((d) => (
@@ -81,14 +95,14 @@ const AdminDelivery = () => (
               <div className="text-[0.82rem] font-semibold text-white">{d.name}</div>
               <Pill c={d.sc}>{d.status}</Pill>
             </div>
-            <div className="space-y-1 text-[0.76rem]">
+            <div className="space-y-1 text-[0.875rem]">
               <div className="text-gray">Phone: <span className="text-white">{d.phone}</span></div>
               <div className="text-gray">Zone: <span className="text-white">{d.zone}</span></div>
               <div className="text-gray">Deliveries: <span className="text-white">{d.deliveries}</span></div>
               <div className="text-gray">Rating: <span className="text-white">{d.rating}</span></div>
               <div className="text-gray">Earnings: <span className="text-teal font-medium">{d.earnings}</span></div>
             </div>
-            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded-md border border-white/[0.07] w-full px-4 py-2 text-[0.85rem] font-medium">
               View
             </button>
           </div>
@@ -133,7 +147,7 @@ const AdminDelivery = () => (
                   <Pill c={d.sc}>{d.status}</Pill>
                 </td>
                 <td className="px-4 py-3">
-                  <button className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/2 px-3 py-1 text-[0.75rem]">
+                  <button className="block w-full text-gray2 hover:border-teal hover:text-teal rounded-md border border-white/[0.07] px-4 py-2 text-[0.85rem] font-medium">
                     View
                   </button>
                 </td>

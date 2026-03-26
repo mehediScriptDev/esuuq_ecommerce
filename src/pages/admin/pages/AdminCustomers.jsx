@@ -90,13 +90,13 @@ const AdminCustomers = () => (
     <AdminStats stats={stats} />
     <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">All Customers</h3>
-        <div className="flex gap-2">
+        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">All Customers</h3>
+        <div className="flex min-[400px]:flex-row flex-col gap-2 w-full lg:w-auto lg:ml-auto">
           <input
-            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none"
+            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none w-full lg:w-auto"
             placeholder="Search customers..."
           />
-          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none">
+          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none w-full lg:w-auto">
             <option>All Status</option>
           </select>
         </div>
@@ -115,13 +115,13 @@ const AdminCustomers = () => (
               </div>
               <Pill c={c.sc}>{c.status}</Pill>
             </div>
-            <div className="space-y-1 text-[0.76rem]">
+            <div className="space-y-1 text-[0.875rem]">
               <div className="text-gray">{c.email}</div>
               <div className="text-gray">Orders: <span className="text-white">{c.orders}</span></div>
               <div className="text-gray">Spent: <span className="text-teal font-medium">{c.spent}</span></div>
               <div className="text-gray">Joined: <span className="text-white">{c.joined}</span></div>
             </div>
-            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded-md border border-white/[0.07] w-full px-4 py-2 text-[0.85rem] font-medium">
               View
             </button>
           </div>
@@ -165,7 +165,7 @@ const AdminCustomers = () => (
                   <Pill c={c.sc}>{c.status}</Pill>
                 </td>
                 <td className="px-4 py-3">
-                  <button className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+                  <button className="block w-full text-gray2 hover:border-teal hover:text-teal rounded-md border border-white/[0.07] px-4 py-2 text-[0.85rem] font-medium">
                     View
                   </button>
                 </td>

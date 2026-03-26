@@ -116,7 +116,7 @@ const AdminMerchants = () => (
     {/* Pending */}
     <div className="border-yellow/30 bg-card mb-4 overflow-hidden rounded-md border">
       <div className="border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">
+        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">
           ⏳ Pending Approvals (3)
         </h3>
       </div>
@@ -124,19 +124,19 @@ const AdminMerchants = () => (
         {pending.map((p) => (
           <div key={p.biz} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
             <div className="mb-2 flex items-center justify-between gap-2">
-              <div className="text-[0.82rem] font-semibold text-white">{p.biz}</div>
+              <div className="text-[1rem] font-semibold text-white">{p.biz}</div>
               <Pill c={p.dc}>{p.docs}</Pill>
             </div>
-            <div className="space-y-1 text-[0.76rem]">
+            <div className="space-y-1 text-[0.875rem]">
               <div className="text-gray">Owner: <span className="text-white">{p.owner}</span></div>
               <div className="text-gray">Category: <span className="text-white">{p.cat}</span></div>
               <div className="text-gray">Applied: <span className="text-white">{p.date}</span></div>
             </div>
-            <div className="mt-3 flex gap-1.5">
-              <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1 rounded px-3 py-1 text-[0.75rem] font-medium">
+            <div className="mt-3 flex flex-col gap-2">
+              <button className="bg-teal text-navy hover:bg-teal2 flex items-center justify-center gap-2 rounded-md w-full px-4 py-2 text-[0.85rem] font-medium">
                 <Check size={12} /> Approve
               </button>
-              <button className="border-red/20 bg-red/10 text-red hover:bg-red/20 flex items-center gap-1 rounded border px-3 py-1 text-[0.75rem]">
+              <button className="border-red/20 bg-red/10 text-red hover:bg-red/20 flex items-center justify-center gap-2 rounded-md w-full px-4 py-2 text-[0.85rem]">
                 <X size={12} /> Reject
               </button>
             </div>
@@ -168,11 +168,11 @@ const AdminMerchants = () => (
                   <Pill c={p.dc}>{p.docs}</Pill>
                 </td>
                 <td className="px-4 py-3">
-                  <div className="flex gap-1.5">
-                    <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1 rounded px-3 py-1 text-[0.75rem] font-medium">
+                  <div className="flex flex-col gap-2">
+                    <button className="block w-full bg-teal text-navy hover:bg-teal2 flex items-center justify-center gap-2 rounded-md px-4 py-2 text-[0.85rem] font-medium">
                       <Check size={12} /> Approve
                     </button>
-                    <button className="border-red/20 bg-red/10 text-red hover:bg-red/20 flex items-center gap-1 rounded border px-3 py-1 text-[0.75rem]">
+                    <button className="block w-full border-red/20 bg-red/10 text-red hover:bg-red/20 flex items-center justify-center gap-2 rounded-md px-4 py-2 text-[0.85rem]">
                       <X size={12} /> Reject
                     </button>
                   </div>
@@ -186,15 +186,15 @@ const AdminMerchants = () => (
     {/* Active */}
     <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">
+        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">
           Active Merchants (312)
         </h3>
-        <div className="flex gap-2">
+        <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
           <input
-            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none"
+            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none w-full"
             placeholder="Search merchants..."
           />
-          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none">
+          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none w-full md:w-auto">
             <option>All Categories</option>
           </select>
         </div>
@@ -203,17 +203,17 @@ const AdminMerchants = () => (
         {merchants.map((m) => (
           <div key={m.name} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
             <div className="mb-2 flex items-center justify-between gap-2">
-              <div className="text-[0.82rem] font-semibold text-white">{m.name}</div>
+              <div className="text-[1rem] font-semibold text-white">{m.name}</div>
               <Pill c={m.sc}>{m.status}</Pill>
             </div>
-            <div className="space-y-1 text-[0.76rem]">
+            <div className="space-y-1 text-[0.875rem]">
               <div className="text-gray">Category: <span className="text-white">{m.cat}</span></div>
               <div className="text-gray">Products: <span className="text-white">{m.prods}</span></div>
               <div className="text-gray">Revenue: <span className="text-teal font-medium">{m.rev}</span></div>
               <div className="text-gray">Commission: <span className="text-white">{m.comm}</span></div>
               <div className="text-gray">Rating: <span className="text-white">{m.rating}</span></div>
             </div>
-            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded-md border border-white/[0.07] w-full px-4 py-2 text-[0.85rem] font-medium">
               Manage
             </button>
           </div>
@@ -258,7 +258,7 @@ const AdminMerchants = () => (
                   <Pill c={m.sc}>{m.status}</Pill>
                 </td>
                 <td className="px-4 py-3">
-                  <button className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+                  <button className="block w-full text-gray2 hover:border-teal hover:text-teal rounded-md border border-white/[0.07] px-4 py-2 text-[0.85rem] font-medium">
                     Manage
                   </button>
                 </td>

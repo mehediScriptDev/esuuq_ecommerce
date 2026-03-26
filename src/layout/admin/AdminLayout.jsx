@@ -16,7 +16,6 @@ import {
   BarChart3,
   Settings,
   Bell,
-  Mail,
 } from 'lucide-react';
 import DashboardShell from '../common/DashboardShell';
 
@@ -66,8 +65,6 @@ const navSections = [
 
 const actionButtons = [
   { title: 'Notifications', icon: Bell, dot: true },
-  { title: 'Messages', icon: Mail },
-  { title: 'Settings', icon: Settings, onClick: (navigate) => navigate('/admin/settings') },
 ];
 
 const AdminLayout = () => {

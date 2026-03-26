@@ -195,7 +195,7 @@ const AdminDashboard = ({ onNav }) => (
       {/* Bar Chart */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
         <div className="mb-5 flex items-center justify-between">
-          <h3 className="font-['Syne'] text-[0.88rem] xl:text-[1rem] font-bold text-white">Revenue Overview</h3>
+          <h3 className="font-['Syne'] text-[1rem] font-bold text-white">Revenue <span className='min-[410px]:block hidden'>Overview</span></h3>
           <div className="flex gap-1">
             {['Week', 'Month', 'Year'].map((t, i) => (
               <button
@@ -227,7 +227,7 @@ const AdminDashboard = ({ onNav }) => (
 
       {/* Donut Chart (simplified) */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
-        <h3 className="mb-4 font-['Syne'] text-[0.88rem] xl:text-[1rem] font-bold text-white">
+        <h3 className="mb-4 font-['Syne'] text-[1rem] font-bold text-white">
           Orders by Category
         </h3>
         <div className="flex flex-col items-center gap-4">
@@ -299,7 +299,7 @@ const AdminDashboard = ({ onNav }) => (
             ].map((item) => (
               <div key={item.name} className="flex items-center gap-2">
                 <div className={`h-2 w-2 shrink-0 rounded-full ${item.color}`} />
-                <span className="text-gray flex-1 text-[0.75rem] lg:text-[0.875rem]">{item.name}</span>
+                <span className="text-gray flex-1 text-[0.875rem]">{item.name}</span>
                 <span className="text-[0.75rem] font-medium text-white">{item.pct}</span>
               </div>
             ))}
@@ -320,8 +320,8 @@ const AdminDashboard = ({ onNav }) => (
           >
             <Icon size={24} className="text-teal" />
             <div>
-              <div className="text-[0.8rem] xl:text-[0.875rem] font-medium text-white">{qa.label}</div>
-              <div className="text-gray text-[0.7rem] xl:text-[0.8rem]">{qa.sub}</div>
+              <div className="text-[0.875rem] font-medium text-white">{qa.label}</div>
+              <div className="text-gray text-[0.8rem]">{qa.sub}</div>
             </div>
           </button>
         );
@@ -333,7 +333,7 @@ const AdminDashboard = ({ onNav }) => (
       {/* Recent Orders Table */}
       <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
         <div className="flex items-center justify-between border-b border-white/[0.07] px-5 py-3.5">
-          <h3 className="font-['Syne'] text-[0.88rem] xl:text-[1rem] font-bold text-white">Recent Orders</h3>
+          <h3 className="font-['Syne'] text-[1rem] font-bold text-white">Recent Orders</h3>
           <button
             onClick={() => onNav?.('orders')}
             className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1 text-[0.75rem] transition-colors"
@@ -353,7 +353,7 @@ const AdminDashboard = ({ onNav }) => (
                   {o.status}
                 </span>
               </div>
-              <div className="space-y-1 text-[0.76rem]">
+              <div className="space-y-1 text-[0.875rem]">
                 <div className="text-gray">Customer: <span className="text-white">{o.customer}</span></div>
                 <div className="text-gray">Amount: <span className="text-white font-semibold">{o.amount}</span></div>
                 <div className="text-gray">Date: <span className="text-white">{o.date}</span></div>
@@ -409,7 +409,7 @@ const AdminDashboard = ({ onNav }) => (
 
       {/* Activity Feed */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
-        <h3 className="mb-4 font-['Syne'] text-[0.88rem] xl:text-[1rem] font-bold text-white">Recent Activity</h3>
+        <h3 className="mb-4 font-['Syne'] text-[1rem] font-bold text-white">Recent Activity</h3>
         <div className="space-y-0">
           {activities.map((a, i) => {
             const Icon = a.icon;

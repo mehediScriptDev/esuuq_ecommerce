@@ -24,7 +24,7 @@ const AdminStats = ({ stats = [] }) => {
 							)}
 						</div>
 						<div className="font-['Syne'] text-[1.7rem]  font-extrabold text-white">{s.val}</div>
-						<div className="text-gray mt-1 text-[0.75rem] xl:text-[0.875rem]">{s.label}</div>
+						<div className="text-gray mt-1 text-[0.875rem] xl:text-[0.875rem]">{s.label}</div>
 					</div>
 				);
 			})}

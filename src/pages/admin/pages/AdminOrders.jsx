@@ -121,13 +121,13 @@ const AdminOrders = () => (
     </div>
     <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">All Orders</h3>
-        <div className="flex gap-2">
+        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">All Orders</h3>
+        <div className="flex flex-col md:flex-row gap-2 w-full lg:w-auto lg:ml-auto">
           <input
-            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none"
+            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none w-full lg:w-auto"
             placeholder="Search orders..."
           />
-          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none">
+          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none w-full lg:w-auto">
             <option>All Status</option>
             <option>Pending</option>
             <option>Delivered</option>
@@ -141,7 +141,7 @@ const AdminOrders = () => (
               <div className="text-teal text-[0.82rem] font-medium">{o.id}</div>
               <Pill className={o.statusC}>{o.status}</Pill>
             </div>
-            <div className="space-y-1 text-[0.76rem]">
+            <div className="space-y-1 text-[0.875rem]">
               <div className="text-gray">Customer: <span className="text-white">{o.customer}</span></div>
               <div className="text-gray">Merchant: <span className="text-white">{o.merchant}</span></div>
               <div className="text-gray">Items: <span className="text-white">{o.items}</span></div>
@@ -149,7 +149,7 @@ const AdminOrders = () => (
               <div className="text-gray">Payment: <Pill className={o.paymentC}>{o.payment}</Pill></div>
               <div className="text-gray">Date: <span className="text-white">{o.date}</span></div>
             </div>
-            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded-md border border-white/[0.07] w-full px-4 py-2 text-[0.85rem] font-medium">
               View
             </button>
           </div>
@@ -202,7 +202,7 @@ const AdminOrders = () => (
                 </td>
                 <td className="text-gray px-4 py-3 text-[0.82rem]">{o.date}</td>
                 <td className="px-4 py-3">
-                  <button className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+                  <button className="block w-full text-gray2 hover:border-teal hover:text-teal rounded-md border border-white/[0.07] px-4 py-2 text-[0.85rem] font-medium">
                     View
                   </button>
                 </td>
