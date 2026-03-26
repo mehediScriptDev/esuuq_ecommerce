@@ -89,6 +89,7 @@ const DashboardShell = ({
                   <NavLink
                     key={item.id}
                     to={item.to}
+                    end
                     onClick={() => setMobileOpen(false)}
                     className={({ isActive }) =>
                       `mb-0.5 flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition-all ${
