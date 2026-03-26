@@ -1,5 +1,6 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
+import DashboardPageHeader from '../components/DashboardPageHeader';
 const Pill = ({ children, c }) => (
   <span
     className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}
@@ -63,32 +64,50 @@ const products = [
 const AdminProducts = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.3rem] font-bold text-white">
-          Product <span className="text-teal">Catalog</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.8rem]">Review and moderate all marketplace listings</p>
-      </div>
+      <DashboardPageHeader
+        title={<span>Product <span className="text-teal">Catalog</span></span>}
+        subtitle="Review and moderate all marketplace listings"
+      />
       <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded px-4 py-1.5 text-[0.8rem] font-medium">
         <Plus size={14} /> Add Product
       </button>
     </div>
     <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">All Products (10,420)</h3>
-        <div className="flex gap-2">
+        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">All Products (10,420)</h3>
+        <div className="flex min-[400px]:flex-row flex-col gap-2 w-full lg:w-auto lg:ml-auto">
           <input
-            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none"
+            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none w-full lg:w-auto"
             placeholder="Search products..."
           />
-          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none">
+          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none w-full lg:w-auto">
             <option>All Categories</option>
             <option>Electronics</option>
             <option>Fashion</option>
           </select>
         </div>
       </div>
-      <div className="overflow-x-auto">
+      <div className="space-y-3 p-4 md:hidden">
+        {products.map((p) => (
+          <div key={p.name} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="text-[1rem] font-medium text-white">{p.name}</div>
+              <Pill c={p.sc}>{p.status}</Pill>
+            </div>
+            <div className="space-y-1 text-[0.875rem]">
+              <div className="text-gray">Merchant: <span className="text-white">{p.merchant}</span></div>
+              <div className="text-gray">Category: <span className="text-white">{p.cat}</span></div>
+              <div className="text-gray">Price: <span className="text-white">{p.price}</span></div>
+              <div className="text-gray">Stock: <span className="text-white">{p.stock}</span></div>
+              <div className="text-gray">Sales: <span className="text-white">{p.sales}</span></div>
+            </div>
+            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded-md border border-white/[0.07] w-full px-4 py-2 text-[0.85rem] font-medium">
+              Edit
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
           <thead>
             <tr className="bg-navy3">
@@ -115,7 +134,7 @@ const AdminProducts = () => (
             {products.map((p) => (
               <tr
                 key={p.name}
-                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/[0.02]"
+                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/2"
               >
                 <td className="px-4 py-3 text-[0.82rem] text-white">{p.name}</td>
                 <td className="text-gray px-4 py-3 text-[0.82rem]">{p.merchant}</td>
@@ -127,7 +146,7 @@ const AdminProducts = () => (
                   <Pill c={p.sc}>{p.status}</Pill>
                 </td>
                 <td className="px-4 py-3">
-                  <button className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+                  <button className="block w-full text-gray2 hover:border-teal hover:text-teal rounded-md border border-white/[0.07] px-4 py-2 text-[0.85rem] font-medium">
                     Edit
                   </button>
                 </td>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Save, Settings, DollarSign, Bell, Lock } from 'lucide-react';
+import { Save, Settings, DollarSign, Bell, Lock, Key } from 'lucide-react';
+import DashboardPageHeader from '../components/DashboardPageHeader';
 const Toggle = ({ defaultOn = false }) => {
   const [on, setOn] = useState(defaultOn);
   return (
@@ -8,7 +9,7 @@ const Toggle = ({ defaultOn = false }) => {
       className={`relative h-5 w-9 shrink-0 rounded-full border-none transition-colors ${on ? 'bg-teal' : 'bg-white/[0.07]'}`}
     >
       <span
-        className={`absolute top-[3px] h-3.5 w-3.5 rounded-full bg-white transition-all ${on ? 'left-[18px]' : 'left-[3px]'}`}
+        className={`absolute top-0.75 h-3.5 w-3.5 rounded-full bg-white transition-all ${on ? 'left-4.5' : 'left-0.75'}`}
       />
     </button>
   );
@@ -16,12 +17,10 @@ const Toggle = ({ defaultOn = false }) => {
 const AdminSettings = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.3rem] font-bold text-white">
-          Platform <span className="text-teal">Settings</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.8rem]">Configure your marketplace preferences</p>
-      </div>
+      <DashboardPageHeader
+        title={<span>Platform <span className="text-teal">Settings</span></span>}
+        subtitle="Configure your marketplace preferences"
+      />
       <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded px-4 py-1.5 text-[0.8rem] font-medium">
         <Save size={14} /> Save Changes
       </button>
@@ -29,7 +28,7 @@ const AdminSettings = () => (
     <div className="grid grid-cols-1 gap-4 min-[900px]:grid-cols-2">
       {/* General */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
-        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[0.88rem] font-bold text-white">
+        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[1rem] font-bold text-white">
           <Settings size={16} className="text-teal" /> General Settings
         </h3>
         {[
@@ -67,7 +66,7 @@ const AdminSettings = () => (
       </div>
       {/* Commission */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
-        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[0.88rem] font-bold text-white">
+        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[1rem] font-bold text-white">
           <DollarSign size={16} className="text-teal" /> Commission Settings
         </h3>
         {[
@@ -99,7 +98,7 @@ const AdminSettings = () => (
       </div>
       {/* Notifications */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
-        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[0.88rem] font-bold text-white">
+        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[1rem] font-bold text-white">
           <Bell size={16} className="text-teal" /> Notification Settings
         </h3>
         {[
@@ -122,7 +121,7 @@ const AdminSettings = () => (
       </div>
       {/* Security */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
-        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[0.88rem] font-bold text-white">
+        <h3 className="mb-4 flex items-center gap-2 font-['Syne'] text-[1rem] font-bold text-white">
           <Lock size={16} className="text-teal" /> Security Settings
         </h3>
         {[
@@ -141,8 +140,8 @@ const AdminSettings = () => (
             <Toggle defaultOn={item.on} />
           </div>
         ))}
-        <button className="text-gray2 hover:border-teal hover:text-teal mt-4 w-full rounded border border-white/[0.07] py-2.5 text-[0.82rem] transition-colors">
-          🔑 Change Admin Password
+        <button className="text-gray2 flex items-center justify-center hover:border-teal hover:text-teal mt-4 w-full rounded border border-white/[0.07] py-2.5 text-[0.82rem] transition-colors  gap-2">
+          <Key size={14} className="text-teal" /> Change Admin Password
         </button>
       </div>
     </div>

@@ -96,7 +96,7 @@ const NavbarLayout = () => {
           <input
             type="text"
             placeholder="Search products, brands, categories..."
-            className="placeholder:text-gray flex-1 bg-transparent px-4 py-[0.6rem] text-[0.9rem] text-white outline-none"
+            className="placeholder:text-gray flex-1 bg-transparent px-4 py-[0.4rem] lg:py-[0.6rem] text-[0.9rem] text-white outline-none"
           />
           <button
             type="button"

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
+import DashboardPageHeader from '../components/DashboardPageHeader';
 const Pill = ({ children, c }) => (
   <span
     className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}
@@ -63,21 +64,39 @@ const coupons = [
 const AdminCoupons = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.3rem] font-bold text-white">
-          Coupon <span className="text-teal">Management</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.8rem]">Create and manage promotional coupon codes</p>
-      </div>
+      <DashboardPageHeader
+        title={<span>Coupon <span className="text-teal">Management</span></span>}
+        subtitle="Create and manage promotional coupon codes"
+      />
       <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded px-4 py-1.5 text-[0.8rem] font-medium">
         <Plus size={14} /> Create Coupon
       </button>
     </div>
     <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
       <div className="border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">All Coupons</h3>
+        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">All Coupons</h3>
       </div>
-      <div className="overflow-x-auto">
+      <div className="space-y-3 p-4 md:hidden">
+        {coupons.map((c) => (
+          <div key={c.code} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="text-teal text-[0.82rem] font-bold">{c.code}</div>
+              <Pill c={c.sc}>{c.status}</Pill>
+            </div>
+            <div className="space-y-1 text-[0.875rem]">
+              <div className="text-gray">Type: <span className="text-white">{c.type}</span></div>
+              <div className="text-gray">Value: <span className="text-white">{c.val}</span></div>
+              <div className="text-gray">Min Order: <span className="text-white">{c.min}</span></div>
+              <div className="text-gray">Used: <span className="text-white">{c.used}</span></div>
+              <div className="text-gray">Expires: <span className="text-white">{c.exp}</span></div>
+            </div>
+            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded-md border border-white/[0.07] w-full px-4 py-2 text-[0.85rem] font-medium">
+              Edit
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
           <thead>
             <tr className="bg-navy3">
@@ -109,7 +128,7 @@ const AdminCoupons = () => (
                   <Pill c={c.sc}>{c.status}</Pill>
                 </td>
                 <td className="px-4 py-3">
-                  <button className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+                  <button className="block w-full text-gray2 hover:border-teal hover:text-teal rounded-md border border-white/[0.07] px-4 py-2 text-[0.85rem] font-medium">
                     Edit
                   </button>
                 </td>

@@ -1,5 +1,7 @@
 import React from 'react';
 import { Users, UserPlus, Star, Moon, Download } from 'lucide-react';
+import DashboardPageHeader from '../components/DashboardPageHeader';
+import AdminStats from '../components/AdminStats';
 const Pill = ({ children, c }) => (
   <span
     className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}
@@ -77,51 +79,55 @@ const customers = [
 const AdminCustomers = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.3rem] font-bold text-white">
-          Customer <span className="text-teal">Management</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.8rem]">View and manage all registered customers</p>
-      </div>
+      <DashboardPageHeader
+        title={<span>Customer <span className="text-teal">Management</span></span>}
+        subtitle="View and manage all registered customers"
+      />
       <button className="text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border border-white/[0.07] px-4 py-1.5 text-[0.8rem]">
         <Download size={14} /> Export CSV
       </button>
     </div>
-    <div className="mb-5 grid grid-cols-1 gap-4 min-[580px]:grid-cols-2 min-[1100px]:grid-cols-4">
-      {stats.map((s) => {
-        const Icon = s.icon;
-        return (
-          <div key={s.label} className="bg-card rounded-md border border-white/[0.07] p-5">
-            <div className="mb-3 flex items-start justify-between">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-md ${s.bg}`}>
-                <Icon size={20} className="text-teal" />
-              </div>
-              <span
-                className={`rounded-full px-2 py-0.5 text-[0.72rem] font-medium ${s.up ? 'bg-green-500/10 text-green-500' : 'bg-red/10 text-red'}`}
-              >
-                {s.trend}
-              </span>
-            </div>
-            <div className="font-['Syne'] text-[1.4rem] font-extrabold text-white">{s.val}</div>
-            <div className="text-gray mt-1 text-[0.72rem]">{s.label}</div>
-          </div>
-        );
-      })}
-    </div>
+    <AdminStats stats={stats} />
     <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">All Customers</h3>
-        <div className="flex gap-2">
+        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">All Customers</h3>
+        <div className="flex min-[400px]:flex-row flex-col gap-2 w-full lg:w-auto lg:ml-auto">
           <input
-            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none"
+            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none w-full lg:w-auto"
             placeholder="Search customers..."
           />
-          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none">
+          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none w-full lg:w-auto">
             <option>All Status</option>
           </select>
         </div>
       </div>
-      <div className="overflow-x-auto">
+      <div className="space-y-3 p-4 md:hidden">
+        {customers.map((c) => (
+          <div key={c.name} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5">
+                <div
+                  className={`flex h-7 w-7 items-center justify-center rounded-full bg-linear-to-br ${c.grad} text-navy text-[0.65rem] font-bold`}
+                >
+                  {c.initial}
+                </div>
+                <span className="text-[0.82rem] font-medium text-white">{c.name}</span>
+              </div>
+              <Pill c={c.sc}>{c.status}</Pill>
+            </div>
+            <div className="space-y-1 text-[0.875rem]">
+              <div className="text-gray">{c.email}</div>
+              <div className="text-gray">Orders: <span className="text-white">{c.orders}</span></div>
+              <div className="text-gray">Spent: <span className="text-teal font-medium">{c.spent}</span></div>
+              <div className="text-gray">Joined: <span className="text-white">{c.joined}</span></div>
+            </div>
+            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded-md border border-white/[0.07] w-full px-4 py-2 text-[0.85rem] font-medium">
+              View
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
           <thead>
             <tr className="bg-navy3">
@@ -139,12 +145,12 @@ const AdminCustomers = () => (
             {customers.map((c) => (
               <tr
                 key={c.name}
-                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/[0.02]"
+                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/2"
               >
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2.5">
                     <div
-                      className={`flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br ${c.grad} text-navy text-[0.65rem] font-bold`}
+                      className={`flex h-7 w-7 items-center justify-center rounded-full bg-linear-to-br ${c.grad} text-navy text-[0.65rem] font-bold`}
                     >
                       {c.initial}
                     </div>
@@ -159,7 +165,7 @@ const AdminCustomers = () => (
                   <Pill c={c.sc}>{c.status}</Pill>
                 </td>
                 <td className="px-4 py-3">
-                  <button className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+                  <button className="block w-full text-gray2 hover:border-teal hover:text-teal rounded-md border border-white/[0.07] px-4 py-2 text-[0.85rem] font-medium">
                     View
                   </button>
                 </td>

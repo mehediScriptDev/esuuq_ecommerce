@@ -65,7 +65,7 @@ const Alert = memo(
         aria-live={variant === 'error' || variant === 'warning' ? 'assertive' : 'polite'}
         aria-atomic="true"
       >
-        <div className={clsx('flex-shrink-0', config.iconColor)}>{config.icon}</div>
+        <div className={clsx('shrink-0', config.iconColor)}>{config.icon}</div>
 
         <div className="flex-1">
           {title && <h4 className="mb-1 font-semibold">{title}</h4>}
@@ -75,7 +75,7 @@ const Alert = memo(
         {dismissible && onClose && (
           <button
             onClick={onClose}
-            className="flex-shrink-0 rounded-lg p-1 transition-colors hover:bg-black/10 focus:ring-2 focus:ring-current focus:outline-none"
+            className="shrink-0 rounded-lg p-1 transition-colors hover:bg-black/10 focus:ring-2 focus:ring-current focus:outline-none"
             aria-label="Dismiss alert"
           >
             <X className="h-4 w-4" aria-hidden="true" />

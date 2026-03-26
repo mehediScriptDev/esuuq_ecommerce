@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, ShoppingCart, Eye } from 'lucide-react';
+import { Heart, ShoppingCart, Eye, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const ProductCard = ({ product, inScroll = false }) => {
@@ -85,8 +85,14 @@ const ProductCard = ({ product, inScroll = false }) => {
               ? 'bg-red text-white shadow-lg'
               : 'text-gray2 bg-navy/60 hover:text-red border border-white/5 backdrop-blur-md hover:bg-white'
           }`}
+          aria-pressed={isWishlisted}
+          aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-          {isWishlisted ? '❤' : '♡'}
+          <Heart
+            size={16}
+            className={isWishlisted ? 'text-white' : 'text-white'}
+            fill={isWishlisted ? 'currentColor' : 'none'}
+          />
         </button>
       </div>
 
@@ -106,13 +112,11 @@ const ProductCard = ({ product, inScroll = false }) => {
         <div className="mb-3 flex items-center gap-1.5">
           <div className="flex gap-0.5">
             {[...Array(5)].map((_, i) => (
-              <span key={i} className={`text-[0.65rem] ${i < 4 ? 'text-yellow' : 'text-gray/30'}`}>
-                ★
-              </span>
+              <Star key={i} size={14} className={`${i < 4 ? 'text-yellow' : 'text-gray/30'}`} />
             ))}
           </div>
           <span className="text-[0.7rem] font-bold text-white/90">{product.rating || '4.8'}</span>
-          <span className="text-gray/60 text-[0.7rem]">({product.reviews || '120'})</span>
+          <span className="text-gray/60 text-[0.75rem]">({product.reviews || '120'})</span>
         </div>
 
         {/* PRICE */}

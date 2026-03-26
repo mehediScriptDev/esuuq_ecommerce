@@ -7,23 +7,23 @@ const FooterLayout = () => {
       <div className="container mx-auto">
         <div className="mb-10 grid grid-cols-1 min-[450px]:grid-cols-2 gap-8  min-[900px]:grid-cols-4">
           <div>
-            <a href="#" className="font-['Syne'] text-[1.4rem] font-extrabold tracking-[-0.02em] text-white no-underline">
+            <a href="#" className="font-['Syne'] text-[1.4rem] lg:text-[1.625rem] font-extrabold tracking-[-0.02em] text-white no-underline">
               ES<span className="text-teal">UUQ</span>
             </a>
-            <p className="mt-3 max-w-65 text-[0.85rem] leading-[1.7] text-gray">
+            <p className="mt-3 max-w-65 text-[0.85rem] lg:text-[1rem] text-gray">
               Your one-stop marketplace for everything you need - delivered fast, securely, and at the best prices.
             </p>
-            <div className="mt-5 flex gap-2.5">
-              <a href="#" className="social-btn" title="Facebook">
+            <div className="mt-5 flex gap-2.5 ">
+              <a href="#" className="social-btn lg:text-sm text-xs" title="Facebook">
                 <Facebook size={18} />
               </a>
-              <a href="#" className="social-btn" title="Twitter">
+              <a href="#" className="social-btn lg:text-sm text-xs" title="Twitter">
                 <Twitter size={18} />
               </a>
-              <a href="#" className="social-btn" title="Instagram">
+              <a href="#" className="social-btn lg:text-sm text-xs" title="Instagram">
                 <Instagram size={18} />
               </a>
-              <a href="#" className="social-btn" title="LinkedIn">
+              <a href="#" className="social-btn lg:text-sm text-xs" title="LinkedIn">
                 <Linkedin size={18} />
               </a>
             </div>
@@ -31,7 +31,7 @@ const FooterLayout = () => {
 
           <div>
             <h4 className="mt-4 lg:mt-0 mb-4 font-['Syne'] text-[0.85rem] font-bold uppercase tracking-[0.08em] text-white">Shop</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-2 lg:text-sm text-xs">
               <li><a href="#" className="footer-link">Today's Deals</a></li>
               <li><a href="#" className="footer-link">New Arrivals</a></li>
               <li><a href="#" className="footer-link">Best Sellers</a></li>
@@ -42,7 +42,7 @@ const FooterLayout = () => {
 
           <div>
             <h4 className="mb-4 font-['Syne'] text-[0.85rem] font-bold uppercase tracking-[0.08em] text-white">Sell</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-2 lg:text-sm text-xs">
               <li><a href="#" className="footer-link">Start Selling</a></li>
               <li><a href="#" className="footer-link">Merchant Portal</a></li>
               <li><a href="#" className="footer-link">Merchant App</a></li>
@@ -52,8 +52,8 @@ const FooterLayout = () => {
           </div>
 
           <div>
-            <h4 className="mb-4 font-['Syne'] text-[0.85rem] font-bold uppercase tracking-[0.08em] text-white">Help</h4>
-            <ul className="space-y-2">
+            <h4 className="mb-4 font-['Syne'] text-[0.85rem] md:text-[0.875rem] xl:text-[1rem] font-bold uppercase tracking-[0.08em] text-white">Help</h4>
+            <ul className="space-y-2 lg:text-sm text-xs">
               <li><a href="#" className="footer-link">Track Order</a></li>
               <li><a href="#" className="footer-link">Returns</a></li>
               <li><a href="#" className="footer-link">FAQ</a></li>

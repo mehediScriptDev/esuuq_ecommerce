@@ -1,8 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { User, Package, Smartphone, ShoppingBag } from 'lucide-react';
 
 const Sidebar = ({ categories, selectedCategory, mobileMenuOpen, onSelectCategory }) => {
+  const location = useLocation();
   return (
     <div
       className={`bg-navy2 fixed top-16 left-0 z-50 h-[calc(100vh-4rem)] w-64 overflow-y-auto border-r border-white/10 pt-6 transition-transform duration-300 min-[900px]:hidden ${
@@ -40,12 +41,17 @@ const Sidebar = ({ categories, selectedCategory, mobileMenuOpen, onSelectCategor
         { path: '/merchant', name: 'Merchant Portal', icon: ShoppingBag, color: 'text-white' },
       ].map((item) => {
         const Icon = item.icon;
+        const isActive = location.pathname === item.path;
         return (
           <Link
             key={item.path}
             to={item.path}
             onClick={() => onSelectCategory({ path: item.path })}
-            className={`hover:bg-teal/5 flex w-full items-center gap-3 px-6 py-3 text-[0.85rem] no-underline transition-colors ${item.color}`}
+            className={`mt-4 flex w-full items-center gap-3 border-l-4 px-4 py-3 text-[0.85rem] lg:text-[0.875rem] tracking-[0.04em] no-underline transition-colors ${
+              isActive
+                ? 'border-teal text-teal bg-[rgba(0,201,167,0.1)]'
+                : 'text-gray2 hover:text-teal border-transparent hover:bg-[rgba(0,201,167,0.05)]'
+            }`}
           >
             <Icon size={18} />
             {item.name}
