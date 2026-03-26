@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SlidersHorizontal, X } from 'lucide-react';
 import ProductCard from '../marketplace/ProductCard';
 import CategoryFilter from './CategoryFilter';
+import CategoryHeader from './CategoryHeader';
 
 const CategoryPageLayout = ({ title, icon, description, products }) => {
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
@@ -59,12 +60,7 @@ const CategoryPageLayout = ({ title, icon, description, products }) => {
       <div className="container mx-auto">
         {/* Header */}
         <div className="mb-6 flex flex-col gap-2 min-[640px]:flex-row min-[640px]:items-center min-[640px]:justify-between">
-          <div>
-            <h1 className="font-['Syne'] text-[1.4rem] font-bold text-white min-[640px]:text-[1.8rem]">
-              {title}
-            </h1>
-            <p className="text-gray mt-1 text-[0.82rem]">{description}</p>
-          </div>
+          <CategoryHeader title={title} description={description} />
           <div className="flex items-center gap-3">
             <span className="text-gray text-[0.8rem]">{products.length} products</span>
             <select
@@ -118,7 +114,7 @@ const CategoryPageLayout = ({ title, icon, description, products }) => {
 
           {/* Product Grid */}
           <div className="flex-1">
-            <div className="grid grid-cols-1 gap-2 min-[375px]:grid-cols-2 min-[375px]:gap-2 min-[640px]:gap-3 min-[768px]:grid-cols-3 min-[768px]:gap-4 min-[1024px]:grid-cols-3 min-[1280px]:grid-cols-4">
+            <div className="grid grid-cols-1 gap-2 min-[375px]:grid-cols-2 min-[375px]:gap-2 min-[640px]:gap-3 min-[768px]:gap-4 min-[1024px]:grid-cols-3 min-[1280px]:grid-cols-4">
               {sortedProducts.map((product, index) => (
                 <ProductCard key={index} product={product} />
               ))}

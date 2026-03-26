@@ -129,23 +129,7 @@ const CategoryFilter = ({ filters, onFilterChange }) => {
           )}
         </div>
 
-        {/* Sort */}
-        <div className="bg-card overflow-hidden rounded border border-white/10">
-          <div className="px-4 py-3">
-            <label className="mb-2 block text-[0.82rem] font-semibold text-white">Sort By</label>
-            <select
-              value={filters.sort}
-              onChange={(e) => onFilterChange('sort', e.target.value)}
-              className="bg-navy3 focus:border-teal w-full cursor-pointer rounded border border-white/10 px-3 py-2 text-[0.8rem] text-white transition-colors outline-none"
-            >
-              <option value="popular">Most Popular</option>
-              <option value="newest">Newest First</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="rating">Highest Rated</option>
-            </select>
-          </div>
-        </div>
+        {/* Sort removed per request */}
 
         {/* Clear Filters */}
         <button
