@@ -87,7 +87,7 @@
     align-items: center;
     justify-content: center;
     color: var(--color-gray);
-    font-size: 0.9rem;
+    /* font-size: 0.9rem; */
     cursor: pointer;
     text-decoration: none;
     transition:
@@ -101,7 +101,7 @@
   }
 
   .footer-link {
-    font-size: 0.82rem;
+    /* font-size: 0.82rem; */
     color: var(--color-gray);
     text-decoration: none;
     transition: color 0.2s;

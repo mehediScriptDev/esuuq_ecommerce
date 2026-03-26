@@ -15,11 +15,11 @@ const TrustStrip = () => {
         {trustItems.map((item, index) => {
           const { Icon, title, subtitle } = item;
           return (
-            <div key={index} className="flex items-center gap-4">
+            <div key={index} className="flex items-center gap-3">
               <Icon size={28} className="text-teal shrink-0" />
               <div>
-                <p className="text-sm font-semibold text-white">{title}</p>
-                <p className="text-xs text-gray">{subtitle}</p>
+                <p className="text-sm lg:text-base font-semibold text-white">{title}</p>
+                <p className="text-xs lg:text-sm text-gray">{subtitle}</p>
               </div>
             </div>
           );

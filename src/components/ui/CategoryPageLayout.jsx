@@ -59,10 +59,10 @@ const CategoryPageLayout = ({ title, icon, description, products }) => {
     <section className="px-3 py-6 min-[640px]:px-4 min-[900px]:px-8 min-[900px]:py-8">
       <div className="container mx-auto">
         {/* Header */}
-        <div className="mb-6 flex flex-col gap-2 min-[640px]:flex-row min-[640px]:items-center min-[640px]:justify-between">
+        <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <CategoryHeader title={title} description={description} />
           <div className="flex items-center gap-3">
-            <span className="text-gray text-[0.8rem]">{products.length} products</span>
+            <span className="text-gray text-[0.8rem] md:hidden lg:block">{products.length} products</span>
             <select
               value={filters.sort}
               onChange={(e) => handleFilterChange('sort', e.target.value)}
