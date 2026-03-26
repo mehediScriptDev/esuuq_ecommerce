@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Save, Settings, DollarSign, Bell, Lock } from 'lucide-react';
+import { Save, Settings, DollarSign, Bell, Lock, Key } from 'lucide-react';
 import DashboardPageHeader from '../components/DashboardPageHeader';
 const Toggle = ({ defaultOn = false }) => {
   const [on, setOn] = useState(defaultOn);
@@ -140,8 +140,8 @@ const AdminSettings = () => (
             <Toggle defaultOn={item.on} />
           </div>
         ))}
-        <button className="text-gray2 hover:border-teal hover:text-teal mt-4 w-full rounded border border-white/[0.07] py-2.5 text-[0.82rem] transition-colors">
-          🔑 Change Admin Password
+        <button className="text-gray2 flex items-center justify-center hover:border-teal hover:text-teal mt-4 w-full rounded border border-white/[0.07] py-2.5 text-[0.82rem] transition-colors  gap-2">
+          <Key size={14} className="text-teal" /> Change Admin Password
         </button>
       </div>
     </div>
