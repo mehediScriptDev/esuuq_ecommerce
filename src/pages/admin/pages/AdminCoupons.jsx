@@ -1,5 +1,6 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
+import DashboardPageHeader from '../components/DashboardPageHeader';
 const Pill = ({ children, c }) => (
   <span
     className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}
@@ -63,12 +64,10 @@ const coupons = [
 const AdminCoupons = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.3rem] font-bold text-white">
-          Coupon <span className="text-teal">Management</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.8rem]">Create and manage promotional coupon codes</p>
-      </div>
+      <DashboardPageHeader
+        title={<span>Coupon <span className="text-teal">Management</span></span>}
+        subtitle="Create and manage promotional coupon codes"
+      />
       <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded px-4 py-1.5 text-[0.8rem] font-medium">
         <Plus size={14} /> Create Coupon
       </button>

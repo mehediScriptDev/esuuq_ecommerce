@@ -1,5 +1,7 @@
 import React from 'react';
 import { Truck, MapPin, CheckCircle, Clock, Plus } from 'lucide-react';
+import DashboardPageHeader from '../components/DashboardPageHeader';
+import AdminStats from '../components/AdminStats';
 const Pill = ({ children, c }) => (
   <span
     className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}
@@ -59,32 +61,15 @@ const drivers = [
 const AdminDelivery = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.3rem] font-bold text-white">
-          Delivery <span className="text-teal">Partners</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.8rem]">Manage drivers and active deliveries</p>
-      </div>
+      <DashboardPageHeader
+        title={<span>Delivery <span className="text-teal">Partners</span></span>}
+        subtitle="Manage drivers and active deliveries"
+      />
       <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded px-4 py-1.5 text-[0.8rem] font-medium">
         <Plus size={14} /> Add Driver
       </button>
     </div>
-    <div className="mb-5 grid grid-cols-1 gap-4 min-[580px]:grid-cols-2 min-[1100px]:grid-cols-4">
-      {stats.map((s) => {
-        const Icon = s.icon;
-        return (
-          <div key={s.label} className="bg-card rounded-md border border-white/[0.07] p-5">
-            <div className="mb-3">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-md ${s.bg}`}>
-                <Icon size={20} className="text-teal" />
-              </div>
-            </div>
-            <div className="font-['Syne'] text-[1.7rem] font-extrabold text-white">{s.val}</div>
-            <div className="text-gray mt-1 text-[0.75rem]">{s.label}</div>
-          </div>
-        );
-      })}
-    </div>
+    <AdminStats stats={stats} />
     <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
       <div className="border-b border-white/[0.07] px-5 py-3.5">
         <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">All Delivery Partners</h3>
@@ -116,7 +101,7 @@ const AdminDelivery = () => (
             {drivers.map((d) => (
               <tr
                 key={d.name}
-                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/[0.02]"
+                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/2"
               >
                 <td className="px-4 py-3 text-[0.82rem] font-semibold text-white">{d.name}</td>
                 <td className="text-gray px-4 py-3 text-[0.82rem]">{d.phone}</td>
@@ -128,7 +113,7 @@ const AdminDelivery = () => (
                   <Pill c={d.sc}>{d.status}</Pill>
                 </td>
                 <td className="px-4 py-3">
-                  <button className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+                  <button className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/2 px-3 py-1 text-[0.75rem]">
                     View
                   </button>
                 </td>

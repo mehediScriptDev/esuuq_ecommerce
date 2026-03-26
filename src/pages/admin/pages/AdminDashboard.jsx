@@ -11,6 +11,8 @@ import {
   CreditCard,
   ArrowRight,
 } from 'lucide-react';
+import DashboardPageHeader from '../components/DashboardPageHeader';
+import AdminStats from '../components/AdminStats';
 
 const stats = [
   {
@@ -164,14 +166,14 @@ const AdminDashboard = ({ onNav }) => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
     {/* Header */}
     <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.3rem] font-bold text-white">
-          Dashboard <span className="text-teal">Overview</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.8rem]">
-          Welcome back, Admin · Thursday, March 12, 2026
-        </p>
-      </div>
+      <DashboardPageHeader
+        title={
+          <>
+            Dashboard <span className="text-teal">Overview</span>
+          </>
+        }
+        subtitle="Welcome back, Admin · Thursday, March 12, 2026"
+      />
       <div className="flex gap-3">
         <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] outline-none">
           <option>Last 7 days</option>
@@ -186,37 +188,14 @@ const AdminDashboard = ({ onNav }) => (
     </div>
 
     {/* Stats */}
-    <div className="mb-6 grid grid-cols-1 gap-4 min-[580px]:grid-cols-2 min-[1100px]:grid-cols-4">
-      {stats.map((s) => {
-        const Icon = s.icon;
-        return (
-          <div
-            key={s.label}
-            className="bg-card hover:border-teal/20 rounded-md border border-white/[0.07] p-5 transition-colors"
-          >
-            <div className="mb-3 flex items-start justify-between">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-md ${s.iconBg}`}>
-                <Icon size={20} className="text-teal" />
-              </div>
-              <span
-                className={`rounded-full px-2 py-0.5 text-[0.72rem] font-medium ${s.up ? 'bg-green-500/10 text-green-500' : 'bg-red/10 text-red'}`}
-              >
-                {s.trend}
-              </span>
-            </div>
-            <div className="font-['Syne'] text-[1.7rem] font-extrabold text-white">{s.val}</div>
-            <div className="text-gray mt-1 text-[0.75rem]">{s.label}</div>
-          </div>
-        );
-      })}
-    </div>
+    <AdminStats stats={stats} />
 
     {/* Charts Row */}
     <div className="mb-6 grid grid-cols-1 gap-4 min-[1100px]:grid-cols-[2fr_1fr]">
       {/* Bar Chart */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
         <div className="mb-5 flex items-center justify-between">
-          <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">Revenue Overview</h3>
+          <h3 className="font-['Syne'] text-[0.88rem] xl:text-[1rem] font-bold text-white">Revenue Overview</h3>
           <div className="flex gap-1">
             {['Week', 'Month', 'Year'].map((t, i) => (
               <button
@@ -228,12 +207,12 @@ const AdminDashboard = ({ onNav }) => (
             ))}
           </div>
         </div>
-        <div className="relative flex h-[140px] items-end gap-2 pb-6">
+        <div className="relative flex h-35 items-end gap-2 pb-6">
           <div className="absolute right-0 bottom-6 left-0 h-px bg-white/[0.07]" />
           {barData.map((b) => (
             <div key={b.label} className="group flex flex-1 flex-col items-center gap-1">
               <div
-                className="from-teal2 to-teal relative w-full cursor-pointer rounded-t bg-gradient-to-t transition-all group-hover:opacity-80"
+                className="from-teal2 to-teal relative w-full cursor-pointer rounded-t bg-linear-to-t transition-all group-hover:opacity-80"
                 style={{ height: b.height }}
               >
                 <div className="bg-teal text-navy pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 rounded px-1.5 py-0.5 text-[0.62rem] font-bold opacity-0 transition-opacity group-hover:opacity-100">
@@ -248,11 +227,11 @@ const AdminDashboard = ({ onNav }) => (
 
       {/* Donut Chart (simplified) */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
-        <h3 className="mb-4 font-['Syne'] text-[0.88rem] font-bold text-white">
+        <h3 className="mb-4 font-['Syne'] text-[0.88rem] xl:text-[1rem] font-bold text-white">
           Orders by Category
         </h3>
         <div className="flex flex-col items-center gap-4">
-          <div className="relative flex h-[120px] w-[120px] items-center justify-center">
+          <div className="relative flex h-30 w-30 items-center justify-center">
             <svg width="120" height="120" viewBox="0 0 120 120" className="-rotate-90">
               <circle
                 cx="60"
@@ -320,7 +299,7 @@ const AdminDashboard = ({ onNav }) => (
             ].map((item) => (
               <div key={item.name} className="flex items-center gap-2">
                 <div className={`h-2 w-2 shrink-0 rounded-full ${item.color}`} />
-                <span className="text-gray flex-1 text-[0.75rem]">{item.name}</span>
+                <span className="text-gray flex-1 text-[0.75rem] lg:text-[0.875rem]">{item.name}</span>
                 <span className="text-[0.75rem] font-medium text-white">{item.pct}</span>
               </div>
             ))}
@@ -341,8 +320,8 @@ const AdminDashboard = ({ onNav }) => (
           >
             <Icon size={24} className="text-teal" />
             <div>
-              <div className="text-[0.8rem] font-medium text-white">{qa.label}</div>
-              <div className="text-gray text-[0.7rem]">{qa.sub}</div>
+              <div className="text-[0.8rem] xl:text-[0.875rem] font-medium text-white">{qa.label}</div>
+              <div className="text-gray text-[0.7rem] xl:text-[0.8rem]">{qa.sub}</div>
             </div>
           </button>
         );
@@ -354,7 +333,7 @@ const AdminDashboard = ({ onNav }) => (
       {/* Recent Orders Table */}
       <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
         <div className="flex items-center justify-between border-b border-white/[0.07] px-5 py-3.5">
-          <h3 className="font-['Syne'] text-[0.88rem] font-bold text-white">Recent Orders</h3>
+          <h3 className="font-['Syne'] text-[0.88rem] xl:text-[1rem] font-bold text-white">Recent Orders</h3>
           <button
             onClick={() => onNav?.('orders')}
             className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1 text-[0.75rem] transition-colors"
@@ -387,7 +366,7 @@ const AdminDashboard = ({ onNav }) => (
               {recentOrders.map((o) => (
                 <tr
                   key={o.id}
-                  className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/[0.02]"
+                  className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/2"
                 >
                   <td className="text-teal px-4 py-3 text-[0.82rem] font-medium">{o.id}</td>
                   <td className="px-4 py-3 text-[0.82rem] text-white">{o.customer}</td>
@@ -410,7 +389,7 @@ const AdminDashboard = ({ onNav }) => (
 
       {/* Activity Feed */}
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
-        <h3 className="mb-4 font-['Syne'] text-[0.88rem] font-bold text-white">Recent Activity</h3>
+        <h3 className="mb-4 font-['Syne'] text-[0.88rem] xl:text-[1rem] font-bold text-white">Recent Activity</h3>
         <div className="space-y-0">
           {activities.map((a, i) => {
             const Icon = a.icon;

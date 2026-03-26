@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Save, Settings, DollarSign, Bell, Lock } from 'lucide-react';
+import DashboardPageHeader from '../components/DashboardPageHeader';
 const Toggle = ({ defaultOn = false }) => {
   const [on, setOn] = useState(defaultOn);
   return (
@@ -8,7 +9,7 @@ const Toggle = ({ defaultOn = false }) => {
       className={`relative h-5 w-9 shrink-0 rounded-full border-none transition-colors ${on ? 'bg-teal' : 'bg-white/[0.07]'}`}
     >
       <span
-        className={`absolute top-[3px] h-3.5 w-3.5 rounded-full bg-white transition-all ${on ? 'left-[18px]' : 'left-[3px]'}`}
+        className={`absolute top-0.75 h-3.5 w-3.5 rounded-full bg-white transition-all ${on ? 'left-4.5' : 'left-0.75'}`}
       />
     </button>
   );
@@ -16,12 +17,10 @@ const Toggle = ({ defaultOn = false }) => {
 const AdminSettings = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.3rem] font-bold text-white">
-          Platform <span className="text-teal">Settings</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.8rem]">Configure your marketplace preferences</p>
-      </div>
+      <DashboardPageHeader
+        title={<span>Platform <span className="text-teal">Settings</span></span>}
+        subtitle="Configure your marketplace preferences"
+      />
       <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded px-4 py-1.5 text-[0.8rem] font-medium">
         <Save size={14} /> Save Changes
       </button>

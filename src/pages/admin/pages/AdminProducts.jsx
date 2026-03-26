@@ -1,5 +1,6 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
+import DashboardPageHeader from '../components/DashboardPageHeader';
 const Pill = ({ children, c }) => (
   <span
     className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}
@@ -63,12 +64,10 @@ const products = [
 const AdminProducts = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.3rem] font-bold text-white">
-          Product <span className="text-teal">Catalog</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.8rem]">Review and moderate all marketplace listings</p>
-      </div>
+      <DashboardPageHeader
+        title={<span>Product <span className="text-teal">Catalog</span></span>}
+        subtitle="Review and moderate all marketplace listings"
+      />
       <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded px-4 py-1.5 text-[0.8rem] font-medium">
         <Plus size={14} /> Add Product
       </button>
@@ -115,7 +114,7 @@ const AdminProducts = () => (
             {products.map((p) => (
               <tr
                 key={p.name}
-                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/[0.02]"
+                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/2"
               >
                 <td className="px-4 py-3 text-[0.82rem] text-white">{p.name}</td>
                 <td className="text-gray px-4 py-3 text-[0.82rem]">{p.merchant}</td>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Download, Plus } from 'lucide-react';
+import DashboardPageHeader from '../components/DashboardPageHeader';
 const orders = [
   {
     id: '#ESQ-00847',
@@ -95,14 +96,10 @@ const Pill = ({ children, className }) => (
 const AdminOrders = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.3rem] font-bold text-white">
-          Order <span className="text-teal">Management</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.8rem]">
-          Monitor and manage all orders across merchants
-        </p>
-      </div>
+      <DashboardPageHeader
+        title={<span>Order <span className="text-teal">Management</span></span>}
+        subtitle="Monitor and manage all orders across merchants"
+      />
       <div className="flex gap-3">
         <button className="text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border border-white/[0.07] px-4 py-1.5 text-[0.8rem] transition-colors">
           <Download size={14} /> Export
@@ -166,7 +163,7 @@ const AdminOrders = () => (
             {orders.map((o) => (
               <tr
                 key={o.id}
-                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/[0.02]"
+                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/2"
               >
                 <td className="px-4 py-3">
                   <input type="checkbox" className="accent-teal" />

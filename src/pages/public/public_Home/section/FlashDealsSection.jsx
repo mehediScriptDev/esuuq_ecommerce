@@ -26,9 +26,9 @@ const FlashDealsSection = () => {
         <a href="#" className="text-[0.8rem] font-medium text-teal hover:opacity-70 min-[640px]:text-[0.8rem]">See all deals {'\u2192'}</a>
       </div>
 
-      <div className="scrollbar-hide flex gap-4 overflow-x-auto pb-2">
+      <div className="grid grid-cols-1 gap-2 min-[375px]:grid-cols-2 min-[375px]:gap-2 min-[640px]:gap-3 min-[768px]:grid-cols-3 min-[768px]:gap-4 min-[1024px]:grid-cols-4 min-[1280px]:grid-cols-5 min-[1580px]:grid-cols-6">
         {products.map((product, index) => (
-          <div key={index}><ProductCard product={product} inScroll={true} /></div>
+          <ProductCard key={index} product={product} />
         ))}
       </div>
       </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Download, Plus, Check, X } from 'lucide-react';
+import DashboardPageHeader from '../components/DashboardPageHeader';
 const Pill = ({ children, c }) => (
   <span
     className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}
@@ -99,12 +100,10 @@ const merchants = [
 const AdminMerchants = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.3rem] font-bold text-white">
-          Merchant <span className="text-teal">Management</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.8rem]">Approve, manage and monitor all sellers</p>
-      </div>
+      <DashboardPageHeader
+        title={<span>Merchant <span className="text-teal">Management</span></span>}
+        subtitle="Approve, manage and monitor all sellers"
+      />
       <div className="flex gap-3">
         <button className="text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border border-white/[0.07] px-4 py-1.5 text-[0.8rem]">
           <Download size={14} /> Export
@@ -204,7 +203,7 @@ const AdminMerchants = () => (
             {merchants.map((m) => (
               <tr
                 key={m.name}
-                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/[0.02]"
+                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/2"
               >
                 <td className="px-4 py-3 text-[0.82rem] font-semibold text-white">{m.name}</td>
                 <td className="text-gray px-4 py-3 text-[0.82rem]">{m.cat}</td>

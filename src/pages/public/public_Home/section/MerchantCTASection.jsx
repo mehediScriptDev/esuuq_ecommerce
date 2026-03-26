@@ -1,5 +1,6 @@
 import React from 'react';
 import { Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const MerchantCTASection = () => {
   return (
@@ -12,13 +13,15 @@ const MerchantCTASection = () => {
         </div>
         <div className="order-last min-[900px]:order-0 flex flex-wrap gap-3 min-[640px]:gap-6">
           {['Easy onboarding', 'Low commission rates', 'Real-time analytics', 'Fast payouts'].map((perk) => (
-            <span key={perk} className="flex items-center gap-2 text-[0.7rem] text-gray2 min-[640px]:text-[0.8rem]">
+            <span key={perk} className="flex items-center gap-2 text-[0.8rem] text-gray2 min-[640px]:text-[0.875rem]">
               <Check size={14} className="text-teal shrink-0" />
               {perk}
             </span>
           ))}
         </div>
-        <a href="#" className="self-start min-[900px]:self-auto w-full min-[900px]:w-auto text-center inline-block bg-teal px-6 py-2 min-[640px]:px-8 min-[640px]:py-3 text-[0.8rem] min-[640px]:text-[0.85rem] font-medium tracking-[0.06em] text-navy transition hover:bg-teal2">Become a Merchant</a>
+        <Link to="/login" className="self-start min-[900px]:self-auto w-full min-[900px]:w-auto text-center inline-block bg-teal px-6 py-2 min-[640px]:px-8 min-[640px]:py-3 text-[0.8rem] min-[640px]:text-[0.85rem] font-medium tracking-[0.06em] text-navy transition hover:bg-teal2">
+          Become a Merchant
+        </Link>
       </div>
       </div>
     </section>
