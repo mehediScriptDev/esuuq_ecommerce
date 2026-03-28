@@ -1,69 +1,86 @@
 {
-  "wireless-earbuds-pro-max": {
-    "name": "Earbuds Pro Max",
-    "store": "TechZone MN Official",
-    "storeRating": 4.9,
-    "price": 49.99,
-    "oldPrice": 89.99,
-    "off": 44,
-    "rating": 4.8,
-    "reviews": 1204,
-    "sold": 834,
-    "description": "Experience crystal-clear audio with our premium Wireless Earbuds Pro Max. Featuring advanced active noise cancellation (ANC), 32-hour extended battery life, and IPX5 water resistance for your toughest workouts. High-fidelity sound meets ergonomic comfort, creating an unparalleled listening experience whether you are in a quiet room or a busy street.",
+  "premium-china-sneakers-y26-1033": {
+    "name": "Premium China Sneakers-Y26-1033",
+    "store": "Sneaker Hub Official",
+    "storeRating": 4.5,
+    "price": 1800,
+    "oldPrice": 4500,
+    "off": 60,
+    "rating": 4.3,
+    "reviews": 95,
+    "sold": 120,
+    "stock": 18,
+    "description": "Step up your style with these premium sneakers featuring a sleek design and superior comfort. The lightweight construction ensures fatigue-free wear while the padded collar offers ankle support. Perfect for daily wear and light sports activities.",
     "features": [
-      "Active Noise Cancellation",
-      "32-hour Battery Life",
-      "IPX5 Water Resistant",
-      "High-Fidelity Audio",
-      "Seamless Multi-Device Pairing",
-      "Fast Charging Support"
+      "Breathable Mesh Upper",
+      "Cushioned Insole",
+      "Non-slip Rubber Sole",
+      "Reflective Accents",
+      "True to Size Fit"
     ],
     "specs": {
-      "Brand": "TechZone",
-      "Model": "Pro Max Gen 2",
-      "Connectivity": "Bluetooth 5.3",
-      "Driver": "10mm Dynamic Dynamic Driver",
-      "Warranty": "1 Year Brand Warranty"
+      "Model": "Y26-1033",
+      "Material": "Synthetic Leather & Textile",
+      "Closure": "Lace-up",
+      "Heel": "Flat",
+      "Colors": "Black, Gray"
     },
-    "colors": ["Midnight Black", "Pearl White", "Deep Navy", "Crimson Red"],
+    "colors": ["Black", "Gray"],
+    "sizes": ["39", "40", "41", "42", "43"],
     "images": [
-      "/earbuds-black.png",
-      "/earbuds-white.png",
-      "/earbuds-navy.png",
-      "/earbuds-red.png"
+      "/img/products/sneaker-black.png",
+      "/img/products/sneaker-gray.png",
+      "/img/products/sneaker-black.png"
     ],
-    "category": "Electronics"
+    "category": "Sneakers",
+    "materials": "Premium quality materials sourced from trusted suppliers. Built to last with attention to every detail.",
+    "care": "Machine washable at 30°C. Do not bleach. Tumble dry low. Iron at medium heat if needed.",
+    "shipping": {
+      "dhaka": "1-2 business days (৳60)",
+      "outside": "3-5 business days (৳120)",
+      "free_threshold": 2000
+    }
   },
   "default": {
-    "name": "Premium Sound Master X",
-    "store": "ESUUQ Global Store",
-    "storeRating": 4.7,
-    "price": 59.99,
-    "oldPrice": 99.99,
-    "off": 40,
-    "rating": 4.6,
-    "reviews": 856,
-    "sold": 421,
-    "description": "Our flagship Sound Master X delivers precision engineering with studio-quality acoustics. Designed for purists, this product incorporates premium materials and the latest audio technology for a rich, immersive soundstage that captures every detail of your favorite tracks.",
+    "name": "Premium China Sneakers-Y26-1033",
+    "store": "Sneaker Hub Official",
+    "storeRating": 4.5,
+    "price": 1800,
+    "oldPrice": 4500,
+    "off": 60,
+    "rating": 4.3,
+    "reviews": 95,
+    "sold": 120,
+    "stock": 18,
+    "description": "Step up your style with these premium sneakers featuring a sleek design and superior comfort. The lightweight construction ensures fatigue-free wear while the padded collar offers ankle support. Perfect for daily wear and light sports activities.",
     "features": [
-      "Premium Build Quality",
-      "Advanced Equalizer Support",
-      "24-Month Extended Warranty",
-      "Sustainable Packaging",
-      "Voice Assistant Integration",
-      "Hard Shell Carrying Case"
+      "Breathable Mesh Upper",
+      "Cushioned Insole",
+      "Non-slip Rubber Sole",
+      "Reflective Accents",
+      "True to Size Fit"
     ],
     "specs": {
-      "Brand": "ESUUQ",
-      "Material": "Aviation Grade Alloy",
-      "Driver": "40mm Neodymium",
-      "Origin": "Crafted in Germany"
+      "Model": "Y26-1033",
+      "Material": "Synthetic Leather & Textile",
+      "Closure": "Lace-up",
+      "Heel": "Flat",
+      "Colors": "Black, Gray"
     },
-    "colors": ["Space Gray", "Arctic White"],
+    "colors": ["Black", "Gray"],
+    "sizes": ["39", "40", "41", "42", "43"],
     "images": [
-      "/earbuds-black.png",
-      "/earbuds-white.png"
+      "/img/products/sneaker-black.png",
+      "/img/products/sneaker-gray.png",
+      "/img/products/sneaker-black.png"
     ],
-    "category": "Tech Audiophile"
+    "category": "Sneakers",
+    "materials": "Premium quality materials sourced from trusted suppliers. Built to last with attention to every detail.",
+    "care": "Machine washable at 30°C. Do not bleach. Tumble dry low. Iron at medium heat if needed.",
+    "shipping": {
+      "dhaka": "1-2 business days (৳60)",
+      "outside": "3-5 business days (৳120)",
+      "free_threshold": 2000
+    }
   }
 }

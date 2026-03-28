@@ -1,21 +1,24 @@
 import React, { useMemo, useState } from 'react';
 import {
   CheckCircle2,
+  Heart,
   Minus,
   Plus,
   RotateCcw,
+  Share2,
   Shield,
   ShoppingCart,
   Star,
-  Store,
   Truck,
 } from 'lucide-react';
 
 const ProductInfo = ({ product }) => {
   const [qty, setQty] = useState(1);
   const [selectedColor, setSelectedColor] = useState(0);
+  const [selectedSize, setSelectedSize] = useState(0);
 
   const colors = Array.isArray(product.colors) ? product.colors : [];
+  const sizes = Array.isArray(product.sizes) ? product.sizes : [];
 
   const savings = useMemo(() => {
     const current = Number(product.price) || 0;
@@ -27,129 +30,145 @@ const ProductInfo = ({ product }) => {
   }, [product.oldPrice, product.price]);
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-wrap items-center gap-3">
-        <span className="inline-flex items-center gap-1 rounded-full border border-teal/40 bg-teal/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-teal">
-          <CheckCircle2 size={12} /> Verified Store
-        </span>
-        <span className="inline-flex items-center gap-1.5 text-sm text-gray2">
-          <Store size={14} className="text-teal" />
-          <span className="font-medium text-white">{product.store}</span>
-        </span>
-        <span className="inline-flex items-center gap-1 text-sm text-white">
-          <Star size={14} className="fill-yellow text-yellow" />
-          {product.storeRating}
-        </span>
-      </div>
-
-      <div>
-        <h1 className="font-['Syne'] text-[2rem] font-bold leading-tight text-white sm:text-[2.4rem] lg:text-[2.8rem]">
+    <div className="flex flex-col space-y-5">
+      {/* Product Title and Rating */}
+      <div className="space-y-1.5">
+        <h1 className="font-['Syne'] text-2xl font-bold tracking-tight text-white lg:text-3xl">
           {product.name}
         </h1>
-        <p className="mt-3 max-w-2xl text-[0.95rem] leading-relaxed text-gray2 sm:text-base">
-          {product.description}
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4 rounded-md border border-white/10 bg-card p-4 sm:grid-cols-3 sm:p-5">
-        <div>
-          <p className="text-xs uppercase tracking-wide text-gray2">Rating</p>
-          <p className="mt-1 text-lg font-semibold text-white">{product.rating} / 5</p>
-        </div>
-        <div>
-          <p className="text-xs uppercase tracking-wide text-gray2">Reviews</p>
-          <p className="mt-1 text-lg font-semibold text-white">{Number(product.reviews).toLocaleString()}</p>
-        </div>
-        <div>
-          <p className="text-xs uppercase tracking-wide text-gray2">Sold</p>
-          <p className="mt-1 text-lg font-semibold text-white">{Number(product.sold).toLocaleString()}+</p>
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-0.5">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                size={14}
+                className={i < 4 ? 'fill-yellow text-yellow' : 'text-white/10'}
+              />
+            ))}
+          </div>
+          <span className="text-gray/50 text-xs lg:text-sm font-medium">({product.reviews} reviews)</span>
         </div>
       </div>
 
-      <div className="rounded-md border border-white/10 bg-card p-5">
-        <div className="flex flex-wrap items-end gap-3">
-          <span className="font-['Syne'] text-[2.1rem] font-bold text-white sm:text-[2.6rem]">
-            ${Number(product.price).toFixed(2)}
+      {/* Price Section */}
+      <div className="space-y-3.5">
+        <div className="flex items-baseline gap-3.5">
+          <span className="font-['Syne'] text-2xl font-bold text-white lg:text-3xl">
+            ৳{Number(product.price).toLocaleString()}
           </span>
-          <span className="pb-1 text-lg text-gray line-through sm:text-xl">${Number(product.oldPrice).toFixed(2)}</span>
-          <span className="mb-1 rounded-full bg-red/15 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-red">
-            -{product.off}%
+          <span className="text-gray/30 text-base line-through lg:text-lg">
+            ৳{Number(product.oldPrice).toLocaleString()}
+          </span>
+          <span className="bg-teal/10 text-teal px-2 py-0.5 text-xs lg:text-sm font-bold leading-none">
+            Save ৳{savings.toLocaleString()}
           </span>
         </div>
-        <p className="mt-2 text-sm text-teal">You save ${savings.toFixed(2)} today</p>
-      </div>
 
-      <div className="space-y-6 rounded-md border border-white/10 bg-card p-5">
-        <div>
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray2">Color</h3>
+        {/* Color Selection - Circles */}
+        <div className="space-y-2.5">
+          <h3 className="text-gray/70 text-xs lg:text-sm font-bold uppercase tracking-wider">
+            Color: <span className="text-white ml-0.5 lowercase font-normal">Select</span>
+          </h3>
           <div className="flex flex-wrap gap-2.5">
             {colors.map((color, idx) => (
               <button
                 key={color}
                 type="button"
                 onClick={() => setSelectedColor(idx)}
-                className={`rounded-md border px-3.5 py-2 text-sm font-medium transition-colors ${
+                className={`group relative h-7 w-7 overflow-hidden rounded-full border ring-2 ring-offset-2 ring-offset-navy transition-all lg:h-8 lg:w-8 ${
                   selectedColor === idx
-                    ? 'border-teal bg-teal text-navy'
-                    : 'border-white/15 bg-navy2/50 text-white hover:border-white/35'
+                    ? 'border-teal ring-teal'
+                    : 'border-white/10 ring-transparent hover:border-white/30'
                 }`}
+                title={color}
               >
-                {color}
+                <span 
+                  className="absolute inset-0" 
+                  style={{ backgroundColor: color.toLowerCase() === 'gray' ? '#666' : color.toLowerCase() }}
+                />
               </button>
             ))}
           </div>
         </div>
 
-        <div>
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray2">Quantity</h3>
-          <div className="inline-flex items-center rounded-md border border-white/15 bg-navy2/50 p-1.5">
-            <button
-              type="button"
-              onClick={() => setQty((q) => Math.max(1, q - 1))}
-              className="flex h-9 w-9 items-center justify-center rounded text-white transition-colors hover:bg-white/10"
-              aria-label="Decrease quantity"
-            >
-              <Minus size={16} />
-            </button>
-            <span className="w-10 text-center text-base font-semibold text-white">{qty}</span>
-            <button
-              type="button"
-              onClick={() => setQty((q) => q + 1)}
-              className="flex h-9 w-9 items-center justify-center rounded text-white transition-colors hover:bg-white/10"
-              aria-label="Increase quantity"
-            >
-              <Plus size={16} />
-            </button>
+        {/* Size Selection - Boxes */}
+        <div className="space-y-2.5">
+          <h3 className="text-gray/70 text-xs lg:text-sm font-bold uppercase tracking-wider">
+            Size: <span className="text-white ml-0.5 lowercase font-normal">Select</span>
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {sizes.map((size, idx) => (
+              <button
+                key={size}
+                type="button"
+                onClick={() => setSelectedSize(idx)}
+                className={`flex h-9 w-11 items-center justify-center rounded-xs border text-xs lg:text-sm font-bold transition-all lg:h-10 lg:w-12 ${
+                  selectedSize === idx
+                    ? 'border-teal bg-teal/10 text-white'
+                    : 'border-white/10 text-gray2 hover:border-white/30'
+                }`}
+              >
+                {size}
+              </button>
+            ))}
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <button
-            type="button"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-teal px-5 text-sm font-semibold uppercase tracking-wide text-navy transition-colors hover:bg-teal2"
-          >
-            <ShoppingCart size={16} />
-            Add To Bag
-          </button>
-          <button
-            type="button"
-            className="h-12 rounded-md border border-white/20 bg-white text-sm font-semibold uppercase tracking-wide text-navy transition-colors hover:bg-white/90"
-          >
-            Buy Now
-          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      {/* Buttons and Actions */}
+      <div className="space-y-5 pt-1.5">
+        <div className="flex flex-wrap items-center gap-3.5">
+          <div className="bg-navy2/50 flex items-center rounded-xs border border-white/10 p-0.5">
+            <button
+              type="button"
+              onClick={() => setQty((q) => Math.max(1, q - 1))}
+              className="flex h-9 w-8 items-center justify-center text-gray hover:text-white lg:h-10 lg:w-9"
+            >
+              <Minus size={14} />
+            </button>
+            <span className="w-8 text-center text-sm lg:text-base font-bold text-white">{qty}</span>
+            <button
+              type="button"
+              onClick={() => setQty((q) => q + 1)}
+              className="flex h-9 w-8 items-center justify-center text-gray hover:text-white lg:h-10 lg:w-9"
+            >
+              <Plus size={14} />
+            </button>
+          </div>
+          
+          <button
+            type="button"
+            className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xs bg-teal px-6 text-xs lg:text-sm font-bold uppercase tracking-widest text-navy transition-all active:scale-95 lg:h-12 lg:px-8"
+          >
+            <ShoppingCart size={16} /> Select a Size
+          </button>
+
+          <button className="bg-navy2/50 hover:bg-navy2 flex h-11 w-11 items-center justify-center rounded-xs border border-white/10 text-gray2 transition-colors hover:text-white lg:h-12 lg:w-12">
+            <Heart size={18} />
+          </button>
+          <button className="bg-navy2/50 hover:bg-navy2 flex h-11 w-11 items-center justify-center rounded-xs border border-white/10 text-gray2 transition-colors hover:text-white lg:h-12 lg:w-12">
+            <Share2 size={18} />
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs lg:text-sm font-bold text-teal">
+          <CheckCircle2 size={16} /> In Stock ({product.stock} available)
+        </div>
+      </div>
+
+      {/* Trust Badges */}
+      <div className="bg-navy2/30 grid grid-cols-1 gap-3.5 rounded-xs border border-white/5 p-4 sm:grid-cols-3">
         {[
-          { icon: Truck, title: 'Fast Delivery', text: 'Ships within 24 hours' },
-          { icon: Shield, title: 'Secure Payment', text: 'Protected checkout' },
-          { icon: RotateCcw, title: 'Easy Returns', text: '30 day return policy' },
-        ].map((item) => (
-          <div key={item.title} className="rounded-md border border-white/10 bg-card p-4">
-            <item.icon size={18} className="mb-2 text-teal" />
-            <p className="text-sm font-semibold text-white">{item.title}</p>
-            <p className="mt-1 text-xs text-gray2">{item.text}</p>
+          { icon: Truck, title: 'Free Delivery', text: 'Orders over ৳2000', color: 'text-blue-400' },
+          { icon: RotateCcw, title: 'Easy Returns', text: '7-day return policy', color: 'text-green-500' },
+          { icon: Shield, title: 'Authentic', text: '100% genuine product', color: 'text-purple-400' },
+        ].map((item, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <item.icon size={18} className={item.color} />
+            <div className="flex flex-col">
+              <span className="text-[11px] lg:text-xs font-bold text-white leading-tight mb-0.5 uppercase tracking-wide">{item.title}</span>
+              <span className="text-[10px] lg:text-[11px] text-gray/50 leading-tight">{item.text}</span>
+            </div>
           </div>
         ))}
       </div>

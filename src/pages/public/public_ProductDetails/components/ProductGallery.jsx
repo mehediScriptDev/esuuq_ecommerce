@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Heart, Share2 } from 'lucide-react';
 
-const ProductGallery = ({ product, wishlisted, onWishlistToggle }) => {
+const ProductGallery = ({ product }) => {
   const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
@@ -11,53 +10,35 @@ const ProductGallery = ({ product, wishlisted, onWishlistToggle }) => {
   const images = Array.isArray(product.images) && product.images.length > 0 ? product.images : ['/img/home/default.jpg'];
 
   return (
-    <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-      <div className="group relative aspect-square overflow-hidden rounded-md border border-white/10 bg-card">
+    <div className="flex flex-col space-y-3 lg:space-y-4 lg:sticky lg:top-24 lg:self-start">
+      {/* Main Image Container */}
+      <div className="group relative aspect-square overflow-hidden rounded-xs border border-white/10 bg-linear-to-b from-navy2/50 to-navy2 shadow-2xl">
         <img
           src={images[selectedImage]}
           alt={product.name}
-          className="h-full w-full object-contain p-6 transition-transform duration-500 group-hover:scale-105 sm:p-10"
+          className="h-full w-full object-contain p-6 transition-all duration-700 group-hover:scale-105 sm:p-10"
         />
 
-        <div className="absolute right-3 top-3 flex gap-2 sm:right-4 sm:top-4">
-          <button
-            type="button"
-            onClick={onWishlistToggle}
-            className={`flex h-10 w-10 items-center justify-center rounded-md border transition-colors ${
-              wishlisted
-                ? 'border-red bg-red text-white'
-                : 'border-white/15 bg-navy/60 text-white hover:border-teal hover:text-teal'
-            }`}
-            aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-          >
-            <Heart size={16} className={wishlisted ? 'fill-white' : ''} />
-          </button>
-          <button
-            type="button"
-            className="flex h-10 w-10 items-center justify-center rounded-md border border-white/15 bg-navy/60 text-white transition-colors hover:border-teal hover:text-teal"
-            aria-label="Share product"
-          >
-            <Share2 size={16} />
-          </button>
-        </div>
-
-        <span className="absolute bottom-3 left-3 rounded-md border border-teal/40 bg-teal/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-teal sm:bottom-4 sm:left-4">
-          In Stock
-        </span>
+        {/* Discount Badge */}
+        {product.off && (
+          <div className="bg-red absolute left-3 top-3 lg:left-4 lg:top-4 rounded-xs px-2 py-0.5 text-[0.65rem] lg:text-[0.7rem] font-black text-white shadow-lg shadow-red/20 uppercase tracking-wider">
+            -{product.off}%
+          </div>
+        )}
       </div>
 
-      <div className="grid grid-cols-5 gap-2.5 sm:gap-3">
+      {/* Thumbnails */}
+      <div className="no-scrollbar flex gap-3 lg:gap-4 overflow-x-auto pb-2 lg:pb-4">
         {images.map((img, idx) => (
           <button
             key={`${img}-${idx}`}
             type="button"
             onClick={() => setSelectedImage(idx)}
-            className={`overflow-hidden rounded-md border bg-navy2/40 transition-colors ${
-              selectedImage === idx ? 'border-teal' : 'border-white/10 hover:border-white/30'
+            className={`h-16 w-16 lg:h-20 lg:w-20 shrink-0 overflow-hidden rounded-xs border bg-navy2/60 transition-all ${
+              selectedImage === idx ? 'border-teal ring-1 ring-teal/20' : 'border-white/10 hover:border-white/30'
             }`}
-            aria-label={`Select image ${idx + 1}`}
           >
-            <img src={img} alt="" className="h-16 w-full object-contain p-2 sm:h-20" />
+            <img src={img} alt="" className="h-full w-full object-contain p-1.5 lg:p-2 transition-transform duration-500 group-hover:scale-110" />
           </button>
         ))}
       </div>

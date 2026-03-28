@@ -105,23 +105,23 @@ const ProductDetailsSection = () => {
   const categoryLink = `/${toSlug(product.category || 'category')}`;
 
   return (
-    <div className="bg-navy min-h-screen pb-16 selection:bg-teal selection:text-navy">
+    <div className="bg-navy min-h-screen pb-12 selection:bg-teal selection:text-navy">
       <div className="border-b border-white/10 bg-navy2/40">
-        <div className="container mx-auto flex items-center gap-2 overflow-x-auto px-4 py-4 text-xs font-semibold uppercase tracking-wide text-gray2 sm:px-6 lg:px-8">
-          <Link to="/" className="whitespace-nowrap transition-colors hover:text-teal">
+        <div className="container mx-auto flex items-center gap-2 overflow-x-auto px-4 py-3 text-[0.65rem] font-bold uppercase tracking-widest text-gray2 sm:px-6 lg:px-8 lg:text-xs">
+          <Link to="/" className="whitespace-nowrap transition-colors hover:text-teal font-black">
             Marketplace
           </Link>
-          <ChevronRight size={12} className="shrink-0 text-white/20" />
-          <Link to={categoryLink} className="whitespace-nowrap transition-colors hover:text-teal">
+          <ChevronRight size={10} className="shrink-0 text-white/20" />
+          <Link to={categoryLink} className="whitespace-nowrap transition-colors hover:text-teal font-black">
             {product.category}
           </Link>
-          <ChevronRight size={12} className="shrink-0 text-white/20" />
+          <ChevronRight size={10} className="shrink-0 text-white/20" />
           <span className="truncate text-teal">{product.name}</span>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 pt-8 sm:px-6 lg:px-8 lg:pt-10">
-        <div className="grid grid-cols-1 gap-8 xl:grid-cols-[1.05fr_1fr] xl:gap-12">
+      <div className="container mx-auto px-4 pt-6 sm:px-6 lg:px-8 lg:pt-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.1fr_1fr] lg:gap-12 xl:grid-cols-[1.05fr_1fr] xl:gap-16">
           <ProductGallery
             product={product}
             wishlisted={wishlisted}

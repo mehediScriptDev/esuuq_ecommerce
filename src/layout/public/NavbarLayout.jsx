@@ -123,13 +123,6 @@ const NavbarLayout = () => {
 
         <div className="flex items-center gap-1.5 min-[640px]:gap-2">
           <div className="group relative order-last min-[640px]:order-first">
-            <button
-              onClick={() => navigate('/dashboard/wishlist')}
-              className="icon-btn text-gray2 hover:text-teal rounded-sm px-2 py-2 transition hover:bg-[rgba(0,201,167,0.15)]"
-              title="Wishlist"
-            >
-              <Heart size={20} />
-            </button>
 
             {currentUser ? (
               <button
@@ -159,7 +152,7 @@ const NavbarLayout = () => {
                     <div className="text-gray2 mt-1 text-[0.7rem] leading-none tracking-widest uppercase font-semibold">
                       {currentUser.role}
                     </div>
-                    <div className="text-gray mt-1.5 text-[0.7rem] break-words">
+                    <div className="text-gray mt-1.5 text-[0.7rem] wrap-break-word">
                       {currentUser.email}
                     </div>
                   </div>
