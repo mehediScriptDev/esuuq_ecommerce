@@ -11,7 +11,7 @@ import {
   CreditCard,
   TrendingUp,
   FolderOpen,
-  Image,
+  ImageIcon,
   Tag,
   BarChart3,
   Settings,
@@ -50,7 +50,7 @@ const navSections = [
       label: 'Content',
       items: [
         // { id: 'categories', icon: FolderOpen, label: 'Categories', to: '/admin/categories' },
-        // { id: 'banners', icon: Image, label: 'Banners', to: '/admin/banners' },
+        // { id: 'banners', icon: ImageIcon, label: 'Banners', to: '/admin/banners' },
         { id: 'coupons', icon: Tag, label: 'Coupons', to: '/admin/coupons' },
       ],
     },

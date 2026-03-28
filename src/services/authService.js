@@ -15,6 +15,7 @@ export const login = (email, password) => {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
+            role: user.role,
           },
         });
       } else {
@@ -34,6 +35,7 @@ export const register = (userData) => {
                 const newUser = {
                     id: dummyUsers.length + 1,
                     ...userData,
+                    role: userData.role || 'user',
                 };
                 dummyUsers.push(newUser);
                 resolve({
@@ -43,6 +45,7 @@ export const register = (userData) => {
                         firstName: newUser.firstName,
                         lastName: newUser.lastName,
                         email: newUser.email,
+                        role: newUser.role,
                     },
                 });
             }
@@ -74,4 +77,15 @@ export const logout = () => {
             resolve();
         }, 200);
     });
+};
+
+export const getCurrentUser = () => {
+    const token = localStorage.getItem('token');
+    if (token === MOCK_TOKEN) {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+            return JSON.parse(userStr);
+        }
+    }
+    return null;
 };

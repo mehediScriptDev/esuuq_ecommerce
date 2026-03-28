@@ -1,28 +1,59 @@
 import React, { useState } from 'react';
+import { Heart, Package, Rocket, ShieldCheck } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import AuthLayout from './components/AuthLayout';
-import { AuthInput, AuthButton, SocialButton } from './components/AuthFormComponents';
 import { login } from '../../services/authService';
+import AuthLayout from './components/AuthLayout';
+import {
+  AuthButton,
+  AuthDivider,
+  AuthInput,
+  CheckboxField,
+  SocialButton,
+} from './components/AuthFormComponents';
+
+const loginPerks = [
+  { icon: Package, text: 'Track all your orders in real-time' },
+  { icon: Heart, text: 'Access your saved wishlist anytime' },
+  { icon: Rocket, text: 'Faster checkout with saved addresses' },
+  { icon: ShieldCheck, text: 'Secure, encrypted account protection' },
+];
 
 const LoginView = () => {
-  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setLoading(true);
-    setError(null);
+    setError('');
+
     try {
       const { token, user } = await login(email, password);
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
-      navigate('/dashboard');
+      localStorage.removeItem('pendingToken');
+      localStorage.removeItem('pendingUser');
+
+      if (remember) {
+        localStorage.setItem('rememberedEmail', email);
+      } else {
+        localStorage.removeItem('rememberedEmail');
+      }
+
+      if (user?.role === 'admin') {
+        navigate('/admin');
+      } else if (user?.role === 'merchant') {
+        navigate('/merchant');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Invalid email or password.');
     } finally {
       setLoading(false);
     }
@@ -30,62 +61,89 @@ const LoginView = () => {
 
   return (
     <AuthLayout
+      mode="login"
       title="Sign In"
       subtitle="Don't have an account?"
       subtitleLink="/auth/register"
       subtitleLinkText="Create one free"
+      leftTagline="Welcome back to your marketplace"
+      leftTaglineEmphasis=""
+      leftDescription="Sign in to track orders, manage your wishlist, save addresses, and enjoy a personalized shopping experience."
+      leftPerks={loginPerks}
     >
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-            <SocialButton icon="google">Google</SocialButton>
-            <SocialButton icon="facebook">Facebook</SocialButton>
-        </div>
-
-        <div className="flex items-center text-center">
-            <hr className="flex-grow border-border"/>
-            <span className="px-2 text-sm text-gray-400">or continue with email</span>
-            <hr className="flex-grow border-border"/>
-        </div>
-
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div>
-            <label className="text-sm font-medium text-gray-400">Email Address</label>
-            <AuthInput id="email" type="email" placeholder="you@email.com" icon="mail" value={email} onChange={(e) => setEmail(e.target.value)} />
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-400">Password</label>
-            <AuthInput
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Enter your password"
-              icon={showPassword ? 'eyeOff' : 'eye'}
-              onIconClick={() => setShowPassword(!showPassword)}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          {error && <p className="text-sm text-red-500">{error}</p>}
-          <div className="text-right">
-            <Link to="#" className="text-sm font-medium text-teal hover:underline">
-              Forgot password?
-            </Link>
-          </div>
-          <AuthButton type="submit" disabled={loading}>
-            {loading ? 'Signing In...' : 'Sign In →'}
-          </AuthButton>
-        </form>
+      <div className="mb-6 flex overflow-hidden rounded-md border border-white/10">
+        <button
+          type="button"
+          className="flex-1 bg-teal px-4 py-2.5 text-[0.82rem] font-semibold tracking-[0.04em] text-navy"
+        >
+          Sign In
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('/auth/register')}
+          className="text-gray hover:text-teal flex-1 bg-transparent px-4 py-2.5 text-[0.82rem] font-medium tracking-[0.04em] transition-colors"
+        >
+          Create Account
+        </button>
       </div>
+
+      <div className="mb-4 grid grid-cols-2 gap-3">
+        <SocialButton provider="google">Google</SocialButton>
+        <SocialButton provider="facebook">Facebook</SocialButton>
+      </div>
+
+      <AuthDivider text="or continue with email" />
+
+      <form onSubmit={handleSubmit}>
+        <AuthInput
+          id="email"
+          label="Email Address"
+          type="email"
+          placeholder="you@email.com"
+          icon="mail"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+        />
+
+        <AuthInput
+          id="password"
+          label="Password"
+          type={showPassword ? 'text' : 'password'}
+          placeholder="Enter your password"
+          icon={showPassword ? 'eyeOff' : 'eye'}
+          onIconClick={() => setShowPassword((prev) => !prev)}
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+        />
+
+        <div className="mb-4 text-right">
+          <Link to="#" className="text-teal text-[0.78rem] no-underline">
+            Forgot password?
+          </Link>
+        </div>
+
+        {error ? <p className="mb-3 text-sm text-red">{error}</p> : null}
+
+        <AuthButton type="submit" disabled={loading}>
+          {loading ? 'Signing In...' : 'Sign In ->'}
+        </AuthButton>
+
+        <CheckboxField
+          id="remember"
+          checked={remember}
+          onChange={(event) => setRemember(event.target.checked)}
+        >
+          Keep me signed in on this device
+        </CheckboxField>
+
+        <p className="text-gray mt-2 text-center text-[0.8rem]">
+          Don't have an account?{' '}
+          <Link to="/auth/register" className="text-teal font-medium no-underline">
+            Create one free
+          </Link>
+        </p>
+      </form>
     </AuthLayout>
-  );
-};
-
-export default LoginView;
-
-        <div className="">
-          <img src="/img/login.png" alt="City skyline" className="h-screen w-full object-cover" />
-        </div>
-      </div>
-    </section>
   );
 };
 

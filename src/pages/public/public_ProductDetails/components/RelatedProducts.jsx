@@ -5,29 +5,29 @@ import ProductCard from '../../../../components/marketplace/ProductCard';
 
 const toCardProduct = (item) => ({
   name: item.name,
-  store: item.store,
-  price: `$${Number(item.price).toFixed(2)}`,
-  old: `$${Number(item.oldPrice).toFixed(2)}`,
-  image: item.images?.[0] || '',
-  rating: item.rating,
-  reviews: item.reviews,
-  badge: item.off >= 40 ? 'HOT' : '',
+  store: item.store || 'Sneaker Hub',
+  price: `৳${Number(item.price).toLocaleString()}`,
+  old: `৳${Number(item.oldPrice).toLocaleString()}`,
+  image: item.images?.[0] || '/img/products/sneaker-black.png',
+  rating: item.rating || 4.5,
+  reviews: item.reviews || 95,
+  badge: item.off ? `-${item.off}%` : '',
 });
 
 const RelatedProducts = ({ items = [] }) => {
   return (
-    <section className="mt-14 sm:mt-16 lg:mt-20">
-      <div className="mb-6 flex items-center justify-between sm:mb-8">
-        <h2 className="font-['Syne'] text-[1.55rem] font-bold text-white sm:text-[1.9rem]">You May Also Like</h2>
+    <section className="mt-16 sm:mt-24">
+      <div className="mb-8 flex items-end justify-between">
+        <h2 className="font-['Syne'] text-2xl font-bold text-white sm:text-3xl">Related Products</h2>
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-teal transition-colors hover:text-teal2 sm:text-sm"
+          className="text-gray/40 hover:text-white transition-colors text-[0.7rem] font-bold uppercase tracking-widest flex items-center gap-1"
         >
-          View More <ArrowRight size={15} />
+          View All <ArrowRight size={14} />
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
+      <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
         {items.map((item) => (
           <ProductCard key={item.id} product={toCardProduct(item)} />
         ))}

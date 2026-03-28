@@ -3,6 +3,7 @@ import { createBrowserRouter, createRoutesFromElements, Route, useNavigate } fro
 
 import RootLayout from '../layout/public/RootLayout';
 import LoadingFallback from './components/LoadingFallback';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const Home = lazy(() => import('../pages/public/public_Home/Home'));
 const ContactView = lazy(() => import('../pages/public/public_contact/ContactView'));
@@ -152,28 +153,51 @@ const router = createBrowserRouter(
         <Route path="tools-diy" element={wrap(ToolsDIYView)} />
         <Route path="pet-supplies" element={wrap(PetSuppliesView)} />
         <Route path="health" element={wrap(HealthView)} />
-        <Route path="cart" element={wrap(CartView)} />
-        <Route path="product/:id" element={wrap(ProductDetailsView)} />
+        <Route path="cart" element={
+          <ProtectedRoute>
+            {wrap(CartView)}
+          </ProtectedRoute>
+        } />
+        <Route
+          path="product/:id"
+          element={
+            <ProtectedRoute>
+              {wrap(ProductDetailsView)}
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={wrap(NotFound)} />
       </Route>
 
       {/* Auth & Dashboards - No marketplace layout */}
       <Route path="auth">
-        <Route path="login" element={wrap(LoginView)} />
+        <Route path="login" element={<LoginView />} />
         <Route path="register" element={wrap(RegisterView)} />
         <Route path="otp" element={wrap(OTPView)} />
       </Route>
-      <Route path="dashboard" element={wrap(UserView)}>
+      <Route path="dashboard" element={
+        <ProtectedRoute>
+          {wrap(UserView)}
+        </ProtectedRoute>
+      }>
         <Route index element={wrapElement(<UserDashboardRoute />)} />
         <Route path="orders" element={wrap(UserOrders)} />
         <Route path="track" element={wrap(UserTrackOrder)} />
-        <Route path="wishlist" element={wrap(UserWishlist)} />
+        <Route path="wishlist" element={
+          <ProtectedRoute>
+            {wrap(UserWishlist)}
+          </ProtectedRoute>
+        } />
         <Route path="profile" element={wrap(UserProfile)} />
         <Route path="addresses" element={wrap(UserAddresses)} />
         <Route path="payments" element={wrap(UserPayments)} />
         <Route path="settings" element={wrap(UserSettings)} />
       </Route>
-      <Route path="admin" element={wrap(AdminView)}>
+      <Route path="admin" element={
+        <ProtectedRoute>
+          {wrap(AdminView)}
+        </ProtectedRoute>
+      }>
         <Route index element={wrapElement(<AdminDashboardRoute />)} />
         <Route path="orders" element={wrap(AdminOrders)} />
         <Route path="products" element={wrap(AdminProducts)} />
@@ -189,7 +213,11 @@ const router = createBrowserRouter(
         <Route path="banners" element={<AdminPlaceholder title="Banner Management" icon="🖼️" />} />
         <Route path="analytics" element={<AdminPlaceholder title="Analytics Reports" icon="📊" />} /> */}
       </Route>
-      <Route path="merchant" element={wrap(MerchantView)}>
+      <Route path="merchant" element={
+        <ProtectedRoute>
+          {wrap(MerchantView)}
+        </ProtectedRoute>
+      }>
         <Route index element={wrapElement(<MerchantDashboardRoute />)} />
         <Route path="orders" element={wrap(MerchantOrders)} />
         <Route path="products" element={wrapElement(<MerchantProductsRoute />)} />

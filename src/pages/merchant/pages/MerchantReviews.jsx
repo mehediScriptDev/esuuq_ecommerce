@@ -44,86 +44,121 @@ const reviews = [
 
 const MerchantReviews = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
-    <MerchantPageHeader title="Customer" highlight="Reviews" subtitle="Monitor and respond to your customers' feedback" />
-    <div className="mb-4 flex items-center justify-between gap-4">
-      <div className="flex items-center gap-3">
-        <div className="text-center">
-          <div className="text-[1.8rem] font-extrabold text-white">4.9</div>
-          <div className="flex items-center gap-0.5">
-            <Star size={10} className="fill-yellow text-yellow" />
-            <Star size={10} className="fill-yellow text-yellow" />
-            <Star size={10} className="fill-yellow text-yellow" />
-            <Star size={10} className="fill-yellow text-yellow" />
-            <Star size={10} className="fill-yellow text-yellow" />
+    <div className="mb-6">
+      <MerchantPageHeader
+        title={
+          <>
+            Customer <span className="text-teal">Reviews</span>
+          </>
+        }
+        subtitle="Monitor and respond to customer feedback"
+      />
+    </div>
+    
+    <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6 lg:gap-8 mb-8">
+      {/* Overview Card */}
+      <div className="bg-card rounded-lg border border-white/[0.07] p-6 lg:p-8 text-center flex flex-col items-center justify-center">
+        <div className="font-syne text-[3.5rem] leading-none font-extrabold text-white mb-2">4.9</div>
+        <div className="flex items-center gap-0.5 mb-3">
+          <Star size={16} className="fill-yellow text-yellow" />
+          <Star size={16} className="fill-yellow text-yellow" />
+          <Star size={16} className="fill-yellow text-yellow" />
+          <Star size={16} className="fill-yellow text-yellow" />
+          <Star size={16} className="fill-yellow text-yellow" />
+        </div>
+        <div className="text-gray text-[0.7rem] font-bold tracking-widest uppercase mb-6">
+          1,204 reviews
+        </div>
+        <div className="w-full space-y-2.5">
+          <div className="flex items-center gap-3">
+            <span className="text-[0.7rem] font-bold text-gray w-2">5</span>
+            <div className="h-1.5 flex-1 bg-navy3 rounded-full overflow-hidden">
+               <div className="h-full bg-yellow rounded-full" style={{ width: '88%' }} />
+            </div>
+            <span className="text-[0.7rem] font-bold text-gray w-8 text-right">1,059</span>
           </div>
-          <div className="text-gray text-[0.62rem] tracking-widest uppercase">
-            Average Store Rating
+          <div className="flex items-center gap-3">
+            <span className="text-[0.7rem] font-bold text-gray w-2">4</span>
+            <div className="h-1.5 flex-1 bg-navy3 rounded-full overflow-hidden">
+               <div className="h-full bg-yellow rounded-full" style={{ width: '10%' }} />
+            </div>
+            <span className="text-[0.7rem] font-bold text-gray w-8 text-right">120</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-[0.7rem] font-bold text-gray w-2">3</span>
+            <div className="h-1.5 flex-1 bg-navy3 rounded-full overflow-hidden">
+               <div className="h-full bg-yellow rounded-full" style={{ width: '2%' }} />
+            </div>
+            <span className="text-[0.7rem] font-bold text-gray w-8 text-right">18</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-[0.7rem] font-bold text-gray w-2">2</span>
+            <div className="h-1.5 flex-1 bg-navy3 rounded-full overflow-hidden">
+               <div className="h-full bg-yellow rounded-full" style={{ width: '0%' }} />
+            </div>
+            <span className="text-[0.7rem] font-bold text-gray w-8 text-right">4</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-[0.7rem] font-bold text-gray w-2">1</span>
+            <div className="h-1.5 flex-1 bg-navy3 rounded-full overflow-hidden">
+               <div className="h-full bg-yellow rounded-full" style={{ width: '0%' }} />
+            </div>
+            <span className="text-[0.7rem] font-bold text-gray w-8 text-right">3</span>
           </div>
         </div>
       </div>
-    </div>
-    <div className="mb-4 flex gap-2">
-      <button className="bg-teal text-navy rounded-full px-4 py-1.5 text-[0.75rem] font-medium">
-        All Reviews (1,204)
-      </button>
-      <button className="text-gray2 hover:border-teal hover:text-teal rounded-full border border-white/[0.07] px-4 py-1.5 text-[0.75rem]">
-        Pending (12)
-      </button>
-      <button className="text-gray2 hover:border-teal hover:text-teal rounded-full border border-white/[0.07] px-4 py-1.5 text-[0.75rem]">
-        5 Stars (1,040)
-      </button>
-    </div>
-    <div className="space-y-4">
-      {reviews.map((r, i) => (
-        <div key={i} className="bg-card rounded-md border border-white/[0.07] p-5">
-          <div className="mb-4 flex items-start justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="from-teal text-navy flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br to-blue-500 text-[0.75rem] font-bold">
-                {r.name.charAt(0)}
-              </div>
-              <div>
-                <div className="text-[1rem] font-bold text-white">{r.name}</div>
-                <div className="text-gray flex items-center gap-3 text-[0.72rem]">
-                  <span className="flex items-center gap-1">
-                    <Calendar size={12} /> {r.date}
-                  </span>
-                  <span className="text-teal font-medium">{r.product}</span>
+      
+      {/* Reviews List */}
+      <div className="bg-card rounded-lg border border-white/[0.07] overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between border-b border-white/[0.07] px-6 py-4 gap-3">
+          <h3 className="font-syne text-[1rem] font-bold text-white">Recent Reviews</h3>
+          <select className="bg-navy3 text-gray2 hover:border-white/20 cursor-pointer transition-colors rounded border border-white/[0.07] px-3 py-1.5 text-[0.8rem] outline-none">
+            <option>All Products</option>
+            <option>Earbuds Pro</option>
+            <option>Headphones</option>
+          </select>
+        </div>
+        
+        <div className="p-6 space-y-6">
+          {reviews.map((r, i) => (
+            <div key={i} className="bg-navy3 border-white/[0.07] rounded-md border p-5">
+              <div className="mb-2 flex items-start justify-between">
+                <div>
+                  <div className="text-[0.95rem] font-bold text-white mb-0.5">
+                    {r.name} <span className="text-gray text-[0.75rem] font-normal ml-1">· {r.product}</span>
+                  </div>
+                  <div className="flex items-center gap-0.5">
+                    {[...Array(5)].map((_, j) => (
+                      <Star
+                        key={j}
+                        size={12}
+                        className={j < r.rating ? 'fill-yellow text-yellow' : 'text-gray/20'}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className={`rounded-full px-2 py-0.5 text-[0.68rem] font-bold ${r.statusC}`}>
-              {r.status}
-            </div>
-          </div>
-          <div className="border-teal/30 mb-4 border-l-2 pl-4">
-            <div className="mb-1.5 flex gap-0.5">
-              {[...Array(5)].map((_, j) => (
-                <Star
-                  key={j}
-                  size={14}
-                  className={j < r.rating ? 'fill-yellow text-yellow' : 'text-gray/40'}
-                />
-              ))}
-            </div>
-            <p className="text-gray2 text-[0.875rem] leading-relaxed">{r.comment}</p>
-          </div>
-          <div className="flex items-center justify-between border-t border-white/[0.07] pt-4">
-            <div className="flex gap-4">
-              <button className="text-gray hover:text-teal flex items-center gap-1.5 text-[0.875rem]">
-                <Reply size={14} /> Reply
-              </button>
-              <button className="text-gray hover:text-red flex items-center gap-1.5 text-[0.875rem]">
-                <Trash2 size={14} /> Report Abuse
-              </button>
-            </div>
-            {r.status === 'Answered' && (
-              <div className="text-teal flex items-center gap-1.5 text-[0.875rem]">
-                <MessageCircle size={14} /> View Response
+              
+              <p className="text-gray2 text-[0.88rem] leading-relaxed mb-3 mt-3">{r.comment}</p>
+              
+              <div className="flex items-center justify-between pt-2">
+                 <div className="text-gray text-[0.7rem] font-bold tracking-widest uppercase">
+                    {r.date}
+                 </div>
+                 {r.status === 'Pending' ? (
+                   <button className="text-gray hover:border-teal hover:text-teal rounded border border-white/10 px-4 py-1.5 text-[0.75rem] font-bold transition-all">
+                     Reply
+                   </button>
+                 ) : (
+                   <span className={`rounded-full px-2 py-0.5 text-[0.62rem] font-bold uppercase tracking-widest ${r.statusC}`}>
+                     {r.status}
+                   </span>
+                 )}
               </div>
-            )}
-          </div>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   </div>
 );

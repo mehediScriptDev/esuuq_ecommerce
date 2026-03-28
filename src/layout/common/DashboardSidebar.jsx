@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
+import { logout } from '../../services/authService';
 
 const DashboardSidebar = ({ navSections, mobileOpen, onSelectItem }) => {
   const navigate = useNavigate();
@@ -50,7 +51,10 @@ const DashboardSidebar = ({ navSections, mobileOpen, onSelectItem }) => {
       <div className="mt-auto border-t border-white/[0.07] p-3">
         <button
           type="button"
-          onClick={() => navigate('/')}
+          onClick={async () => {
+            await logout();
+            navigate('/auth/login');
+          }}
           className="text-red hover:bg-red/10 flex w-full items-center gap-2.5 rounded px-3 py-2 text-left text-[0.82rem] transition-colors"
         >
           <LogOut size={16} /> Logout
