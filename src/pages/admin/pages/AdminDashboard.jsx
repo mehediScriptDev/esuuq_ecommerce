@@ -180,28 +180,36 @@ const AdminDashboard = ({ onNav }) => {
       {/* QUICK ACTIONS */}
       <div className="mb-6 lg:mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mt-6">
         <div className="bg-card border-border hover:border-teal flex cursor-pointer items-center gap-3.5 rounded-lg border p-4 transition-all hover:-translate-y-0.5" onClick={() => onNav?.('merchants')}>
-          <div className="text-[1.5rem]">✅</div>
+          <div className="flex items-center justify-center">
+            <CheckCircle className="h-6 w-6 text-teal" />
+          </div>
           <div>
             <div className="text-[0.95rem] font-medium text-white">Approve Merchants</div>
             <div className="text-gray text-[0.85rem]">3 pending</div>
           </div>
         </div>
         <div className="bg-card border-border hover:border-teal flex cursor-pointer items-center gap-3.5 rounded-lg border p-4 transition-all hover:-translate-y-0.5" onClick={() => onNav?.('orders')}>
-          <div className="text-[1.5rem]">📦</div>
+          <div className="flex items-center justify-center">
+            <Package className="h-6 w-6 text-white" />
+          </div>
           <div>
             <div className="text-[0.95rem] font-medium text-white">Manage Orders</div>
             <div className="text-gray text-[0.85rem]">12 need action</div>
           </div>
         </div>
         <div className="bg-card border-border hover:border-teal flex cursor-pointer items-center gap-3.5 rounded-lg border p-4 transition-all hover:-translate-y-0.5" onClick={() => onNav?.('coupons')}>
-          <div className="text-[1.5rem]">🏷️</div>
+          <div className="flex items-center justify-center">
+            <Tag className="h-6 w-6 text-white" />
+          </div>
           <div>
             <div className="text-[0.95rem] font-medium text-white">Create Coupon</div>
             <div className="text-gray text-[0.85rem]">Run promotions</div>
           </div>
         </div>
         <div className="bg-card border-border hover:border-teal flex cursor-pointer items-center gap-3.5 rounded-lg border p-4 transition-all hover:-translate-y-0.5" onClick={() => onNav?.('payouts')}>
-          <div className="text-[1.5rem]">💸</div>
+          <div className="flex items-center justify-center">
+            <DollarSign className="h-6 w-6 text-white" />
+          </div>
           <div>
             <div className="text-[0.95rem] font-medium text-white">Process Payouts</div>
             <div className="text-gray text-[0.85rem]">$12,400 pending</div>
