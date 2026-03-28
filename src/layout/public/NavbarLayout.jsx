@@ -130,12 +130,12 @@ const NavbarLayout = () => {
                   </div>
                 </div>
                 <div className="space-y-0.5 p-2">
-                  {/* <Link
+                  <Link
                     to="/dashboard"
                     className="text-gray2 hover:bg-teal/10 hover:text-teal flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition"
                   >
                     <User size={14} /> My Dashboard
-                  </Link> */}
+                  </Link>
                   <Link
                     to="/admin"
                     className="text-gray2 hover:bg-teal/10 hover:text-teal flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition"

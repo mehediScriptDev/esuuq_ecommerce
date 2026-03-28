@@ -26,7 +26,17 @@ const ProductDetailsView = lazy(
 const LoginView = lazy(() => import('../pages/public/public_Account/LoginView'));
 const RegisterView = lazy(() => import('../pages/public/public_Account/RegisterView'));
 const OTPView = lazy(() => import('../pages/public/public_Account/OTPView'));
-const UserDashboardView = lazy(() => import('../pages/public/public_Account/UserDashboardView'));
+
+// User Dashboard
+const UserView = lazy(() => import('../pages/users/UserView'));
+const UserDashboard = lazy(() => import('../pages/users/pages/UserDashboard'));
+const UserOrders = lazy(() => import('../pages/users/pages/UserOrders'));
+const UserTrackOrder = lazy(() => import('../pages/users/pages/UserTrackOrder'));
+const UserWishlist = lazy(() => import('../pages/users/pages/UserWishlist'));
+const UserProfile = lazy(() => import('../pages/users/pages/UserProfile'));
+const UserAddresses = lazy(() => import('../pages/users/pages/UserAddresses'));
+const UserPayments = lazy(() => import('../pages/users/pages/UserPayments'));
+const UserSettings = lazy(() => import('../pages/users/pages/UserSettings'));
 
 // Portals
 const AdminView = lazy(() => import('../pages/admin/AdminView'));
@@ -77,6 +87,16 @@ const merchantPathMap = {
   products: '/merchant/products',
 };
 
+const userPathMap = {
+  orders: '/dashboard/orders',
+  track: '/dashboard/track',
+  wishlist: '/dashboard/wishlist',
+  profile: '/dashboard/profile',
+  addresses: '/dashboard/addresses',
+  payments: '/dashboard/payments',
+  settings: '/dashboard/settings',
+};
+
 const AdminDashboardRoute = () => {
   const navigate = useNavigate();
   return <AdminDashboard onNav={(id) => navigate(adminPathMap[id] || '/admin')} />;
@@ -85,6 +105,11 @@ const AdminDashboardRoute = () => {
 const MerchantDashboardRoute = () => {
   const navigate = useNavigate();
   return <MerchantDashboard onNav={(id) => navigate(merchantPathMap[id] || '/merchant')} />;
+};
+
+const UserDashboardRoute = () => {
+  const navigate = useNavigate();
+  return <UserDashboard onNav={(id) => navigate(userPathMap[id] || '/dashboard')} />;
 };
 
 const MerchantProductsRoute = () => {
@@ -129,7 +154,6 @@ const router = createBrowserRouter(
         <Route path="health" element={wrap(HealthView)} />
         <Route path="cart" element={wrap(CartView)} />
         <Route path="product/:id" element={wrap(ProductDetailsView)} />
-        <Route path="dashboard" element={wrap(UserDashboardView)} />
         <Route path="*" element={wrap(NotFound)} />
       </Route>
 
@@ -137,6 +161,16 @@ const router = createBrowserRouter(
       <Route path="login" element={wrap(LoginView)} />
       <Route path="register" element={wrap(RegisterView)} />
       <Route path="otp" element={wrap(OTPView)} />
+      <Route path="dashboard" element={wrap(UserView)}>
+        <Route index element={wrapElement(<UserDashboardRoute />)} />
+        <Route path="orders" element={wrap(UserOrders)} />
+        <Route path="track" element={wrap(UserTrackOrder)} />
+        <Route path="wishlist" element={wrap(UserWishlist)} />
+        <Route path="profile" element={wrap(UserProfile)} />
+        <Route path="addresses" element={wrap(UserAddresses)} />
+        <Route path="payments" element={wrap(UserPayments)} />
+        <Route path="settings" element={wrap(UserSettings)} />
+      </Route>
       <Route path="admin" element={wrap(AdminView)}>
         <Route index element={wrapElement(<AdminDashboardRoute />)} />
         <Route path="orders" element={wrap(AdminOrders)} />
