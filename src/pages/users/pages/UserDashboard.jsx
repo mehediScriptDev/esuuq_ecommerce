@@ -1,86 +1,58 @@
-import React from 'react';
-import { ArrowRight, Heart, Package, Star, Truck } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { ArrowRight, Heart, Package, Star, Truck, XCircle } from 'lucide-react';
 import UserPageHeader from '../components/UserPageHeader';
 import UserPill from '../components/UserPill';
 import DashboardStats from '../../../components/DashboardStats';
+import LoadingFallback from '../../../router/components/LoadingFallback';
 
-const stats = [
-  {
-    label: 'Total Orders',
-    val: '14',
-    icon: Package,
-    bg: 'bg-teal/10',
-  },
-  {
-    label: 'Total Spent',
-    val: '$1,240',
-    icon: Truck,
-    bg: 'bg-blue-500/10',
-  },
-  {
-    label: 'Wishlist Items',
-    val: '5',
-    icon: Heart,
-    bg: 'bg-red/10',
-  },
-  {
-    label: 'Avg Rating',
-    val: '4.8',
-    icon: Star,
-    bg: 'bg-yellow/10',
-  },
-];
-
-const recentOrders = [
-  {
-    id: '#ESQ-00847',
-    date: 'Placed Mar 12, 2026',
-    desc: 'Wireless Earbuds Pro + 2 more items',
-    meta: 'Sold by TechZone MN · Standard Delivery',
-    total: '$392.95',
-    status: 'Delivered',
-    statusColor: 'text-green-500 bg-green-500/10',
-    images: ['https://loremflickr.com/300/300/electronics?seed=3', 'https://loremflickr.com/300/300/electronics?seed=4'],
-  },
-  {
-    id: '#ESQ-00846',
-    date: 'Placed Mar 12, 2026',
-    desc: 'Urban Runner Sneakers (Size 10)',
-    meta: 'Sold by SoleStyle · Express Delivery',
-    total: '$64.99',
-    status: 'In Transit',
-    statusColor: 'text-yellow bg-yellow/10',
-    images: ['https://loremflickr.com/300/300/fashion?seed=3'],
-  },
-  {
-    id: '#ESQ-00821',
-    date: 'Placed Feb 28, 2026',
-    desc: 'Premium Polarized Sunglasses',
-    meta: 'Sold by VisionX · Standard Delivery',
-    total: '$28.99',
-    status: 'Delivered',
-    statusColor: 'text-green-500 bg-green-500/10',
-    images: ['https://loremflickr.com/300/300/fashion?seed=4'],
-  },
-];
-
-const wishlisted = [
-  { id: 1, name: 'Premium Polarized Sunglasses', price: '$28.99', image: 'https://loremflickr.com/300/300/fashion?seed=4' },
-  { id: 2, name: 'Laptop Stand Adjustable', price: '$34.99', image: 'https://loremflickr.com/300/300/furniture?seed=3' },
-  { id: 3, name: 'Leather Crossbody Bag', price: '$54.99', image: 'https://loremflickr.com/300/300/fashion?seed=5' },
-  { id: 4, name: 'Indoor Plant Collection', price: '$39.99', image: 'https://loremflickr.com/300/300/plants?seed=1' },
-  { id: 5, name: 'Non-Stick Cookware Set', price: '$89.00', image: 'https://loremflickr.com/300/300/food?seed=1' },
-];
-
-const quickActions = [
-  { id: 'orders', label: 'View All Orders', sub: 'Track and manage your purchases' },
-  { id: 'track', label: 'Track Current Delivery', sub: 'Live progress for active packages' },
-  { id: 'addresses', label: 'Manage Addresses', sub: 'Set and update delivery locations' },
-  { id: 'settings', label: 'Account Settings', sub: 'Security and notification preferences' },
-];
+const iconMap = {
+  Package,
+  Truck,
+  Heart,
+  Star,
+};
 
 const UserDashboard = ({ onNav }) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('/data/user_dashboard.json');
+        setData(response.data);
+      } catch (err) {
+        setError('Failed to fetch dashboard data. Please try again later.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <LoadingFallback />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-64 flex-col items-center justify-center text-red">
+        <XCircle size={48} className="mb-4" />
+        <h2 className="text-xl font-semibold">An Error Occurred</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  const stats = data?.stats || [];
+  const recentOrders = data?.recentOrders || [];
+  const wishlisted = data?.wishlisted || [];
+  const quickActions = data?.quickActions || [];
+
   return (
     <div className="animate-[fadeUp_0.4s_ease_both]">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -92,15 +64,17 @@ const UserDashboard = ({ onNav }) => {
           }
           subtitle="Welcome back, Ahmed. Here is your shopping summary."
         />
-        <Link
-          to="/"
+
+        <button
+          type="button"
+          onClick={() => onNav?.('orders')}
           className="text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border border-white/[0.07] px-4 py-1.5 text-[0.8rem] transition-colors"
         >
-          Back to Store <ArrowRight size={14} />
-        </Link>
+          Go to Orders <ArrowRight size={14} />
+        </button>
       </div>
 
-      <DashboardStats stats={stats} />
+      <DashboardStats stats={stats.map((s) => ({ ...s, icon: iconMap[s.icon] }))} />
 
       <div className="grid grid-cols-1 gap-4 min-[1100px]:grid-cols-[1.55fr_1fr]">
         <div className="space-y-4">
@@ -137,17 +111,13 @@ const UserDashboard = ({ onNav }) => {
                           key={`${order.id}-${index}`}
                           className="h-9 w-9 overflow-hidden rounded-md border border-white/[0.07]"
                         >
-                          <img
-                            src={img}
-                            alt={`order-item-${index}`}
-                            className="h-full w-full object-cover"
-                          />
+                          <img src={img} alt={`order-item-${index}`} className="h-full w-full object-cover" />
                         </div>
                       ))}
                     </div>
 
                     <div className="min-w-42.5 flex-1">
-                      <div className="text-[0.875rem] lg:text-[1rem] font-medium text-white">{order.desc}</div>
+                      <div className="text-[0.875rem] font-medium text-white lg:text-[1rem]">{order.desc}</div>
                       <div className="text-gray mt-0.5 text-[0.875rem]">{order.meta}</div>
                     </div>
 
@@ -173,7 +143,10 @@ const UserDashboard = ({ onNav }) => {
             <h3 className="mb-4 font-['Syne'] text-[1rem] font-bold text-white">Recently Wishlisted</h3>
             <div className="grid grid-cols-2 gap-2.5">
               {wishlisted.map((item) => (
-                <div key={item.id} className="group block overflow-hidden rounded border border-white/[0.07] bg-navy3 transition-all hover:border-teal/30">
+                <div
+                  key={item.id}
+                  className="group block overflow-hidden rounded border border-white/[0.07] bg-navy3 transition-all hover:border-teal/30"
+                >
                   <div className="relative flex h-20 items-center justify-center overflow-hidden bg-[#0F172A]">
                     <img
                       src={item.image}
@@ -182,7 +155,7 @@ const UserDashboard = ({ onNav }) => {
                     />
                   </div>
                   <div className="p-2">
-                    <div className="truncate text-[0.875rem] xl:text-[1rem] font-medium text-white">{item.name}</div>
+                    <div className="truncate text-[0.875rem] font-medium text-white xl:text-[1rem]">{item.name}</div>
                     <div className="text-teal text-[0.875rem]">{item.price}</div>
                   </div>
                 </div>

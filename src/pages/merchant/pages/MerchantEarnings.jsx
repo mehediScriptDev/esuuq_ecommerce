@@ -1,12 +1,11 @@
 import React from 'react';
 import { Download } from 'lucide-react';
+import MerchantPageHeader from '../components/MerchantPageHeader';
+import MerchantPill from '../components/MerchantPill';
 const Pill = ({ children, c }) => (
-  <span
-    className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}
-  >
-    <span className="h-1.5 w-1.5 rounded-full bg-current" />
+  <MerchantPill className={c}>
     {children}
-  </span>
+  </MerchantPill>
 );
 const barData = [
   { l: 'Jan', h: '50%', v: '$11.2k' },
@@ -47,15 +46,8 @@ const rows = [
 ];
 const MerchantEarnings = ({ onNav }) => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
+    <MerchantPageHeader title="Earnings" highlight="Dashboard" subtitle="Track your revenue, commissions, and settlements" />
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.25rem] font-bold text-white">
-          Earnings <span className="text-teal">Dashboard</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.78rem]">
-          Track your revenue, commissions, and settlements
-        </p>
-      </div>
       <div className="flex gap-3">
         <button className="text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border border-white/[0.07] px-4 py-1.5 text-[0.8rem]">
           <Download size={14} /> Download Report
@@ -77,7 +69,7 @@ const MerchantEarnings = ({ onNav }) => (
         <div className="mt-1 font-['Syne'] text-[2.2rem] leading-tight font-extrabold text-white">
           $4,320.00
         </div>
-        <div className="text-gray mt-1 text-[0.78rem]">Next payout: March 18, 2026</div>
+        <div className="text-gray mt-1 text-[0.875rem]">Next payout: March 18, 2026</div>
       </div>
       <div className="flex flex-wrap gap-6">
         {[
@@ -90,7 +82,7 @@ const MerchantEarnings = ({ onNav }) => (
             <div className={`font-['Syne'] text-[1.1rem] font-bold ${s.c || 'text-white'}`}>
               {s.v}
             </div>
-            <div className="text-gray text-[0.68rem]">{s.l}</div>
+            <div className="text-gray text-[0.875rem]">{s.l}</div>
           </div>
         ))}
       </div>
@@ -105,7 +97,7 @@ const MerchantEarnings = ({ onNav }) => (
     </div>
     {/* Chart */}
     <div className="bg-card mb-5 rounded-md border border-white/[0.07] p-5">
-      <h3 className="mb-4 font-['Syne'] text-[0.88rem] font-bold text-white">
+      <h3 className="mb-4 font-['Syne'] text-[1rem] font-bold text-white">
         Monthly Earnings (2026)
       </h3>
       <div className="relative flex h-[150px] items-end gap-2 pb-6">
@@ -128,7 +120,7 @@ const MerchantEarnings = ({ onNav }) => (
     {/* Commission Table */}
     <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
       <div className="border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[0.85rem] font-bold text-white">Commission Breakdown</h3>
+        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">Commission Breakdown</h3>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -144,7 +136,7 @@ const MerchantEarnings = ({ onNav }) => (
               ].map((h) => (
                 <th
                   key={h}
-                  className="text-gray px-4 py-2.5 text-left text-[0.68rem] font-semibold tracking-widest whitespace-nowrap uppercase"
+                  className="text-gray px-4 py-2.5 text-left text-[0.75rem] font-semibold tracking-widest whitespace-nowrap uppercase"
                 >
                   {h}
                 </th>
@@ -154,11 +146,11 @@ const MerchantEarnings = ({ onNav }) => (
           <tbody>
             {rows.map((r) => (
               <tr key={r.period} className="border-b border-white/[0.07] last:border-b-0">
-                <td className="px-4 py-3 text-[0.82rem] text-white">{r.period}</td>
-                <td className="px-4 py-3 text-[0.82rem] text-white">{r.gross}</td>
-                <td className="px-4 py-3 text-[0.82rem] text-white">{r.rate}</td>
-                <td className="text-red px-4 py-3 text-[0.82rem]">{r.comm}</td>
-                <td className="text-teal px-4 py-3 text-[0.82rem] font-medium">{r.net}</td>
+                <td className="px-4 py-3 text-[0.875rem] text-white">{r.period}</td>
+                <td className="px-4 py-3 text-[0.875rem] text-white">{r.gross}</td>
+                <td className="px-4 py-3 text-[0.875rem] text-white">{r.rate}</td>
+                <td className="text-red px-4 py-3 text-[0.875rem]">{r.comm}</td>
+                <td className="text-teal px-4 py-3 text-[0.875rem] font-medium">{r.net}</td>
                 <td className="px-4 py-3">
                   <Pill c={r.sc}>{r.status}</Pill>
                 </td>

@@ -1,103 +1,108 @@
-import { Eye, EyeOff } from 'lucide-react';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-
-const Logo = () => (
-  <div className="mb-10 flex items-center gap-2">
-    <Link to="/">
-      <img src="/img/logo-white.png" alt="" />
-    </Link>
-  </div>
-);
-
-const TextInput = ({ label, type = 'text', placeholder, value, onChange, right }) => (
-  <label className="block">
-    <span className="mb-1 block text-sm text-[#111b2b]">{label}</span>
-    <div className="relative">
-      <input
-        type={type}
-        className="w-full rounded-md border border-gray-300 px-3 py-3 text-[15px] transition outline-none focus:border-[#2f66ff] focus:ring-2 focus:ring-[#2f66ff]/20"
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-      />
-      {right ? <div className="absolute inset-y-0 right-3 flex items-center">{right}</div> : null}
-    </div>
-  </label>
-);
-
-const EyeIcon = ({ show, onClick }) => (
-  <button
-    type="button"
-    aria-label={show ? 'Hide password' : 'Show password'}
-    onClick={onClick}
-    className="text-gray-500 hover:text-[#2f66ff]"
-  >
-    {show ? <EyeOff /> : <Eye />}
-  </button>
-);
+import { Link, useNavigate } from 'react-router-dom';
+import AuthLayout from './components/AuthLayout';
+import { AuthInput, AuthButton, SocialButton } from './components/AuthFormComponents';
+import { register } from '../../services/authService';
 
 const RegisterView = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
-    phoneNumber: '',
+    phone: '',
     password: '',
-    confirmPassword: '',
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleChange = (field) => (e) => {
-    setFormData({ ...formData, [field]: e.target.value });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission
+    setLoading(true);
+    setError(null);
+    try {
+      await register(formData);
+      navigate('/auth/otp');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <section className="min-h-screen bg-[#f9fafb]">
-      <div className="grid grid-cols-1 items-center md:grid-cols-2">
-        {/* Right: image */}
-        <div className="order-2 md:order-1">
-          <img src="/img/login.png" alt="City skyline" className="h-screen w-full object-cover" />
+    <AuthLayout
+      title="Create Account"
+      subtitle="Already have one?"
+      subtitleLink="/auth/login"
+      subtitleLinkText="Sign in here"
+    >
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+            <SocialButton icon="google">Google</SocialButton>
+            <SocialButton icon="facebook">Facebook</SocialButton>
         </div>
-        {/* Left: form */}
-        <div className="order-1 px-6 py-10 md:order-2 md:p-24 lg:px-32">
-          <Logo />
 
-          <h1 className="mb-2 text-[2rem] leading-tight font-semibold text-[#111b2b]">Sign up</h1>
-          <p className="mb-8 text-[15px] text-[#6b7280]">
-            Let's get you all set up so you can access your personal account.
-          </p>
+        <div className="flex items-center text-center">
+            <hr className="flex-grow border-border"/>
+            <span className="px-2 text-sm text-gray-400">or sign up with email</span>
+            <hr className="flex-grow border-border"/>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* First Name and Last Name in one row */}
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-              <TextInput
-                label="First Name"
-                type="text"
-                placeholder="Nayem"
-                value={formData.firstName}
-                onChange={handleChange('firstName')}
-              />
-              <TextInput
-                label="Last Name"
-                type="text"
-                placeholder="Islam"
-                value={formData.lastName}
-                onChange={handleChange('lastName')}
-              />
+        <form className="space-y-4" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="text-sm font-medium text-gray-400">First Name</label>
+                    <AuthInput id="firstName" type="text" placeholder="John" icon="user" value={formData.firstName} onChange={handleChange} />
+                </div>
+                <div>
+                    <label className="text-sm font-medium text-gray-400">Last Name</label>
+                    <AuthInput id="lastName" type="text" placeholder="Doe" icon="user" value={formData.lastName} onChange={handleChange} />
+                </div>
             </div>
+          <div>
+            <label className="text-sm font-medium text-gray-400">Email Address</label>
+            <AuthInput id="email" type="email" placeholder="you@email.com" icon="mail" value={formData.email} onChange={handleChange} />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-400">Phone Number</label>
+            <AuthInput id="phone" type="tel" placeholder="(555) 000-0000" icon="smartphone" hasPrefix={true} prefix="+1" value={formData.phone} onChange={handleChange} />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-400">Password</label>
+            <AuthInput
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Min 8 characters"
+              icon={showPassword ? 'eyeOff' : 'eye'}
+              onIconClick={() => setShowPassword(!showPassword)}
+              value={formData.password}
+              onChange={handleChange}
+            />
+          </div>
+          {error && <p className="text-sm text-red-500">{error}</p>}
+          <div className="flex items-start">
+            <input id="terms" type="checkbox" className="w-4 h-4 mt-1 rounded accent-teal" required />
+            <label htmlFor="terms" className="ml-2 text-sm text-gray-400">
+              I agree to the <Link to="#" className="text-teal hover:underline">Terms of Service</Link> and <Link to="#" className="text-teal hover:underline">Privacy Policy</Link>
+            </label>
+          </div>
+          <AuthButton type="submit" disabled={loading}>
+            {loading ? 'Creating Account...' : 'Create Account →'}
+          </AuthButton>
+        </form>
+      </div>
+    </AuthLayout>
+  );
+};
 
-            {/* Email and Phone Number in one row */}
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-              <TextInput
-                label="Email"
+export default RegisterView;
+
                 type="email"
                 placeholder="john.doe@gmail.com"
                 value={formData.email}

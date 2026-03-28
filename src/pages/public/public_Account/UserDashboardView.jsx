@@ -63,7 +63,7 @@ const UserDashboardView = () => {
     <div className="container mx-auto animate-[fadeUp_0.4s_ease_both] px-4 py-8 min-[640px]:px-8">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="from-teal text-navy flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br to-blue-500 font-['Syne'] text-[1.8rem] font-bold shadow-lg">
+          <div className="from-teal text-navy flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br to-blue-500 font-['Syne'] text-[1.8rem] font-bold shadow-lg">
             A
           </div>
           <div>
@@ -131,7 +131,7 @@ const UserDashboardView = () => {
                   {recentOrders.map((o) => (
                     <tr
                       key={o.id}
-                      className="border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-white/[0.02]"
+                      className="border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-white/2"
                     >
                       <td className="text-teal px-6 py-4 font-medium">{o.id}</td>
                       <td className="text-gray2 px-6 py-4">{o.date}</td>
@@ -162,7 +162,7 @@ const UserDashboardView = () => {
               return (
                 <button
                   key={i}
-                  className="group flex w-full items-center justify-between border-b border-white/[0.07] px-6 py-4 text-left transition-colors last:border-b-0 hover:bg-white/[0.02]"
+                  className="group flex w-full items-center justify-between border-b border-white/[0.07] px-6 py-4 text-left transition-colors last:border-b-0 hover:bg-white/2"
                 >
                   <div className="flex items-center gap-4">
                     <div className="bg-navy3/50 text-gray group-hover:text-teal group-hover:bg-teal/5 flex h-10 w-10 items-center justify-center rounded-full transition-all">

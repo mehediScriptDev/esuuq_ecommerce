@@ -23,9 +23,9 @@ const ProductDetailsView = lazy(
 );
 
 // Account Pages
-const LoginView = lazy(() => import('../pages/public/public_Account/LoginView'));
-const RegisterView = lazy(() => import('../pages/public/public_Account/RegisterView'));
-const OTPView = lazy(() => import('../pages/public/public_Account/OTPView'));
+const LoginView = lazy(() => import('../pages/auth/LoginView'));
+const RegisterView = lazy(() => import('../pages/auth/RegisterView'));
+const OTPView = lazy(() => import('../pages/auth/otp/OTPView'));
 
 // User Dashboard
 const UserView = lazy(() => import('../pages/users/UserView'));
@@ -158,9 +158,11 @@ const router = createBrowserRouter(
       </Route>
 
       {/* Auth & Dashboards - No marketplace layout */}
-      <Route path="login" element={wrap(LoginView)} />
-      <Route path="register" element={wrap(RegisterView)} />
-      <Route path="otp" element={wrap(OTPView)} />
+      <Route path="auth">
+        <Route path="login" element={wrap(LoginView)} />
+        <Route path="register" element={wrap(RegisterView)} />
+        <Route path="otp" element={wrap(OTPView)} />
+      </Route>
       <Route path="dashboard" element={wrap(UserView)}>
         <Route index element={wrapElement(<UserDashboardRoute />)} />
         <Route path="orders" element={wrap(UserOrders)} />

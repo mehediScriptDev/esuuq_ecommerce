@@ -70,13 +70,13 @@ const LoginView = () => {
         <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
-            className="bg-navy3/20 flex items-center justify-center gap-2 rounded border border-white/[0.07] px-4 py-2.5 text-[0.82rem] font-medium text-white transition-colors hover:bg-white/[0.04]"
+            className="bg-navy3/20 flex items-center justify-center gap-2 rounded border border-white/[0.07] px-4 py-2.5 text-[0.82rem] font-medium text-white transition-colors hover:bg-white/4"
           >
             <Apple size={16} /> Apple
           </button>
           <button
             type="button"
-            className="bg-navy3/20 flex items-center justify-center gap-2 rounded border border-white/[0.07] px-4 py-2.5 text-[0.82rem] font-medium text-white transition-colors hover:bg-white/[0.04]"
+            className="bg-navy3/20 flex items-center justify-center gap-2 rounded border border-white/[0.07] px-4 py-2.5 text-[0.82rem] font-medium text-white transition-colors hover:bg-white/4"
           >
             <Github size={16} /> Github
           </button>

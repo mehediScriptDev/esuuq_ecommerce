@@ -1,103 +1,86 @@
-import { EyeIcon, EyeOff } from 'lucide-react';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-
-const Logo = () => (
-  <div className="mb-10 flex items-center gap-2">
-    <Link to="/">
-      <img src="/img/logo-white.png" alt="" />
-    </Link>
-  </div>
-);
-
-const TextInput = ({ label, type = 'text', placeholder, value, onChange, right }) => (
-  <label className="block">
-    <span className="mb-1 block text-sm text-[#111b2b]">{label}</span>
-    <div className="relative">
-      <input
-        type={type}
-        className="w-full rounded-md border border-gray-300 px-3 py-3 text-[15px] transition outline-none focus:border-[#2f66ff] focus:ring-2 focus:ring-[#2f66ff]/20"
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-      />
-      {right ? <div className="absolute inset-y-0 right-3 flex items-center">{right}</div> : null}
-    </div>
-  </label>
-);
+import { Link, useNavigate } from 'react-router-dom';
+import AuthLayout from './components/AuthLayout';
+import { AuthInput, AuthButton, SocialButton } from './components/AuthFormComponents';
+import { login } from '../../services/authService';
 
 const LoginView = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [show, setShow] = useState(false);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const { token, user } = await login(email, password);
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <section className="bg-[#f9fafb]">
-      <div className="grid grid-cols-1 items-center md:grid-cols-2">
-        {/* Left: form */}
-        <div className="px-6 py-10 md:p-24 lg:px-32">
-          <Logo />
-
-          <h1 className="mb-2 text-[2rem] leading-tight font-semibold text-[#111b2b]">Login</h1>
-          <p className="mb-8 text-[15px] text-[#6b7280]">Login to access your travelwise account</p>
-
-          <form className="space-y-5">
-            <TextInput
-              label="Email"
-              type="email"
-              placeholder="john.doe@gmail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-
-            <TextInput
-              label="Password"
-              type={show ? 'text' : 'password'}
-              placeholder="••••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              right={
-                <button
-                  type="button"
-                  aria-label={show ? 'Hide password' : 'Show password'}
-                  onClick={() => setShow((s) => !s)}
-                  className="text-gray-500 hover:text-[#2f66ff]"
-                >
-                  {show ? <EyeOff /> : <EyeIcon />}
-                </button>
-              }
-            />
-
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-[14px] text-[#111b2b]">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-[#2f66ff] focus:ring-[#2f66ff]"
-                />
-                Remember me
-              </label>
-              <Link to="/auth/reset-password" className="text-[14px] text-rose-400 hover:underline">
-                Forgot Password
-              </Link>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full rounded-md bg-[#2f66ff] py-3 font-medium text-white transition hover:bg-[#1f4fe0]"
-            >
-              Login
-            </button>
-          </form>
-
-          <p className="mt-6 text-center text-[14px] text-[#6b7280]">
-            Don't have an account?{' '}
-            <Link to="/auth/register" className="text-rose-400 hover:underline">
-              Sign up
-            </Link>
-          </p>
+    <AuthLayout
+      title="Sign In"
+      subtitle="Don't have an account?"
+      subtitleLink="/auth/register"
+      subtitleLinkText="Create one free"
+    >
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+            <SocialButton icon="google">Google</SocialButton>
+            <SocialButton icon="facebook">Facebook</SocialButton>
         </div>
 
-        {/* Right: image */}
+        <div className="flex items-center text-center">
+            <hr className="flex-grow border-border"/>
+            <span className="px-2 text-sm text-gray-400">or continue with email</span>
+            <hr className="flex-grow border-border"/>
+        </div>
+
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <label className="text-sm font-medium text-gray-400">Email Address</label>
+            <AuthInput id="email" type="email" placeholder="you@email.com" icon="mail" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-400">Password</label>
+            <AuthInput
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Enter your password"
+              icon={showPassword ? 'eyeOff' : 'eye'}
+              onIconClick={() => setShowPassword(!showPassword)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          {error && <p className="text-sm text-red-500">{error}</p>}
+          <div className="text-right">
+            <Link to="#" className="text-sm font-medium text-teal hover:underline">
+              Forgot password?
+            </Link>
+          </div>
+          <AuthButton type="submit" disabled={loading}>
+            {loading ? 'Signing In...' : 'Sign In →'}
+          </AuthButton>
+        </form>
+      </div>
+    </AuthLayout>
+  );
+};
+
+export default LoginView;
+
         <div className="">
           <img src="/img/login.png" alt="City skyline" className="h-screen w-full object-cover" />
         </div>

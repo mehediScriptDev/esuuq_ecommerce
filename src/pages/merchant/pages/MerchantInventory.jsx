@@ -1,12 +1,11 @@
 import React from 'react';
 import { Package, AlertTriangle, XCircle, Plus } from 'lucide-react';
+import MerchantPageHeader from '../components/MerchantPageHeader';
+import MerchantPill from '../components/MerchantPill';
 const Pill = ({ children, c }) => (
-  <span
-    className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}
-  >
-    <span className="h-1.5 w-1.5 rounded-full bg-current" />
+  <MerchantPill className={c}>
     {children}
-  </span>
+  </MerchantPill>
 );
 const stats = [
   { icon: Package, bg: 'bg-teal/10', val: '248', label: 'Total Products' },
@@ -77,17 +76,7 @@ const items = [
 ];
 const MerchantInventory = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
-    <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.25rem] font-bold text-white">
-          Inventory <span className="text-teal">Management</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.78rem]">Track and update stock levels</p>
-      </div>
-      <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded px-4 py-1.5 text-[0.8rem] font-medium">
-        <Plus size={14} /> Restock Order
-      </button>
-    </div>
+    <MerchantPageHeader title="Inventory" highlight="Management" subtitle="Track and update stock levels" />
     <div className="mb-5 grid grid-cols-1 gap-4 min-[580px]:grid-cols-3">
       {stats.map((s) => {
         const Icon = s.icon;
@@ -99,20 +88,20 @@ const MerchantInventory = () => (
               </div>
             </div>
             <div className="font-['Syne'] text-[1.7rem] font-extrabold text-white">{s.val}</div>
-            <div className="text-gray mt-1 text-[0.72rem]">{s.label}</div>
+            <div className="text-gray mt-1 text-[0.875rem]">{s.label}</div>
           </div>
         );
       })}
     </div>
     <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[0.85rem] font-bold text-white">Stock Levels</h3>
+        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">Stock Levels</h3>
         <div className="flex gap-2">
           <input
-            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none"
+            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.8rem] text-white outline-none"
             placeholder="Search..."
           />
-          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none">
+          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.8rem] outline-none">
             <option>All</option>
             <option>Low Stock</option>
             <option>Out of Stock</option>
@@ -135,7 +124,7 @@ const MerchantInventory = () => (
               ].map((h) => (
                 <th
                   key={h}
-                  className="text-gray px-4 py-2.5 text-left text-[0.68rem] font-semibold tracking-widest whitespace-nowrap uppercase"
+                  className="text-gray px-4 py-2.5 text-left text-[0.75rem] font-semibold tracking-widest whitespace-nowrap uppercase"
                 >
                   {h}
                 </th>
@@ -148,14 +137,14 @@ const MerchantInventory = () => (
                 key={i.sku}
                 className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/[0.02]"
               >
-                <td className="px-4 py-3 text-[0.82rem] text-white">{i.name}</td>
-                <td className="text-gray px-4 py-3 text-[0.82rem]">{i.sku}</td>
-                <td className="px-4 py-3 text-[0.82rem] text-white">{i.inStock}</td>
-                <td className="px-4 py-3 text-[0.82rem] text-white">{i.reserved}</td>
-                <td className={`px-4 py-3 text-[0.82rem] font-semibold ${i.avColor}`}>
+                <td className="px-4 py-3 text-[0.875rem] text-white">{i.name}</td>
+                <td className="text-gray px-4 py-3 text-[0.875rem]">{i.sku}</td>
+                <td className="px-4 py-3 text-[0.875rem] text-white">{i.inStock}</td>
+                <td className="px-4 py-3 text-[0.875rem] text-white">{i.reserved}</td>
+                <td className={`px-4 py-3 text-[0.875rem] font-semibold ${i.avColor}`}>
                   {i.available}
                 </td>
-                <td className="text-gray px-4 py-3 text-[0.82rem]">{i.alert}</td>
+                <td className="text-gray px-4 py-3 text-[0.875rem]">{i.alert}</td>
                 <td className="px-4 py-3">
                   <Pill c={i.sc}>{i.status}</Pill>
                 </td>
