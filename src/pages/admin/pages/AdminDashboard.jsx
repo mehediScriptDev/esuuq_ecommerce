@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   DollarSign,
   Package,
@@ -10,94 +11,145 @@ import {
   Tag,
   CreditCard,
   ArrowRight,
+  XCircle,
 } from 'lucide-react';
 import DashboardPageHeader from '../components/DashboardPageHeader';
-import AdminStats from '../components/AdminStats';
+import DashboardStats from '../../../components/DashboardStats';
+import LoadingFallback from '../../../router/components/LoadingFallback';
 
-const stats = [
-  {
-    icon: DollarSign,
-    iconBg: 'bg-teal/10',
-    label: 'Total Revenue (Month)',
-    val: '$84,320',
-    trend: '↑ 18.4%',
-    up: true,
-  },
-  {
-    icon: Package,
-    iconBg: 'bg-purple-500/10',
-    label: 'Total Orders',
-    val: '1,847',
-    trend: '↑ 12.1%',
-    up: true,
-  },
-  {
-    icon: Store,
-    iconBg: 'bg-yellow/10',
-    label: 'Active Merchants',
-    val: '312',
-    trend: '↑ 5.3%',
-    up: true,
-  },
-  {
-    icon: Users,
-    iconBg: 'bg-red/10',
-    label: 'Total Customers',
-    val: '24,580',
-    trend: '↓ 2.1%',
-    up: false,
-  },
-];
+const iconMap = {
+  DollarSign,
+  Package,
+  Store,
+  Users,
+  TrendingUp,
+  TrendingDown,
+  CheckCircle,
+  Tag,
+  CreditCard,
+};
 
-const recentOrders = [
-  {
-    id: '#ESQ-00847',
-    customer: 'Ahmed M.',
-    amount: '$392.95',
-    status: 'Delivered',
-    statusColor: 'text-green-500 bg-green-500/10',
-    date: 'Mar 12',
-  },
-  {
-    id: '#ESQ-00846',
-    customer: 'Fatima O.',
-    amount: '$124.50',
-    status: 'Shipping',
-    statusColor: 'text-yellow bg-yellow/10',
-    date: 'Mar 12',
-  },
-  {
-    id: '#ESQ-00845',
-    customer: 'James K.',
-    amount: '$89.00',
-    status: 'Processing',
-    statusColor: 'text-blue-500 bg-blue-500/10',
-    date: 'Mar 11',
-  },
-  {
-    id: '#ESQ-00844',
-    customer: 'Sara L.',
-    amount: '$214.99',
-    status: 'Delivered',
-    statusColor: 'text-green-500 bg-green-500/10',
-    date: 'Mar 11',
-  },
-  {
-    id: '#ESQ-00843',
-    customer: 'David P.',
-    amount: '$49.99',
-    status: 'Cancelled',
-    statusColor: 'text-red bg-red/10',
-    date: 'Mar 10',
-  },
-];
+const AdminDashboard = ({ onNav }) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-const activities = [
-  {
-    icon: Store,
-    bg: 'bg-teal/10',
-    text: (
-      <>
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('/data/admin_dashboard.json');
+        setData(response.data);
+      } catch (err) {
+        setError('Failed to fetch dashboard data. Please try again later.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <LoadingFallback />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-red-500">
+        <XCircle size={48} className="mb-4" />
+        <h2 className="text-xl font-semibold">An Error Occurred</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  const { stats, recentOrders, activities, quickLinks } = data;
+
+  return (
+    <div className="animate-[fadeUp_0.4s_ease_both]">
+      <DashboardPageHeader
+        title="Admin Dashboard"
+        subtitle="Welcome back, Admin. Here's a summary of your marketplace."
+      />
+
+      <DashboardStats stats={stats.map(s => ({...s, icon: iconMap[s.icon]}))} />
+
+      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
+        {/* Recent Orders */}
+        <div className="lg:col-span-2">
+          <h3 className="mb-4 text-lg font-bold text-white font-syne">Recent Orders</h3>
+          <div className="bg-card border border-border rounded-lg">
+            <table className="w-full text-left">
+              <thead className="border-b border-border">
+                <tr>
+                  <th className="p-4 text-sm font-semibold text-gray-400">Order ID</th>
+                  <th className="p-4 text-sm font-semibold text-gray-400">Customer</th>
+                  <th className="p-4 text-sm font-semibold text-gray-400">Amount</th>
+                  <th className="p-4 text-sm font-semibold text-gray-400">Status</th>
+                  <th className="p-4 text-sm font-semibold text-gray-400">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentOrders.map((order) => (
+                  <tr key={order.id} className="border-b border-border last:border-none">
+                    <td className="p-4 text-sm font-medium text-teal">{order.id}</td>
+                    <td className="p-4 text-sm text-white">{order.customer}</td>
+                    <td className="p-4 text-sm text-white">{order.amount}</td>
+                    <td className="p-4 text-sm">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${order.statusColor}`}>{order.status}</span>
+                    </td>
+                    <td className="p-4 text-sm text-gray-400">{order.date}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div>
+          <h3 className="mb-4 text-lg font-bold text-white font-syne">Recent Activity</h3>
+          <div className="space-y-4">
+            {activities.map((activity, i) => {
+              const ActivityIcon = iconMap[activity.icon];
+              return (
+                <div key={i} className="flex items-start gap-3">
+                  <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full ${activity.bg}`}>
+                    <ActivityIcon className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-white" dangerouslySetInnerHTML={{ __html: activity.text }} />
+                    <p className="text-xs text-gray-400">{activity.time}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Links */}
+      <div className="mt-8">
+        <h3 className="mb-4 text-lg font-bold text-white font-syne">Quick Links</h3>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {quickLinks.map((link) => (
+            <button
+              key={link.id}
+              onClick={() => onNav(link.id)}
+              className="flex items-center justify-between rounded-lg bg-card p-4 text-left border border-border hover:border-teal transition-colors"
+            >
+              <span className="font-semibold text-white">{link.label}</span>
+              <ArrowRight size={16} className="text-gray-400" />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;
         <strong className="text-teal">TechZone MN</strong> approved as merchant
       </>
     ),
@@ -188,7 +240,7 @@ const AdminDashboard = ({ onNav }) => (
     </div>
 
     {/* Stats */}
-    <AdminStats stats={stats} />
+    <DashboardStats stats={stats} />
 
     {/* Charts Row */}
     <div className="mb-6 grid grid-cols-1 gap-4 min-[1100px]:grid-cols-[2fr_1fr]">

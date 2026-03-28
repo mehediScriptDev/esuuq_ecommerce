@@ -1,5 +1,6 @@
 import React from 'react';
 import { Star, MessageCircle, Reply, Trash2, Calendar } from 'lucide-react';
+import MerchantPageHeader from '../components/MerchantPageHeader';
 
 const reviews = [
   {
@@ -43,15 +44,8 @@ const reviews = [
 
 const MerchantReviews = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
-    <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.25rem] font-bold text-white">
-          Customer <span className="text-teal">Reviews</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.78rem]">
-          Monitor and respond to your customers’ feedback
-        </p>
-      </div>
+    <MerchantPageHeader title="Customer" highlight="Reviews" subtitle="Monitor and respond to your customers' feedback" />
+    <div className="mb-4 flex items-center justify-between gap-4">
       <div className="flex items-center gap-3">
         <div className="text-center">
           <div className="text-[1.8rem] font-extrabold text-white">4.9</div>
@@ -88,7 +82,7 @@ const MerchantReviews = () => (
                 {r.name.charAt(0)}
               </div>
               <div>
-                <div className="text-[0.88rem] font-bold text-white">{r.name}</div>
+                <div className="text-[1rem] font-bold text-white">{r.name}</div>
                 <div className="text-gray flex items-center gap-3 text-[0.72rem]">
                   <span className="flex items-center gap-1">
                     <Calendar size={12} /> {r.date}
@@ -111,19 +105,19 @@ const MerchantReviews = () => (
                 />
               ))}
             </div>
-            <p className="text-gray2 text-[0.85rem] leading-relaxed">{r.comment}</p>
+            <p className="text-gray2 text-[0.875rem] leading-relaxed">{r.comment}</p>
           </div>
           <div className="flex items-center justify-between border-t border-white/[0.07] pt-4">
             <div className="flex gap-4">
-              <button className="text-gray hover:text-teal flex items-center gap-1.5 text-[0.78rem]">
+              <button className="text-gray hover:text-teal flex items-center gap-1.5 text-[0.875rem]">
                 <Reply size={14} /> Reply
               </button>
-              <button className="text-gray hover:text-red flex items-center gap-1.5 text-[0.78rem]">
+              <button className="text-gray hover:text-red flex items-center gap-1.5 text-[0.875rem]">
                 <Trash2 size={14} /> Report Abuse
               </button>
             </div>
             {r.status === 'Answered' && (
-              <div className="text-teal flex items-center gap-1.5 text-[0.75rem]">
+              <div className="text-teal flex items-center gap-1.5 text-[0.875rem]">
                 <MessageCircle size={14} /> View Response
               </div>
             )}

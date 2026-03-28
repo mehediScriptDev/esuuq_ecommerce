@@ -108,17 +108,21 @@ const NavbarLayout = () => {
 
         <div className="flex items-center gap-1.5 min-[640px]:gap-2">
           <div className="group relative order-last min-[640px]:order-first">
-            <Link
-              to="/login"
-              className="icon-btn text-gray2 hover:text-teal flex items-center rounded-sm px-1.5 py-2 no-underline transition hover:bg-[rgba(0,201,167,0.15)] min-[900px]:px-[0.7rem]"
+            <button
+              onClick={() => navigate('/dashboard/wishlist')}
+              className="icon-btn text-gray2 hover:text-teal rounded-sm px-2 py-2 transition hover:bg-[rgba(0,201,167,0.15)]"
+              title="Wishlist"
+            >
+              <Heart size={20} />
+            </button>
+
+            <button
+              onClick={() => navigate('/auth/login')}
+              className="icon-btn text-gray2 hover:text-teal rounded-sm px-2 py-2 transition hover:bg-[rgba(0,201,167,0.15)]"
               title="Account"
             >
-              <User size={20} className="text-[1.1rem]" />
-              <div className="ml-1 hidden text-[0.7rem] min-[900px]:block">
-                <div className="text-gray text-[0.65rem]">Hello, Sign in</div>
-                <div className="text-[0.82rem] font-medium text-white">Account</div>
-              </div>
-            </Link>
+              <User size={20} />
+            </button>
 
             {/* Account Dropdown */}
             <div className="invisible absolute top-full right-0 z-400 pt-2 group-hover:visible">
@@ -130,12 +134,12 @@ const NavbarLayout = () => {
                   </div>
                 </div>
                 <div className="space-y-0.5 p-2">
-                  {/* <Link
+                  <Link
                     to="/dashboard"
                     className="text-gray2 hover:bg-teal/10 hover:text-teal flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition"
                   >
                     <User size={14} /> My Dashboard
-                  </Link> */}
+                  </Link>
                   <Link
                     to="/admin"
                     className="text-gray2 hover:bg-teal/10 hover:text-teal flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition"
@@ -161,7 +165,7 @@ const NavbarLayout = () => {
           </div>
 
           <Link
-            to="/wishlist"
+            to="/dashboard/wishlist"
             className="icon-btn text-gray2 hover:text-teal relative rounded-sm px-1.5 py-2 no-underline transition hover:bg-[rgba(0,201,167,0.15)] min-[640px]:px-[0.7rem]"
             title="Wishlist"
           >

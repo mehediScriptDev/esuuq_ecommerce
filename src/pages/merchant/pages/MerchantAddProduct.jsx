@@ -1,15 +1,11 @@
 import React from 'react';
 import { Save, X, Plus, Image as ImageIcon, Check } from 'lucide-react';
+import MerchantPageHeader from '../components/MerchantPageHeader';
 
 const MerchantAddProduct = ({ onNav }) => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
+    <MerchantPageHeader title="Add New" highlight="Product" subtitle="Create a new listing for your store" />
     <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.25rem] font-bold text-white">
-          Add New <span className="text-teal">Product</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.78rem]">Create a new listing for your store</p>
-      </div>
       <div className="flex gap-3">
         <button
           onClick={() => onNav?.('products')}
@@ -25,7 +21,7 @@ const MerchantAddProduct = ({ onNav }) => (
     <div className="grid grid-cols-1 gap-4 min-[1100px]:grid-cols-[1fr_340px]">
       <div className="space-y-4">
         <div className="bg-card rounded-md border border-white/[0.07] p-5">
-          <h3 className="mb-4 font-['Syne'] text-[0.88rem] font-bold text-white">
+          <h3 className="mb-4 font-['Syne'] text-[1rem] font-bold text-white">
             📝 Product Details
           </h3>
           <div className="mb-4">
@@ -33,7 +29,7 @@ const MerchantAddProduct = ({ onNav }) => (
               Product Name
             </label>
             <input
-              className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.85rem] text-white outline-none"
+              className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.8rem] text-white outline-none"
               placeholder="e.g. Wireless Earbuds Pro Max"
             />
           </div>
@@ -42,7 +38,7 @@ const MerchantAddProduct = ({ onNav }) => (
               Description
             </label>
             <textarea
-              className="bg-navy3 focus:border-teal h-32 w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.85rem] text-white outline-none"
+              className="bg-navy3 focus:border-teal h-32 w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.8rem] text-white outline-none"
               placeholder="Describe your product specs..."
             />
           </div>
@@ -51,7 +47,7 @@ const MerchantAddProduct = ({ onNav }) => (
               <label className="text-gray mb-1 block text-[0.7rem] font-medium tracking-widest uppercase">
                 Category
               </label>
-              <select className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.85rem] text-white outline-none">
+              <select className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.8rem] text-white outline-none">
                 <option>Electronics</option>
                 <option>Fashion</option>
               </select>
@@ -61,7 +57,7 @@ const MerchantAddProduct = ({ onNav }) => (
                 SKU
               </label>
               <input
-                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.85rem] text-white outline-none"
+                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.8rem] text-white outline-none"
                 placeholder="e.g. TZ-EAR-006"
               />
             </div>
@@ -71,7 +67,7 @@ const MerchantAddProduct = ({ onNav }) => (
               </label>
               <input
                 type="number"
-                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.85rem] text-white outline-none"
+                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.8rem] text-white outline-none"
                 placeholder="49.99"
               />
             </div>
@@ -81,7 +77,7 @@ const MerchantAddProduct = ({ onNav }) => (
               </label>
               <input
                 type="number"
-                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.85rem] text-white outline-none"
+                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.8rem] text-white outline-none"
                 placeholder="89.99"
               />
             </div>
@@ -91,7 +87,7 @@ const MerchantAddProduct = ({ onNav }) => (
               </label>
               <input
                 type="number"
-                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.85rem] text-white outline-none"
+                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.8rem] text-white outline-none"
                 placeholder="100"
               />
             </div>
@@ -101,14 +97,14 @@ const MerchantAddProduct = ({ onNav }) => (
               </label>
               <input
                 type="number"
-                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.85rem] text-white outline-none"
+                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2.5 text-[0.8rem] text-white outline-none"
                 placeholder="10"
               />
             </div>
           </div>
         </div>
         <div className="bg-card rounded-md border border-white/[0.07] p-5">
-          <h3 className="mb-4 font-['Syne'] text-[0.88rem] font-bold text-white">🎨 Variants</h3>
+          <h3 className="mb-4 font-['Syne'] text-[1rem] font-bold text-white">🎨 Variants</h3>
           <div className="mb-4">
             <label className="text-gray mb-2 block text-[0.7rem] font-medium tracking-widest uppercase">
               Colors
@@ -124,7 +120,7 @@ const MerchantAddProduct = ({ onNav }) => (
               ))}
             </div>
             <input
-              className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2 text-[0.82rem] text-white outline-none"
+              className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-3 py-2 text-[0.875rem] text-white outline-none"
               placeholder="Add color variant..."
             />
           </div>
@@ -132,19 +128,19 @@ const MerchantAddProduct = ({ onNav }) => (
       </div>
       <div className="space-y-4">
         <div className="bg-card rounded-md border border-white/[0.07] p-5">
-          <h3 className="mb-4 font-['Syne'] text-[0.88rem] font-bold text-white">
+          <h3 className="mb-4 font-['Syne'] text-[1rem] font-bold text-white">
             🖼 Product Images
           </h3>
           <div className="bg-navy3/30 hover:border-teal hover:bg-teal/5 flex flex-col items-center justify-center rounded-md border-2 border-dashed border-white/[0.07] py-8 text-center transition-all">
             <div className="bg-teal/10 text-teal mb-2 rounded-full p-3">
               <ImageIcon size={24} />
             </div>
-            <div className="text-[0.85rem] font-medium text-white">Drop images here</div>
+            <div className="text-[0.875rem] font-medium text-white">Drop images here</div>
             <div className="text-gray text-[0.7rem]">PNG, JPG up to 10MB</div>
           </div>
         </div>
         <div className="bg-card rounded-md border border-white/[0.07] p-5">
-          <h3 className="mb-4 font-['Syne'] text-[0.85rem] font-bold text-white">⚙️ Visibility</h3>
+          <h3 className="mb-4 font-['Syne'] text-[1rem] font-bold text-white">⚙️ Visibility</h3>
           <div className="space-y-3">
             {[
               { l: 'Published', d: 'Visible to customers' },
@@ -152,7 +148,7 @@ const MerchantAddProduct = ({ onNav }) => (
             ].map((item) => (
               <div key={item.l} className="flex items-center justify-between">
                 <div>
-                  <div className="text-[0.82rem] font-medium text-white">{item.l}</div>
+                  <div className="text-[0.875rem] font-medium text-white">{item.l}</div>
                   <div className="text-gray text-[0.7rem]">{item.d}</div>
                 </div>
                 <button className="bg-teal relative h-5 w-9 rounded-full">

@@ -1,0 +1,69 @@
+{
+  "wireless-earbuds-pro-max": {
+    "name": "Earbuds Pro Max",
+    "store": "TechZone MN Official",
+    "storeRating": 4.9,
+    "price": 49.99,
+    "oldPrice": 89.99,
+    "off": 44,
+    "rating": 4.8,
+    "reviews": 1204,
+    "sold": 834,
+    "description": "Experience crystal-clear audio with our premium Wireless Earbuds Pro Max. Featuring advanced active noise cancellation (ANC), 32-hour extended battery life, and IPX5 water resistance for your toughest workouts. High-fidelity sound meets ergonomic comfort, creating an unparalleled listening experience whether you are in a quiet room or a busy street.",
+    "features": [
+      "Active Noise Cancellation",
+      "32-hour Battery Life",
+      "IPX5 Water Resistant",
+      "High-Fidelity Audio",
+      "Seamless Multi-Device Pairing",
+      "Fast Charging Support"
+    ],
+    "specs": {
+      "Brand": "TechZone",
+      "Model": "Pro Max Gen 2",
+      "Connectivity": "Bluetooth 5.3",
+      "Driver": "10mm Dynamic Dynamic Driver",
+      "Warranty": "1 Year Brand Warranty"
+    },
+    "colors": ["Midnight Black", "Pearl White", "Deep Navy", "Crimson Red"],
+    "images": [
+      "/earbuds-black.png",
+      "/earbuds-white.png",
+      "/earbuds-navy.png",
+      "/earbuds-red.png"
+    ],
+    "category": "Electronics"
+  },
+  "default": {
+    "name": "Premium Sound Master X",
+    "store": "ESUUQ Global Store",
+    "storeRating": 4.7,
+    "price": 59.99,
+    "oldPrice": 99.99,
+    "off": 40,
+    "rating": 4.6,
+    "reviews": 856,
+    "sold": 421,
+    "description": "Our flagship Sound Master X delivers precision engineering with studio-quality acoustics. Designed for purists, this product incorporates premium materials and the latest audio technology for a rich, immersive soundstage that captures every detail of your favorite tracks.",
+    "features": [
+      "Premium Build Quality",
+      "Advanced Equalizer Support",
+      "24-Month Extended Warranty",
+      "Sustainable Packaging",
+      "Voice Assistant Integration",
+      "Hard Shell Carrying Case"
+    ],
+    "specs": {
+      "Brand": "ESUUQ",
+      "Material": "Aviation Grade Alloy",
+      "Driver": "40mm Neodymium",
+      "Origin": "Crafted in Germany"
+    },
+    "colors": ["Space Gray", "Arctic White"],
+    "images": [
+      "/earbuds-black.png",
+      "/earbuds-white.png"
+    ],
+    "category": "Tech Audiophile"
+  }
+}

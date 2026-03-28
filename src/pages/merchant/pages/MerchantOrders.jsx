@@ -1,12 +1,10 @@
 import React from 'react';
 import { Download, Check, X } from 'lucide-react';
+import MerchantPageHeader from '../components/MerchantPageHeader';
+import MerchantPill from '../components/MerchantPill';
+
 const Pill = ({ children, c }) => (
-  <span
-    className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}
-  >
-    <span className="h-1.5 w-1.5 rounded-full bg-current" />
-    {children}
-  </span>
+  <MerchantPill className={c}>{children}</MerchantPill>
 );
 const filters = [
   'All (648)',
@@ -73,13 +71,15 @@ const orders = [
 ];
 const MerchantOrders = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
-    <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 className="font-['Syne'] text-[1.25rem] font-bold text-white">
-          Order <span className="text-teal">Management</span>
-        </h1>
-        <p className="text-gray mt-1 text-[0.78rem]">Accept, process, and manage your orders</p>
-      </div>
+    <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+      <MerchantPageHeader
+        title={
+          <span>
+            Order <span className="text-teal">Management</span>
+          </span>
+        }
+        subtitle="Accept, process, and manage your orders"
+      />
       <button className="text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border border-white/[0.07] px-4 py-1.5 text-[0.8rem]">
         <Download size={14} /> Export
       </button>
@@ -95,14 +95,14 @@ const MerchantOrders = () => (
       ))}
     </div>
     <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[0.85rem] font-bold text-white">All Orders</h3>
+      <div className="flex items-center justify-between border-b border-white/[0.07] px-5 py-3.5">
+        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">All Orders</h3>
         <div className="flex gap-2">
           <input
-            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none"
+            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.8rem] text-white outline-none"
             placeholder="Search orders..."
           />
-          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none">
+          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.8rem] outline-none">
             <option>All Status</option>
           </select>
         </div>
@@ -123,7 +123,7 @@ const MerchantOrders = () => (
               ].map((h) => (
                 <th
                   key={h}
-                  className="text-gray px-4 py-2.5 text-left text-[0.68rem] font-semibold tracking-widest whitespace-nowrap uppercase"
+                  className="text-gray px-4 py-2.5 text-left text-[0.75rem] font-semibold tracking-widest whitespace-nowrap uppercase"
                 >
                   {h}
                 </th>
@@ -136,12 +136,12 @@ const MerchantOrders = () => (
                 key={o.id}
                 className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/[0.02]"
               >
-                <td className="text-teal px-4 py-3 text-[0.82rem] font-medium">{o.id}</td>
-                <td className="px-4 py-3 text-[0.82rem] text-white">{o.customer}</td>
-                <td className="text-gray px-4 py-3 text-[0.82rem]">{o.product}</td>
-                <td className="px-4 py-3 text-[0.82rem] text-white">{o.qty}</td>
-                <td className="px-4 py-3 text-[0.82rem] font-semibold text-white">{o.total}</td>
-                <td className="text-gray px-4 py-3 text-[0.82rem]">{o.date}</td>
+                  <td className="text-teal px-4 py-3 text-[0.875rem] font-medium">{o.id}</td>
+                  <td className="px-4 py-3 text-[0.875rem] text-white">{o.customer}</td>
+                  <td className="text-gray px-4 py-3 text-[0.875rem]">{o.product}</td>
+                  <td className="px-4 py-3 text-[0.875rem]">{o.qty}</td>
+                  <td className="px-4 py-3 text-[0.875rem] font-semibold text-white">{o.total}</td>
+                  <td className="text-gray px-4 py-3 text-[0.875rem]">{o.date}</td>
                 <td className="px-4 py-3">
                   <Pill c={o.sc}>{o.status}</Pill>
                 </td>

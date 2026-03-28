@@ -1,7 +1,7 @@
 import React from 'react';
 import { Truck, MapPin, CheckCircle, Clock, Plus } from 'lucide-react';
 import DashboardPageHeader from '../components/DashboardPageHeader';
-import AdminStats from '../components/AdminStats';
+import DashboardStats from '../../../components/DashboardStats';
 const Pill = ({ children, c }) => (
   <span
     className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}
@@ -69,7 +69,7 @@ const AdminDelivery = () => (
         <Plus size={14} /> Add Driver
       </button>
     </div>
-    <AdminStats stats={stats} />
+    <DashboardStats stats={stats} />
     <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
       <div className="border-b border-white/[0.07] px-5 py-3.5">
         <div className="flex flex-wrap items-center justify-between gap-3">
