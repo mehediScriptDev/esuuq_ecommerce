@@ -16,7 +16,9 @@ const DashboardStats = ({ stats = [] }) => {
             key={s.label}
             className="bg-card hover:border-teal/20 rounded-md border border-white/[0.07] p-5 transition-colors"
           >
-            <div className={`mb-3 flex items-start ${s.trend ? 'justify-between' : 'justify-start'}`}>
+            <div
+              className={`mb-3 flex items-start ${s.trend ? 'justify-between' : 'justify-start'}`}
+            >
               <div className={`flex h-10 w-10 items-center justify-center rounded-md ${bgClass}`}>
                 <Icon size={20} className="text-teal" />
               </div>

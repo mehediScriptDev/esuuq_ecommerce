@@ -48,7 +48,7 @@ const MerchantDashboard = ({ onNav }) => {
 
   if (error) {
     return (
-      <div className="flex h-64 flex-col items-center justify-center text-red">
+      <div className="text-red flex h-64 flex-col items-center justify-center">
         <XCircle size={48} className="mb-4" />
         <h2 className="text-xl font-semibold">An Error Occurred</h2>
         <p>{error}</p>
@@ -65,8 +65,12 @@ const MerchantDashboard = ({ onNav }) => {
   return (
     <div className="animate-[fadeUp_0.4s_ease_both]">
       <MerchantPageHeader
-        title="Merchant Dashboard"
-        subtitle="Welcome to your command center, TechZone MN."
+        title={
+          <>
+            Store <span className="text-teal">Overview</span>
+          </>
+        }
+        subtitle="Welcome back, TechZone MN"
       />
 
       <DashboardStats stats={stats.map((s) => ({ ...s, icon: iconMap[s.icon] }))} />
@@ -94,7 +98,7 @@ const MerchantDashboard = ({ onNav }) => {
                     </div>
                   </div>
                   <div
-                    className="w-full rounded-t-sm bg-teal/20 transition-colors group-hover:bg-teal"
+                    className="bg-teal/20 group-hover:bg-teal w-full rounded-t-sm transition-colors"
                     style={{ height: bar.height }}
                   />
                   <div className="text-gray mt-2 text-xs">{bar.label}</div>
@@ -127,31 +131,60 @@ const MerchantDashboard = ({ onNav }) => {
       <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <h3 className="font-syne mb-4 text-lg font-bold text-white">Recent Orders</h3>
-          <div className="bg-card border-border overflow-x-auto rounded-lg border">
-            <table className="w-full min-w-180 text-left">
-              <thead className="border-border border-b">
-                <tr>
-                  <th className="text-gray p-4 text-sm font-semibold">Order ID</th>
-                  <th className="text-gray p-4 text-sm font-semibold">Customer</th>
-                  <th className="text-gray p-4 text-sm font-semibold">Product</th>
-                  <th className="text-gray p-4 text-sm font-semibold">Total</th>
-                  <th className="text-gray p-4 text-sm font-semibold">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentOrders.map((order) => (
-                  <tr key={order.id} className="border-border border-b last:border-none">
-                    <td className="text-teal p-4 text-sm font-medium">{order.id}</td>
-                    <td className="p-4 text-sm text-white">{order.customer}</td>
-                    <td className="p-4 text-sm text-white">{order.product}</td>
-                    <td className="p-4 text-sm text-white">{order.total}</td>
-                    <td className="p-4 text-sm">
-                      <MerchantPill className={order.sc}>{order.status}</MerchantPill>
-                    </td>
+          <div className="bg-card border-white/[0.07] overflow-x-auto rounded-lg border">
+            {/* Desktop Table */}
+            <div className="hidden min-[800px]:block overflow-x-auto">
+              <table className="w-full text-left">
+                <thead className="bg-navy3/50 text-gray text-[0.7rem] font-bold tracking-widest uppercase">
+                  <tr className="border-b border-white/[0.07]">
+                    <th className="px-6 py-4">Order ID</th>
+                    <th className="px-6 py-4">Customer</th>
+                    <th className="px-6 py-4">Product</th>
+                    <th className="px-6 py-4">Total</th>
+                    <th className="px-6 py-4">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="text-[0.88rem] text-white">
+                  {recentOrders.map((order) => (
+                    <tr key={order.id} className="border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-white/2">
+                      <td className="text-teal font-bold px-6 py-4">{order.id}</td>
+                      <td className="px-6 py-4 font-medium">{order.customer}</td>
+                      <td className="text-gray2 px-6 py-4 max-w-[140px] truncate">{order.product}</td>
+                      <td className="px-6 py-4 font-black">{order.total}</td>
+                      <td className="px-6 py-4">
+                        <MerchantPill className={order.sc}>{order.status}</MerchantPill>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="min-[800px]:hidden divide-y divide-white/[0.07]">
+              {recentOrders.map((order) => (
+                <div key={order.id} className="p-5 space-y-4 hover:bg-white/2 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <span className="text-teal font-black text-[0.9rem]">{order.id}</span>
+                    <MerchantPill className={order.sc}>{order.status}</MerchantPill>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-gray text-[0.62rem] font-bold tracking-widest uppercase mb-1">Customer</p>
+                      <p className="text-white text-sm font-bold">{order.customer}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray text-[0.62rem] font-bold tracking-widest uppercase mb-1">Total</p>
+                      <p className="text-white text-sm font-black">{order.total}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-gray text-[0.62rem] font-bold tracking-widest uppercase mb-1">Product</p>
+                    <p className="text-white text-sm truncate">{order.product}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -163,7 +196,7 @@ const MerchantDashboard = ({ onNav }) => {
                 key={link.id}
                 type="button"
                 onClick={() => onNav?.(link.id)}
-                className="bg-card border-border hover:border-teal flex w-full items-center justify-between rounded-lg border p-4 text-left transition-colors"
+                className="bg-card border-white/[0.07] hover:border-teal flex w-full items-center justify-between rounded-lg border p-4 text-left transition-colors"
               >
                 <span className="font-semibold text-white">{link.label}</span>
                 <ArrowRight size={16} className="text-gray" />

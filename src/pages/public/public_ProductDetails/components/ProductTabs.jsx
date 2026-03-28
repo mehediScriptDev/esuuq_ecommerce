@@ -49,7 +49,7 @@ const ProductTabs = ({ product }) => {
           >
             {tab.label}
             {activeTab === tab.id && (
-              <span className="absolute bottom-[-1px] left-0 h-[2px] w-full bg-teal shadow-[0_-2px_6px_rgba(0,201,167,0.3)]" />
+              <span className="absolute -bottom-px left-0 h-[2px] w-full bg-teal shadow-[0_-2px_6px_rgba(0,201,167,0.3)]" />
             )}
           </button>
         ))}

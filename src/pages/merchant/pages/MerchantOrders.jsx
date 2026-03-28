@@ -71,46 +71,55 @@ const orders = [
 ];
 const MerchantOrders = () => (
   <div className="animate-[fadeUp_0.4s_ease_both]">
-    <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+    <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
       <MerchantPageHeader
         title={
-          <span>
+          <>
             Order <span className="text-teal">Management</span>
-          </span>
+          </>
         }
         subtitle="Accept, process, and manage your orders"
       />
-      <button className="text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border border-white/[0.07] px-4 py-1.5 text-[0.8rem]">
-        <Download size={14} /> Export
-      </button>
+      <div className="flex gap-2.5">
+        <button className="text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border border-white/[0.07] px-4 py-1.5 text-[0.8rem] transition-colors">
+          <Download size={14} /> Export
+        </button>
+      </div>
     </div>
+    
     <div className="mb-4 flex flex-wrap gap-2">
       {filters.map((f, i) => (
         <button
           key={f}
-          className={`rounded px-3 py-1.5 text-[0.75rem] font-medium transition-all ${i === 0 ? 'bg-teal text-navy' : 'text-gray2 hover:border-teal hover:text-teal border border-white/[0.07]'}`}
+          className={`rounded px-3 py-1.5 text-[0.75rem] font-medium transition-colors ${i === 0 ? 'bg-teal text-navy hover:bg-teal2' : 'text-gray2 hover:border-teal hover:text-teal border border-white/[0.07]'}`}
         >
           {f}
         </button>
       ))}
     </div>
-    <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
-      <div className="flex items-center justify-between border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">All Orders</h3>
+    
+    <div className="bg-card overflow-hidden rounded-lg border border-white/[0.07]">
+      <div className="flex items-center justify-between border-b border-white/[0.07] px-6 py-4 flex-wrap gap-3">
+        <h3 className="font-syne text-[1rem] font-bold text-white">All Orders</h3>
         <div className="flex gap-2">
           <input
-            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.8rem] text-white outline-none"
+            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.8rem] text-white outline-none transition-colors"
             placeholder="Search orders..."
           />
-          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.8rem] outline-none">
+          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.8rem] outline-none cursor-pointer hover:border-white/20 transition-colors">
             <option>All Status</option>
+            <option>New</option>
+            <option>Processing</option>
+            <option>Delivered</option>
           </select>
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-navy3">
+      
+      {/* Desktop Table */}
+      <div className="hidden min-[800px]:block overflow-x-auto">
+        <table className="w-full text-left">
+          <thead className="bg-navy3/50 text-gray text-[0.7rem] font-bold tracking-widest uppercase">
+            <tr className="border-b border-white/[0.07]">
               {[
                 'Order ID',
                 'Customer',
@@ -121,51 +130,46 @@ const MerchantOrders = () => (
                 'Status',
                 'Actions',
               ].map((h) => (
-                <th
-                  key={h}
-                  className="text-gray px-4 py-2.5 text-left text-[0.75rem] font-semibold tracking-widest whitespace-nowrap uppercase"
-                >
-                  {h}
-                </th>
+                <th key={h} className="px-6 py-4">{h}</th>
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="text-[0.88rem] text-white">
             {orders.map((o) => (
               <tr
                 key={o.id}
-                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/[0.02]"
+                className="border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-white/2"
               >
-                  <td className="text-teal px-4 py-3 text-[0.875rem] font-medium">{o.id}</td>
-                  <td className="px-4 py-3 text-[0.875rem] text-white">{o.customer}</td>
-                  <td className="text-gray px-4 py-3 text-[0.875rem]">{o.product}</td>
-                  <td className="px-4 py-3 text-[0.875rem]">{o.qty}</td>
-                  <td className="px-4 py-3 text-[0.875rem] font-semibold text-white">{o.total}</td>
-                  <td className="text-gray px-4 py-3 text-[0.875rem]">{o.date}</td>
-                <td className="px-4 py-3">
+                  <td className="text-teal px-6 py-4 font-bold">{o.id}</td>
+                  <td className="px-6 py-4 font-medium">{o.customer}</td>
+                  <td className="text-gray2 px-6 py-4 max-w-[140px] truncate">{o.product}</td>
+                  <td className="px-6 py-4">{o.qty}</td>
+                  <td className="px-6 py-4 font-black">{o.total}</td>
+                  <td className="text-gray2 px-6 py-4">{o.date}</td>
+                <td className="px-6 py-4">
                   <Pill c={o.sc}>{o.status}</Pill>
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-6 py-4">
                   {o.hasActions ? (
                     <div className="flex gap-1.5">
-                      <button className="bg-teal text-navy flex items-center gap-1 rounded px-2.5 py-1 text-[0.72rem] font-medium">
-                        <Check size={12} /> Accept
+                      <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
+                        <Check size={12} strokeWidth={3} /> Accept
                       </button>
-                      <button className="border-red/20 bg-red/10 text-red rounded border p-1">
-                        <X size={12} />
+                      <button className="border-red/20 bg-red/10 text-red hover:bg-red/20 rounded border px-2 py-1 transition-colors">
+                        <X size={12} strokeWidth={3} />
                       </button>
                     </div>
                   ) : o.hasReturn ? (
                     <div className="flex gap-1.5">
-                      <button className="bg-teal text-navy rounded px-2.5 py-1 text-[0.72rem]">
+                      <button className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
                         Approve
                       </button>
-                      <button className="border-red/20 bg-red/10 text-red rounded border px-2.5 py-1 text-[0.72rem]">
+                      <button className="border-red/20 bg-red/10 text-red hover:bg-red/20 rounded border px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
                         Deny
                       </button>
                     </div>
                   ) : (
-                    <button className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1 text-[0.75rem]">
+                    <button className="text-gray hover:border-teal hover:text-teal rounded border border-white/10 px-3 py-1 text-[0.75rem] font-bold transition-all">
                       Details
                     </button>
                   )}
@@ -174,6 +178,58 @@ const MerchantOrders = () => (
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="min-[800px]:hidden divide-y divide-white/[0.07]">
+        {orders.map((o) => (
+          <div key={o.id} className="p-5 space-y-4 hover:bg-white/2 transition-colors">
+            <div className="flex items-center justify-between">
+              <span className="text-teal font-black text-[0.9rem]">{o.id}</span>
+              <Pill c={o.sc}>{o.status}</Pill>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-gray text-[0.62rem] font-bold tracking-widest uppercase mb-1">Customer</p>
+                <p className="text-white text-sm font-bold">{o.customer}</p>
+              </div>
+              <div>
+                <p className="text-gray text-[0.62rem] font-bold tracking-widest uppercase mb-1">Amount</p>
+                <p className="text-white text-sm font-black">{o.total} <span className="text-[0.62rem] font-medium text-gray lowercase">({o.qty} item{o.qty > 1 ? 's' : ''})</span></p>
+              </div>
+            </div>
+            <div>
+              <p className="text-gray text-[0.62rem] font-bold tracking-widest uppercase mb-1">Product</p>
+              <p className="text-white text-sm truncate">{o.product}</p>
+            </div>
+            <div className="pt-2 flex justify-between items-center border-t border-white/[0.07]">
+               <span className="text-gray text-xs">{o.date}</span>
+               {o.hasActions ? (
+                  <div className="flex gap-1.5">
+                    <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
+                      <Check size={12} strokeWidth={3} /> Accept
+                    </button>
+                    <button className="border-red/20 bg-red/10 text-red hover:bg-red/20 rounded border px-2 py-1 transition-colors">
+                      <X size={12} strokeWidth={3} />
+                    </button>
+                  </div>
+                ) : o.hasReturn ? (
+                  <div className="flex gap-1.5">
+                    <button className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
+                      Approve
+                    </button>
+                    <button className="border-red/20 bg-red/10 text-red hover:bg-red/20 rounded border px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
+                      Deny
+                    </button>
+                  </div>
+                ) : (
+                  <button className="text-gray hover:border-teal hover:text-teal rounded border border-white/10 px-3 py-1 text-[0.75rem] font-bold transition-all">
+                    Details
+                  </button>
+                )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   </div>
