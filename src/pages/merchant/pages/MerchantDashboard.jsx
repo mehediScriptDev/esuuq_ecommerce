@@ -149,7 +149,7 @@ const MerchantDashboard = ({ onNav }) => {
                     <tr key={order.id} className="border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-white/2">
                       <td className="text-teal font-bold px-6 py-4">{order.id}</td>
                       <td className="px-6 py-4 font-medium">{order.customer}</td>
-                      <td className="text-gray2 px-6 py-4 max-w-[140px] truncate">{order.product}</td>
+                      <td className="text-gray2 px-6 py-4 max-w-35 truncate">{order.product}</td>
                       <td className="px-6 py-4 font-black">{order.total}</td>
                       <td className="px-6 py-4">
                         <MerchantPill className={order.sc}>{order.status}</MerchantPill>

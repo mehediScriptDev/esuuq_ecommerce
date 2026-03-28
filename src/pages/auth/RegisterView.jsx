@@ -72,7 +72,7 @@ const RegisterView = () => {
       leftDescription="Create your free ESUUQ account and start shopping from hundreds of verified merchants, all in one place."
       leftPerks={registerPerks}
     >
-      <div className="mb-4 grid grid-cols-2 gap-3">
+      <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
         <SocialButton provider="google">Continue with Google</SocialButton>
         <SocialButton provider="facebook">Continue with Facebook</SocialButton>
       </div>

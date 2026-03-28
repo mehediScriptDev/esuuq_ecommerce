@@ -158,13 +158,20 @@ const router = createBrowserRouter(
             {wrap(CartView)}
           </ProtectedRoute>
         } />
-        <Route path="product/:id" element={wrap(ProductDetailsView)} />
+        <Route
+          path="product/:id"
+          element={
+            <ProtectedRoute>
+              {wrap(ProductDetailsView)}
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={wrap(NotFound)} />
       </Route>
 
       {/* Auth & Dashboards - No marketplace layout */}
       <Route path="auth">
-        <Route path="login" element={wrap(LoginView)} />
+        <Route path="login" element={<LoginView />} />
         <Route path="register" element={wrap(RegisterView)} />
         <Route path="otp" element={wrap(OTPView)} />
       </Route>

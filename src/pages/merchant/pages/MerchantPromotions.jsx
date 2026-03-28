@@ -2,6 +2,7 @@ import React from 'react';
 import { Tag, Plus, Calendar, Settings, Trash2 } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
 import MerchantPill from '../components/MerchantPill';
+import DashboardStats from '../../../components/DashboardStats';
 
 const Pill = ({ children, c }) => (
   <MerchantPill className={c}>{children}</MerchantPill>
@@ -68,30 +69,14 @@ const MerchantPromotions = () => (
       </div>
     </div>
     
-    <div className="mb-8 grid grid-cols-1 gap-4 min-[640px]:grid-cols-2 lg:grid-cols-4">
-      {[
-        { l: 'Active Promotions', v: '3', i: Tag, bg: 'bg-teal/10' },
-        { l: 'Total Used', v: '1,240', i: Calendar, bg: 'bg-purple-500/10' },
-        { l: 'Promos Value', v: '$4,120', i: Tag, bg: 'bg-yellow/10' },
-        { l: 'Next Expiring', v: 'in 3 days', i: Calendar, bg: 'bg-red/10' },
-      ].map((s) => {
-        const Icon = s.i;
-        return (
-          <div
-            key={s.l}
-            className="bg-card hover:border-teal/20 rounded-lg border border-white/[0.07] p-5 lg:p-6 transition-all"
-          >
-            <div className="mb-4">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-md ${s.bg}`}>
-                <Icon size={20} className="text-teal" />
-              </div>
-            </div>
-            <div className="font-syne text-[1.8rem] leading-none font-extrabold text-white mb-1.5">{s.v}</div>
-            <div className="text-gray text-[0.7rem] font-bold tracking-widest uppercase">{s.l}</div>
-          </div>
-        );
-      })}
-    </div>
+    <DashboardStats
+      stats={[
+        { icon: Tag, val: '3', label: 'Active Promotions', iconBg: 'bg-teal/10' },
+        { icon: Calendar, val: '1,240', label: 'Total Used', iconBg: 'bg-purple-500/10' },
+        { icon: Tag, val: '$4,120', label: 'Promos Value', iconBg: 'bg-yellow/10' },
+        { icon: Calendar, val: 'in 3 days', label: 'Next Expiring', iconBg: 'bg-red/10' },
+      ]}
+    />
     
     <div className="bg-card overflow-hidden rounded-lg border border-white/[0.07]">
       <div className="border-b border-white/[0.07] px-6 py-4">

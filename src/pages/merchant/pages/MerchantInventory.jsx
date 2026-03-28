@@ -2,6 +2,7 @@ import React from 'react';
 import { Package, AlertTriangle, XCircle, Plus } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
 import MerchantPill from '../components/MerchantPill';
+import DashboardStats from '../../../components/DashboardStats';
 
 const Pill = ({ children, c }) => (
   <MerchantPill className={c}>{children}</MerchantPill>
@@ -94,22 +95,7 @@ const MerchantInventory = () => (
       </div>
     </div>
     
-    <div className="mb-8 grid grid-cols-1 gap-4 min-[580px]:grid-cols-2 lg:grid-cols-3">
-      {stats.map((s) => {
-        const Icon = s.icon;
-        return (
-          <div key={s.label} className="bg-card hover:border-teal/20 transition-colors rounded-md border border-white/[0.07] p-5 lg:p-6">
-            <div className="mb-4">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-md ${s.bg}`}>
-                <Icon size={22} className="text-teal" />
-              </div>
-            </div>
-            <div className="mb-0.5 font-syne text-[1.8rem] font-bold text-white leading-none">{s.val}</div>
-            <div className="text-gray text-[0.7rem] font-bold tracking-widest uppercase mt-2">{s.label}</div>
-          </div>
-        );
-      })}
-    </div>
+    <DashboardStats stats={stats} />
     
     <div className="bg-card overflow-hidden rounded-lg border border-white/[0.07]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-6 py-4">

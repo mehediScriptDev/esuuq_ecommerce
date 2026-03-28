@@ -31,7 +31,7 @@ export const SocialButton = ({ provider = 'google', children, onClick }) => {
     <button
       type="button"
       onClick={onClick}
-      className="bg-navy3 border-border hover:border-teal hover:bg-teal/10 flex items-center justify-center gap-2 rounded-md border px-3 py-2.5 text-[0.82rem] font-medium text-white transition-colors"
+      className="w-full bg-navy3 border-border hover:border-teal hover:bg-teal/10 flex items-center justify-center gap-2 rounded-md border px-3 py-2.5 text-[0.82rem] font-medium text-white transition-colors"
     >
       <Icon size={16} />
       {children}
