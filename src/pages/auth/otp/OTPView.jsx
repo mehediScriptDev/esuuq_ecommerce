@@ -1,106 +1,145 @@
-import React, { useState, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { RefreshCw, ShieldCheck, Smartphone } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import AuthLayout from '../components/AuthLayout';
+import { AuthButton } from '../components/AuthFormComponents';
 
-const OtpInput = ({ otp, setOtp }) => {
-  const inputsRef = useRef([]);
-
-  const handleInput = (e, index) => {
-    const input = e.target;
-    const newOtp = [...otp];
-    newOtp[index] = input.value;
-    setOtp(newOtp.join(''));
-
-    if (input.value && index < 5) {
-      inputsRef.current[index + 1].focus();
-    }
-  };
-
-  const handleKeyDown = (e, index) => {
-    if (e.key === 'Backspace' && !e.target.value && index > 0) {
-      inputsRef.current[index - 1].focus();
-    }
-  };
-
-  return (
-    <div className="flex justify-center gap-3">
-      {Array(6).fill(0).map((_, i) => (
-        <input
-          key={i}
-          ref={el => inputsRef.current[i] = el}
-          type="text"
-          maxLength="1"
-          className="w-12 h-14 text-2xl font-bold text-center bg-navy-3 border rounded-lg border-border focus:border-teal focus:ring-1 focus:ring-teal"
-          onInput={(e) => handleInput(e, i)}
-          onKeyDown={(e) => handleKeyDown(e, i)}
-        />
-      ))}
-    </div>
-  );
-};
-
+const otpPerks = [
+  { icon: ShieldCheck, text: 'OTP expires in 10 minutes' },
+  { icon: Smartphone, text: 'Sent to your email and phone' },
+  { icon: RefreshCw, text: 'Can resend after 60 seconds' },
+];
 
 const OTPView = () => {
-    const [otp, setOtp] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const inputRefs = useRef([]);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError('');
+  const [digits, setDigits] = useState(['', '', '', '', '', '']);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(0);
 
-        // Mock verification
-        setTimeout(() => {
-            if (otp.length === 6) {
-                // In a real app, you would verify the OTP with the backend
-                // For now, we'll just log the user in.
-                const user = JSON.parse(localStorage.getItem('user'));
-                localStorage.setItem('token', 'mock-jwt-token-for-esuuq');
-                navigate('/dashboard');
-            } else {
-                setError('Please enter a valid 6-digit OTP.');
-            }
-            setLoading(false);
-        }, 1000);
-    };
+  const email = location.state?.email || JSON.parse(localStorage.getItem('pendingUser') || 'null')?.email;
+
+  useEffect(() => {
+    if (!secondsLeft) return undefined;
+
+    const timer = setInterval(() => {
+      setSecondsLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [secondsLeft]);
+
+  const handleInput = (index, value) => {
+    const cleanValue = value.replace(/\D/g, '').slice(0, 1);
+    const nextDigits = [...digits];
+    nextDigits[index] = cleanValue;
+    setDigits(nextDigits);
+
+    if (cleanValue && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index, event) => {
+    if (event.key === 'Backspace' && !digits[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleResend = () => {
+    setSecondsLeft(60);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setError('');
+
+    setTimeout(() => {
+      const code = digits.join('');
+      if (code.length !== 6) {
+        setError('Please enter a valid 6-digit code.');
+        setLoading(false);
+        return;
+      }
+
+      const pendingToken = localStorage.getItem('pendingToken');
+      const pendingUser = localStorage.getItem('pendingUser');
+
+      if (pendingToken && pendingUser) {
+        localStorage.setItem('token', pendingToken);
+        localStorage.setItem('user', pendingUser);
+        localStorage.removeItem('pendingToken');
+        localStorage.removeItem('pendingUser');
+      }
+
+      setLoading(false);
+      navigate('/dashboard');
+    }, 600);
+  };
 
   return (
-    <div className="min-h-screen bg-navy-2 text-white flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-            <div className="text-center">
-                <h1 className="text-3xl font-bold font-syne">Verify Your Account</h1>
-                <p className="mt-2 text-gray-400">
-                    We sent a 6-digit code to your email. Enter it below.
-                </p>
-            </div>
-
-            <form onSubmit={handleSubmit}>
-                <div className="mt-8">
-                    <OtpInput otp={otp} setOtp={setOtp} />
-                </div>
-
-                {error && <p className="mt-4 text-sm text-center text-red-500">{error}</p>}
-
-                <div className="mt-6 text-center text-gray-400">
-                    Didn't receive it? <Link to="#" className="font-semibold text-teal hover:underline">Resend code</Link>
-                </div>
-
-                <div className="mt-6">
-                    <button type="submit" disabled={loading} className="w-full py-3 font-semibold text-navy bg-teal rounded-md hover:bg-teal-dark focus:outline-none disabled:opacity-50">
-                        {loading ? 'Verifying...' : 'Verify & Continue'}
-                    </button>
-                </div>
-            </form>
-             <div className="mt-4">
-                <Link to="/auth/register">
-                    <button className="w-full py-3 font-semibold text-gray-300 bg-transparent border rounded-md border-border hover:border-teal hover:text-teal">
-                        &larr; Back
-                    </button>
-                </Link>
-            </div>
+    <AuthLayout
+      mode="otp"
+      title="Verify Your Account"
+      subtitle={`We sent a 6-digit code to ${email || 'your email'}. Enter it below to continue.`}
+      leftTagline="Almost there! Verify your account"
+      leftTaglineEmphasis=""
+      leftDescription="We sent a 6-digit code to your email and phone. Enter it to confirm your identity and activate your account."
+      leftPerks={otpPerks}
+    >
+      <form onSubmit={handleSubmit}>
+        <div className="mb-5 flex justify-center gap-2.5 sm:gap-3">
+          {digits.map((digit, index) => (
+            <input
+              key={index}
+              ref={(element) => {
+                inputRefs.current[index] = element;
+              }}
+              value={digit}
+              onChange={(event) => handleInput(index, event.target.value)}
+              onKeyDown={(event) => handleKeyDown(index, event)}
+              className="bg-navy3 border-border focus:border-teal h-14 w-11 rounded-lg border text-center font-['Syne'] text-[1.35rem] font-bold text-white outline-none sm:w-13"
+              type="text"
+              inputMode="numeric"
+              maxLength={1}
+            />
+          ))}
         </div>
-    </div>
+
+        {error ? <p className="mb-3 text-center text-sm text-red">{error}</p> : null}
+
+        <p className="text-gray mb-5 text-center text-[0.8rem]">
+          Didn't receive it?{' '}
+          <button
+            type="button"
+            onClick={handleResend}
+            disabled={secondsLeft > 0}
+            className="text-teal disabled:text-gray font-medium disabled:cursor-not-allowed"
+          >
+            Resend code
+          </button>{' '}
+          {secondsLeft > 0 ? <span>in {secondsLeft}s</span> : null}
+        </p>
+
+        <AuthButton type="submit" disabled={loading}>
+          {loading ? 'Verifying...' : 'Verify and Continue'}
+        </AuthButton>
+
+        <AuthButton type="button" variant="outline" onClick={() => navigate('/auth/register')}>
+          Back
+        </AuthButton>
+      </form>
+    </AuthLayout>
   );
 };
 

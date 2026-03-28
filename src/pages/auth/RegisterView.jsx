@@ -1,11 +1,31 @@
 import React, { useState } from 'react';
+import { CreditCard, Gift, MailCheck, RotateCcw } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import AuthLayout from './components/AuthLayout';
-import { AuthInput, AuthButton, SocialButton } from './components/AuthFormComponents';
 import { register } from '../../services/authService';
+import AuthLayout from './components/AuthLayout';
+import {
+  AuthButton,
+  AuthDivider,
+  AuthInput,
+  CheckboxField,
+  PasswordStrength,
+  SocialButton,
+} from './components/AuthFormComponents';
+
+const registerPerks = [
+  { icon: Gift, text: 'Get $10 off your first order' },
+  { icon: MailCheck, text: 'Exclusive deals for members' },
+  { icon: RotateCcw, text: '30-day hassle-free returns' },
+  { icon: CreditCard, text: 'Save payment methods securely' },
+];
 
 const RegisterView = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [agreedTerms, setAgreedTerms] = useState(false);
+  const [marketingOptIn, setMarketingOptIn] = useState(true);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -13,23 +33,28 @@ const RegisterView = () => {
     phone: '',
     password: '',
   });
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+  const handleChange = (field) => (event) => {
+    setFormData((prev) => ({ ...prev, [field]: event.target.value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
+
+    if (!agreedTerms) {
+      setError('Please accept the terms to continue.');
+      return;
+    }
+
     setLoading(true);
-    setError(null);
     try {
-      await register(formData);
-      navigate('/auth/otp');
+      const { token, user } = await register({ ...formData, marketingOptIn });
+      localStorage.setItem('pendingToken', token);
+      localStorage.setItem('pendingUser', JSON.stringify(user));
+      navigate('/auth/otp', { state: { email: formData.email } });
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Unable to create account.');
     } finally {
       setLoading(false);
     }
@@ -37,144 +62,109 @@ const RegisterView = () => {
 
   return (
     <AuthLayout
+      mode="register"
       title="Create Account"
       subtitle="Already have one?"
       subtitleLink="/auth/login"
       subtitleLinkText="Sign in here"
+      leftTagline="Join thousands of happy shoppers"
+      leftTaglineEmphasis=""
+      leftDescription="Create your free ESUUQ account and start shopping from hundreds of verified merchants, all in one place."
+      leftPerks={registerPerks}
     >
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-            <SocialButton icon="google">Google</SocialButton>
-            <SocialButton icon="facebook">Facebook</SocialButton>
-        </div>
-
-        <div className="flex items-center text-center">
-            <hr className="flex-grow border-border"/>
-            <span className="px-2 text-sm text-gray-400">or sign up with email</span>
-            <hr className="flex-grow border-border"/>
-        </div>
-
-        <form className="space-y-4" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label className="text-sm font-medium text-gray-400">First Name</label>
-                    <AuthInput id="firstName" type="text" placeholder="John" icon="user" value={formData.firstName} onChange={handleChange} />
-                </div>
-                <div>
-                    <label className="text-sm font-medium text-gray-400">Last Name</label>
-                    <AuthInput id="lastName" type="text" placeholder="Doe" icon="user" value={formData.lastName} onChange={handleChange} />
-                </div>
-            </div>
-          <div>
-            <label className="text-sm font-medium text-gray-400">Email Address</label>
-            <AuthInput id="email" type="email" placeholder="you@email.com" icon="mail" value={formData.email} onChange={handleChange} />
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-400">Phone Number</label>
-            <AuthInput id="phone" type="tel" placeholder="(555) 000-0000" icon="smartphone" hasPrefix={true} prefix="+1" value={formData.phone} onChange={handleChange} />
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-400">Password</label>
-            <AuthInput
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Min 8 characters"
-              icon={showPassword ? 'eyeOff' : 'eye'}
-              onIconClick={() => setShowPassword(!showPassword)}
-              value={formData.password}
-              onChange={handleChange}
-            />
-          </div>
-          {error && <p className="text-sm text-red-500">{error}</p>}
-          <div className="flex items-start">
-            <input id="terms" type="checkbox" className="w-4 h-4 mt-1 rounded accent-teal" required />
-            <label htmlFor="terms" className="ml-2 text-sm text-gray-400">
-              I agree to the <Link to="#" className="text-teal hover:underline">Terms of Service</Link> and <Link to="#" className="text-teal hover:underline">Privacy Policy</Link>
-            </label>
-          </div>
-          <AuthButton type="submit" disabled={loading}>
-            {loading ? 'Creating Account...' : 'Create Account →'}
-          </AuthButton>
-        </form>
+      <div className="mb-4 grid grid-cols-2 gap-3">
+        <SocialButton provider="google">Continue with Google</SocialButton>
+        <SocialButton provider="facebook">Continue with Facebook</SocialButton>
       </div>
-    </AuthLayout>
-  );
-};
 
-export default RegisterView;
+      <AuthDivider text="or sign up with email" />
 
-                type="email"
-                placeholder="john.doe@gmail.com"
-                value={formData.email}
-                onChange={handleChange('email')}
-              />
-              <TextInput
-                label="Phone Number"
-                type="tel"
-                placeholder="+1 234 567 890"
-                value={formData.phoneNumber}
-                onChange={handleChange('phoneNumber')}
-              />
-            </div>
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <AuthInput
+            id="first-name"
+            label="First Name"
+            placeholder="John"
+            icon="user"
+            value={formData.firstName}
+            onChange={handleChange('firstName')}
+          />
+          <AuthInput
+            id="last-name"
+            label="Last Name"
+            placeholder="Doe"
+            icon="user"
+            value={formData.lastName}
+            onChange={handleChange('lastName')}
+          />
+        </div>
 
-            {/* Password field */}
-            <TextInput
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="••••••••••"
-              value={formData.password}
-              onChange={handleChange('password')}
-              right={<EyeIcon show={showPassword} onClick={() => setShowPassword(!showPassword)} />}
-            />
+        <AuthInput
+          id="register-email"
+          label="Email Address"
+          type="email"
+          placeholder="you@email.com"
+          icon="mail"
+          value={formData.email}
+          onChange={handleChange('email')}
+        />
 
-            {/* Confirm Password field */}
-            <TextInput
-              label="Confirm Password"
-              type={showConfirmPassword ? 'text' : 'password'}
-              placeholder="••••••••••"
-              value={formData.confirmPassword}
-              onChange={handleChange('confirmPassword')}
-              right={
-                <EyeIcon
-                  show={showConfirmPassword}
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                />
-              }
-            />
+        <AuthInput
+          id="register-phone"
+          label="Phone Number"
+          type="tel"
+          placeholder="(555) 000-0000"
+          prefix="+1"
+          value={formData.phone}
+          onChange={handleChange('phone')}
+        />
 
-            {/* Terms and Conditions checkbox */}
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="terms"
-                className="h-4 w-4 rounded border-gray-300 text-[#2f66ff] focus:ring-[#2f66ff]"
-                checked={agreeTerms}
-                onChange={(e) => setAgreeTerms(e.target.checked)}
-              />
-              <label htmlFor="terms" className="ml-2 text-[14px] text-[#111b2b]">
-                I agree to all the Terms and Privacy Policies
-              </label>
-            </div>
+        <AuthInput
+          id="register-password"
+          label="Password"
+          type={showPassword ? 'text' : 'password'}
+          placeholder="Min 8 characters"
+          icon={showPassword ? 'eyeOff' : 'eye'}
+          onIconClick={() => setShowPassword((prev) => !prev)}
+          value={formData.password}
+          onChange={handleChange('password')}
+        />
 
-            {/* Create Account button */}
-            <button
-              type="submit"
-              className="w-full rounded-md bg-[#2f66ff] py-3 font-medium text-white transition hover:bg-[#1f4fe0]"
-            >
-              Create account
-            </button>
-          </form>
+        <PasswordStrength value={formData.password} />
 
-          {/* Already have an account link */}
-          <p className="mt-6 text-center text-[14px] text-[#6b7280]">
-            Already have an account?{' '}
-            <Link to="/auth/login" className="text-rose-400 hover:underline">
-              Login
+        {error ? <p className="mt-2 mb-3 text-sm text-red">{error}</p> : null}
+
+        <div className="mt-4">
+          <CheckboxField
+            id="terms"
+            checked={agreedTerms}
+            required
+            onChange={(event) => setAgreedTerms(event.target.checked)}
+          >
+            I agree to the{' '}
+            <Link to="#" className="text-teal no-underline">
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link to="#" className="text-teal no-underline">
+              Privacy Policy
             </Link>
-          </p>
+          </CheckboxField>
+
+          <CheckboxField
+            id="marketing"
+            checked={marketingOptIn}
+            onChange={(event) => setMarketingOptIn(event.target.checked)}
+          >
+            Send me exclusive deals and updates
+          </CheckboxField>
         </div>
-      </div>
-    </section>
+
+        <AuthButton type="submit" disabled={loading}>
+          {loading ? 'Creating Account...' : 'Create Account - It\'s Free ->'}
+        </AuthButton>
+      </form>
+    </AuthLayout>
   );
 };
 
