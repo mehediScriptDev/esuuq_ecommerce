@@ -75,15 +75,22 @@ const OTPView = () => {
       const pendingToken = localStorage.getItem('pendingToken');
       const pendingUser = localStorage.getItem('pendingUser');
 
+      let nextPath = '/dashboard';
       if (pendingToken && pendingUser) {
         localStorage.setItem('token', pendingToken);
         localStorage.setItem('user', pendingUser);
         localStorage.removeItem('pendingToken');
         localStorage.removeItem('pendingUser');
+
+        try {
+          const u = JSON.parse(pendingUser);
+          if (u?.role === 'admin') nextPath = '/admin';
+          if (u?.role === 'merchant') nextPath = '/merchant';
+        } catch (e) {}
       }
 
       setLoading(false);
-      navigate('/dashboard');
+      navigate(nextPath);
     }, 600);
   };
 

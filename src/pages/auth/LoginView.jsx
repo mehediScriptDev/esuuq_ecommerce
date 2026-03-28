@@ -45,7 +45,13 @@ const LoginView = () => {
         localStorage.removeItem('rememberedEmail');
       }
 
-      navigate('/dashboard');
+      if (user?.role === 'admin') {
+        navigate('/admin');
+      } else if (user?.role === 'merchant') {
+        navigate('/merchant');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
       setError(err.message || 'Invalid email or password.');
     } finally {
