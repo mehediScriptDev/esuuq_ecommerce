@@ -17,7 +17,7 @@ const UserProfile = () => {
 
       <div className="bg-card rounded-md border border-white/[0.07] p-5">
         <div className="mb-6 flex flex-wrap items-center gap-4">
-          <div className="from-teal to-blue-500 text-navy flex h-18 w-18 items-center justify-center rounded-full bg-gradient-to-br font-['Syne'] text-[1.3rem] font-bold">
+          <div className="from-teal to-blue-500 text-navy flex h-18 w-18 items-center justify-center rounded-full bg-linear-to-br font-['Syne'] text-[1.3rem] font-bold">
             A
           </div>
           <div>

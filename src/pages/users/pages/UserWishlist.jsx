@@ -37,7 +37,7 @@ const UserWishlist = () => {
               />
               <button
                 type="button"
-                className="text-gray hover:text-red absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/30 text-[0.72rem]"
+                className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-red/80 hover:bg-red text-white text-[0.85rem] font-bold transition-all hover:scale-110"
               >
                 ✕
               </button>

@@ -161,7 +161,7 @@ const NavbarLayout = () => {
           </div>
 
           <Link
-            to="/wishlist"
+            to="/dashboard/wishlist"
             className="icon-btn text-gray2 hover:text-teal relative rounded-sm px-1.5 py-2 no-underline transition hover:bg-[rgba(0,201,167,0.15)] min-[640px]:px-[0.7rem]"
             title="Wishlist"
           >
