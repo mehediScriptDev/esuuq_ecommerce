@@ -48,7 +48,7 @@ const UserAddresses = () => {
               <div className="text-teal mb-1 text-[0.68rem] font-semibold tracking-widest uppercase">
                 {address.type}
               </div>
-              <div className="text-[0.84rem] leading-relaxed text-white">
+              <div className="text-[0.875rem] leading-relaxed text-white">
                 {address.lines.map((line) => (
                   <div key={line}>{line}</div>
                 ))}

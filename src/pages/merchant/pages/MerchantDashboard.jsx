@@ -1,5 +1,6 @@
 import React from 'react';
 import { DollarSign, Package, ShoppingBag, Star, TrendingUp } from 'lucide-react';
+import DashboardStats from '../../../components/DashboardStats';
 
 const stats = [
   {
@@ -178,31 +179,7 @@ const MerchantDashboard = ({ onNav }) => (
       </div>
     </div>
     {/* Stats */}
-    <div className="mb-5 grid grid-cols-1 gap-4 min-[580px]:grid-cols-2 min-[1100px]:grid-cols-4">
-      {stats.map((s) => {
-        const Icon = s.icon;
-        return (
-          <div
-            key={s.label}
-            className="bg-card hover:border-teal/20 rounded-md border border-white/[0.07] p-4 transition-all hover:-translate-y-0.5"
-          >
-            <div className="mb-3 flex items-start justify-between">
-              <div className={`flex h-9 w-9 items-center justify-center rounded-md ${s.bg}`}>
-                <Icon size={18} className="text-teal" />
-              </div>
-              <span className="rounded-full bg-green-500/10 px-2 py-0.5 text-[0.7rem] font-medium text-green-500">
-                {s.trend}
-              </span>
-            </div>
-            <div className="font-['Syne'] text-[1.6rem] leading-none font-extrabold text-white">
-              {s.val}
-            </div>
-            <div className="text-gray mt-1 text-[0.72rem]">{s.label}</div>
-            <div className="text-gray mt-1 text-[0.7rem]">{s.sub}</div>
-          </div>
-        );
-      })}
-    </div>
+    <DashboardStats stats={stats} />
     {/* Charts Row */}
     <div className="mb-5 grid grid-cols-1 gap-4 min-[1100px]:grid-cols-[2fr_1fr]">
       <div className="bg-card rounded-md border border-white/[0.07] p-5">

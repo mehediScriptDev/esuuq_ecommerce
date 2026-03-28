@@ -14,7 +14,7 @@ const orders = [
     total: '$392.95',
     status: 'Delivered',
     statusColor: 'text-green-500 bg-green-500/10',
-    thumbs: ['📱', '🎧', '🍳'],
+    images: ['https://loremflickr.com/300/300/electronics?seed=3', 'https://loremflickr.com/300/300/electronics?seed=4', 'https://loremflickr.com/300/300/food?seed=1'],
   },
   {
     id: '#ESQ-00846',
@@ -24,7 +24,7 @@ const orders = [
     total: '$64.99',
     status: 'In Transit',
     statusColor: 'text-yellow bg-yellow/10',
-    thumbs: ['👟'],
+    images: ['https://loremflickr.com/300/300/fashion?seed=3'],
   },
   {
     id: '#ESQ-00821',
@@ -34,7 +34,7 @@ const orders = [
     total: '$28.99',
     status: 'Delivered',
     statusColor: 'text-green-500 bg-green-500/10',
-    thumbs: ['🕶️'],
+    images: ['https://loremflickr.com/300/300/fashion?seed=4'],
   },
 ];
 
@@ -73,27 +73,31 @@ const UserOrders = () => {
           <div key={order.id} className="bg-card rounded-md border border-white/[0.07] p-4">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-white/[0.07] pb-3">
               <div>
-                <div className="text-teal text-[0.85rem] font-semibold">{order.id}</div>
-                <div className="text-gray text-[0.72rem]">{order.date}</div>
+                <div className="text-teal text-[0.875rem] font-semibold">{order.id}</div>
+                <div className="text-gray text-[0.875rem]">{order.date}</div>
               </div>
               <UserPill className={order.statusColor}>{order.status}</UserPill>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex gap-1.5">
-                {order.thumbs.map((thumb, index) => (
+                {order.images.map((img, index) => (
                   <div
                     key={`${order.id}-${index}`}
-                    className="flex h-10 w-10 items-center justify-center rounded-md border border-white/[0.07] bg-navy3 text-[1rem]"
+                    className="h-10 w-10 overflow-hidden rounded-md border border-white/[0.07]"
                   >
-                    {thumb}
+                    <img
+                      src={img}
+                      alt={`order-item-${index}`}
+                      className="h-full w-full object-cover"
+                    />
                   </div>
                 ))}
               </div>
 
               <div className="min-w-[170px] flex-1">
-                <div className="text-[0.82rem] font-medium text-white">{order.desc}</div>
-                <div className="text-gray mt-0.5 text-[0.72rem]">{order.meta}</div>
+                <div className="text-[0.875rem] lg:text-[1rem] font-medium text-white">{order.desc}</div>
+                <div className="text-gray mt-0.5 text-[0.875rem]">{order.meta}</div>
               </div>
 
               <div className="flex items-center gap-2">

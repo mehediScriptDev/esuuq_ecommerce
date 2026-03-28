@@ -87,8 +87,8 @@ const UserTrackOrder = () => {
 
         <div className="bg-navy3 flex flex-wrap items-center justify-between gap-2 rounded-md border border-white/[0.07] p-3">
           <div>
-            <div className="text-teal font-['Syne'] text-[0.92rem] font-bold">#ESQ-00846</div>
-            <div className="text-gray text-[0.72rem]">Urban Runner Sneakers · SoleStyle</div>
+            <div className="text-teal font-['Syne'] text-[0.875rem] font-bold">#ESQ-00846</div>
+            <div className="text-gray text-[0.875rem]">Urban Runner Sneakers · SoleStyle</div>
           </div>
           <UserPill className="text-yellow bg-yellow/10">In Transit</UserPill>
         </div>
@@ -107,8 +107,8 @@ const UserTrackOrder = () => {
                   {!isLast ? <span className={`mt-1 h-full w-0.5 ${lineClass[step.status]}`} /> : null}
                 </div>
                 <div>
-                  <div className={`text-[0.85rem] font-medium ${titleClass[step.status]}`}>{step.title}</div>
-                  <div className="text-gray mt-0.5 text-[0.72rem]">{step.sub}</div>
+                  <div className={`text-[0.875rem] font-medium ${titleClass[step.status]}`}>{step.title}</div>
+                  <div className="text-gray mt-0.5 text-[0.875rem]">{step.sub}</div>
                 </div>
               </div>
             );

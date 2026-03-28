@@ -57,8 +57,8 @@ const UserPayments = () => {
             </div>
 
             <div className="flex-1">
-              <div className="text-[0.84rem] font-medium text-white">{payment.number}</div>
-              <div className="text-gray mt-0.5 text-[0.72rem]">{payment.exp}</div>
+              <div className="text-[0.875rem] font-medium text-white">{payment.number}</div>
+              <div className="text-gray mt-0.5 text-[0.875rem]">{payment.exp}</div>
             </div>
 
             {payment.isDefault ? (

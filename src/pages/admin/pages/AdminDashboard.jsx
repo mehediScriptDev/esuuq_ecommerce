@@ -12,7 +12,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import DashboardPageHeader from '../components/DashboardPageHeader';
-import AdminStats from '../components/AdminStats';
+import DashboardStats from '../../../components/DashboardStats';
 
 const stats = [
   {
@@ -188,7 +188,7 @@ const AdminDashboard = ({ onNav }) => (
     </div>
 
     {/* Stats */}
-    <AdminStats stats={stats} />
+    <DashboardStats stats={stats} />
 
     {/* Charts Row */}
     <div className="mb-6 grid grid-cols-1 gap-4 min-[1100px]:grid-cols-[2fr_1fr]">

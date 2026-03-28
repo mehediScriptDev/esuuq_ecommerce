@@ -67,8 +67,8 @@ const UserSettings = () => {
               className="flex items-center justify-between border-b border-white/[0.07] py-3.5 last:border-b-0"
             >
               <div>
-                <div className="text-[0.85rem] font-medium text-white">{item.label}</div>
-                <div className="text-gray text-[0.72rem]">{item.sub}</div>
+                <div className="text-[0.875rem] font-medium text-white">{item.label}</div>
+                <div className="text-gray text-[0.875rem]">{item.sub}</div>
               </div>
               <UserToggle defaultOn={item.on} />
             </div>
@@ -83,8 +83,8 @@ const UserSettings = () => {
               className="flex items-center justify-between border-b border-white/[0.07] py-3.5 last:border-b-0"
             >
               <div>
-                <div className="text-[0.85rem] font-medium text-white">{item.label}</div>
-                <div className="text-gray text-[0.72rem]">{item.sub}</div>
+                <div className="text-[0.875rem] font-medium text-white">{item.label}</div>
+                <div className="text-gray text-[0.875rem]">{item.sub}</div>
               </div>
               <UserToggle defaultOn={item.on} />
             </div>
@@ -93,13 +93,13 @@ const UserSettings = () => {
           <div className="mt-4 flex flex-wrap gap-2">
             <button
               type="button"
-              className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem]"
+              className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.74rem]"
             >
               Change Password
             </button>
             <button
               type="button"
-              className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem]"
+              className="text-gray2 hover:border-teal hover:text-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.74rem]"
             >
               Manage Devices
             </button>
@@ -110,12 +110,12 @@ const UserSettings = () => {
           <h3 className="mb-4 font-['Syne'] text-[1rem] font-bold text-red">Danger Zone</h3>
           <div className="flex items-center justify-between border-b border-white/[0.07] py-3.5">
             <div>
-              <div className="text-[0.85rem] font-medium text-white">Deactivate Account</div>
-              <div className="text-gray text-[0.72rem]">Temporarily disable your account</div>
+              <div className="text-[0.875rem] font-medium text-white">Deactivate Account</div>
+              <div className="text-gray text-[0.875rem]">Temporarily disable your account</div>
             </div>
             <button
               type="button"
-              className="rounded border border-red/25 bg-red/10 px-3 py-1.5 text-[0.75rem] text-red"
+              className="rounded border border-red/25 bg-red/10 px-3 py-1.5 text-[0.74rem] text-red"
             >
               Deactivate
             </button>
@@ -123,12 +123,12 @@ const UserSettings = () => {
 
           <div className="flex items-center justify-between pt-3.5">
             <div>
-              <div className="text-[0.85rem] font-medium text-white">Delete Account</div>
-              <div className="text-gray text-[0.72rem]">Permanently delete all your data</div>
+              <div className="text-[0.875rem] font-medium text-white">Delete Account</div>
+              <div className="text-gray text-[0.875rem]">Permanently delete all your data</div>
             </div>
             <button
               type="button"
-              className="rounded border border-red/25 bg-red/10 px-3 py-1.5 text-[0.75rem] text-red"
+              className="rounded border border-red/25 bg-red/10 px-3 py-1.5 text-[0.74rem] text-red"
             >
               Delete
             </button>
