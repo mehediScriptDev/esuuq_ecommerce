@@ -42,22 +42,22 @@ const navSections = [
       label: 'Finance',
       items: [
         { id: 'revenue', icon: DollarSign, label: 'Revenue', to: '/admin/revenue' },
-        { id: 'payouts', icon: CreditCard, label: 'Payouts', to: '/admin/payouts' },
-        { id: 'commission', icon: TrendingUp, label: 'Commission', to: '/admin/commission' },
+        // { id: 'payouts', icon: CreditCard, label: 'Payouts', to: '/admin/payouts' },
+        // { id: 'commission', icon: TrendingUp, label: 'Commission', to: '/admin/commission' },
       ],
     },
     {
       label: 'Content',
       items: [
-        { id: 'categories', icon: FolderOpen, label: 'Categories', to: '/admin/categories' },
-        { id: 'banners', icon: Image, label: 'Banners', to: '/admin/banners' },
+        // { id: 'categories', icon: FolderOpen, label: 'Categories', to: '/admin/categories' },
+        // { id: 'banners', icon: Image, label: 'Banners', to: '/admin/banners' },
         { id: 'coupons', icon: Tag, label: 'Coupons', to: '/admin/coupons' },
       ],
     },
     {
       label: 'System',
       items: [
-        { id: 'analytics', icon: BarChart3, label: 'Analytics', to: '/admin/analytics' },
+        // { id: 'analytics', icon: BarChart3, label: 'Analytics', to: '/admin/analytics' },
         { id: 'settings', icon: Settings, label: 'Settings', to: '/admin/settings' },
       ],
     },

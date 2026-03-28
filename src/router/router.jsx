@@ -147,11 +147,11 @@ const router = createBrowserRouter(
         <Route path="revenue" element={wrap(AdminRevenue)} />
         <Route path="coupons" element={wrap(AdminCoupons)} />
         <Route path="settings" element={wrap(AdminSettings)} />
-        <Route path="payouts" element={<AdminPlaceholder title="Payout Management" icon="💸" />} />
+        {/* <Route path="payouts" element={<AdminPlaceholder title="Payout Management" icon="💸" />} />
         <Route path="commission" element={<AdminPlaceholder title="Commission Config" icon="📈" />} />
         <Route path="categories" element={<AdminPlaceholder title="Category Management" icon="📂" />} />
         <Route path="banners" element={<AdminPlaceholder title="Banner Management" icon="🖼️" />} />
-        <Route path="analytics" element={<AdminPlaceholder title="Analytics Reports" icon="📊" />} />
+        <Route path="analytics" element={<AdminPlaceholder title="Analytics Reports" icon="📊" />} /> */}
       </Route>
       <Route path="merchant" element={wrap(MerchantView)}>
         <Route index element={wrapElement(<MerchantDashboardRoute />)} />
