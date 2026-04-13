@@ -153,10 +153,7 @@ const router = createBrowserRouter(
         <Route path="tools-diy" element={wrap(ToolsDIYView)} />
         <Route path="pet-supplies" element={wrap(PetSuppliesView)} />
         <Route path="health" element={wrap(HealthView)} />
-        <Route path="cart" element=
-            {wrap(CartView)}
-         
-         />
+        <Route path="cart" element={<ProtectedRoute>{wrap(CartView)}</ProtectedRoute>} />
         <Route
           path="product/:id"
           element=
