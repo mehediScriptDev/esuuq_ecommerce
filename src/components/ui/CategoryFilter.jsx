@@ -37,7 +37,7 @@ const CategoryFilter = ({ filters, onFilterChange }) => {
         <div className="bg-card overflow-hidden rounded border border-white/10">
           <button
             onClick={() => toggleSection('price')}
-            className="flex w-full items-center justify-between px-4 py-3 text-[0.82rem] font-semibold text-white"
+            className="flex w-full items-center justify-between px-4 py-3 text-[18px] font-semibold text-white"
           >
             Price Range
             {openSections.price ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -47,7 +47,7 @@ const CategoryFilter = ({ filters, onFilterChange }) => {
               {priceRanges.map((range) => (
                 <label
                   key={range.label}
-                  className="text-gray flex cursor-pointer items-center gap-2 text-[0.8rem] transition-colors hover:text-white"
+                  className="text-gray flex cursor-pointer items-center gap-2 text-[16px] transition-colors hover:text-white"
                 >
                   <input
                     type="radio"
@@ -67,7 +67,7 @@ const CategoryFilter = ({ filters, onFilterChange }) => {
         <div className="bg-card overflow-hidden rounded border border-white/10">
           <button
             onClick={() => toggleSection('rating')}
-            className="flex w-full items-center justify-between px-4 py-3 text-[0.82rem] font-semibold text-white"
+            className="flex w-full items-center justify-between px-4 py-3 text-[18px] font-semibold text-white"
           >
             Customer Rating
             {openSections.rating ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -77,7 +77,7 @@ const CategoryFilter = ({ filters, onFilterChange }) => {
               {ratings.map((r) => (
                 <label
                   key={r}
-                  className="text-gray flex cursor-pointer items-center gap-2 text-[0.8rem] transition-colors hover:text-white"
+                  className="text-gray flex cursor-pointer items-center gap-2 text-[16px] transition-colors hover:text-white"
                 >
                   <input
                     type="radio"
@@ -87,11 +87,11 @@ const CategoryFilter = ({ filters, onFilterChange }) => {
                     className="accent-teal"
                   />
                   <span className="flex items-center gap-1">
-                    <span className="text-yellow text-xs">
+                    <span className="text-yellow text-[16px]">
                       {'★'.repeat(r)}
                       {'☆'.repeat(5 - r)}
                     </span>
-                    <span className="text-gray2 text-xs">& Up</span>
+                    <span className="text-gray2 text-[16px]">& Up</span>
                   </span>
                 </label>
               ))}
@@ -103,7 +103,7 @@ const CategoryFilter = ({ filters, onFilterChange }) => {
         <div className="bg-card overflow-hidden rounded border border-white/10">
           <button
             onClick={() => toggleSection('discount')}
-            className="flex w-full items-center justify-between px-4 py-3 text-[0.82rem] font-semibold text-white"
+            className="flex w-full items-center justify-between px-4 py-3 text-[18px] font-semibold text-white"
           >
             Discount
             {openSections.discount ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -113,7 +113,7 @@ const CategoryFilter = ({ filters, onFilterChange }) => {
               {discountOptions.map((d) => (
                 <label
                   key={d.value}
-                  className="text-gray flex cursor-pointer items-center gap-2 text-[0.8rem] transition-colors hover:text-white"
+                  className="text-gray flex cursor-pointer items-center gap-2 text-[16px] transition-colors hover:text-white"
                 >
                   <input
                     type="radio"

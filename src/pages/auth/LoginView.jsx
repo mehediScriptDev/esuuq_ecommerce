@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Heart, Package, Rocket, ShieldCheck } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { login } from '../../services/authService';
 import AuthLayout from './components/AuthLayout';
 import {
@@ -20,6 +20,7 @@ const loginPerks = [
 
 const LoginView = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -45,7 +46,11 @@ const LoginView = () => {
         localStorage.removeItem('rememberedEmail');
       }
 
-      if (user?.role === 'admin') {
+      // If user was redirected to login from a protected route, go back there
+      const returnTo = location.state?.from?.pathname;
+      if (returnTo) {
+        navigate(returnTo);
+      } else if (user?.role === 'admin') {
         navigate('/admin');
       } else if (user?.role === 'merchant') {
         navigate('/merchant');

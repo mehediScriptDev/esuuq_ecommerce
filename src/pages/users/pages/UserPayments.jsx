@@ -5,7 +5,8 @@ const payments = [
   {
     id: 'visa',
     label: 'VISA',
-    logoBg: 'from-[#1a3a8a] to-[#2a4aaa]',
+    logoSrc:
+      'https://upload.wikimedia.org/wikipedia/commons/4/40/Visa_Inc._logo_%281999%E2%80%932005%29.svg',
     number: 'Visa ending in ···· 4291',
     exp: 'Expires 08 / 27',
     isDefault: true,
@@ -13,7 +14,8 @@ const payments = [
   {
     id: 'mastercard',
     label: 'MC',
-    logoBg: 'from-[#8a1a1a] to-[#aa2a2a]',
+    logoSrc:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/MasterCard_Logo.svg/1280px-MasterCard_Logo.svg.png',
     number: 'Mastercard ending in ···· 7823',
     exp: 'Expires 03 / 26',
     isDefault: false,
@@ -21,7 +23,7 @@ const payments = [
   {
     id: 'paypal',
     label: 'PP',
-    logoBg: 'from-[#003087] to-[#009cde]',
+    logoSrc: 'https://1000logos.net/wp-content/uploads/2017/05/Font-Paypal-Logo-500x326.jpg',
     number: 'PayPal · ahmed@email.com',
     exp: 'Connected',
     isDefault: false,
@@ -50,10 +52,12 @@ const UserPayments = () => {
               payment.isDefault ? 'border-teal/40' : 'border-white/[0.07]'
             }`}
           >
-            <div
-              className={`flex h-8 w-12 shrink-0 items-center justify-center rounded bg-gradient-to-br text-[0.66rem] font-bold text-white ${payment.logoBg}`}
-            >
-              {payment.label}
+            <div className="flex h-8 w-12 shrink-0 items-center justify-center rounded">
+              <img
+                src={payment.logoSrc}
+                alt={payment.label}
+                className="max-h-full max-w-full object-contain"
+              />
             </div>
 
             <div className="flex-1">

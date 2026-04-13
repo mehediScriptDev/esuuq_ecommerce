@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { CreditCard, Lock, Home } from 'lucide-react';
 
 const initialCartItems = [
   {
@@ -130,28 +131,33 @@ const CartView = () => {
       icon: '\u{1F4B3}',
       name: 'Credit / Debit Card',
       desc: 'Visa, Mastercard, Amex, Discover',
-      logos: ['VISA', 'MC'],
+      logos: [
+        { src: 'https://media.assettype.com/sunstar/2025-11-12/8w4ntbmy/visa-logo-800x450.webp?w=1200&h=675&auto=format%2Ccompress&fit=max&enlarge=true', alt: 'Visa' },
+        { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/MasterCard_Logo.svg/250px-MasterCard_Logo.svg.png', alt: 'Mastercard' },
+        { src: '/img/payments/american-express.svg', alt: 'American Express' },
+        { src: '/img/payments/discover.svg', alt: 'Discover' },
+      ],
     },
     {
       id: 'stripe',
       icon: '\u26A1',
       name: 'Stripe Pay',
       desc: 'Fast, secure one-click payment',
-      logos: ['Stripe'],
+      logos: [{ src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc_b7cYDTEaXxYsRDAdsVXYknigIr16CNbZQ&s', alt: 'Stripe' }],
     },
     {
       id: 'paypal',
       icon: '\u{1F17F}\uFE0F',
       name: 'PayPal',
       desc: 'Pay with your PayPal account',
-      logos: [],
+      logos: [{ src: 'https://www.top-bank.ch/images/logo_540/paypal.png', alt: 'PayPal' }],
     },
     {
       id: 'apple',
       icon: '\u{1F34E}',
       name: 'Apple Pay',
       desc: 'Touch ID / Face ID payment',
-      logos: [],
+      logos: [{ src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Apple_Pay_logo.svg/960px-Apple_Pay_logo.svg.png', alt: 'Apple' }],
     },
   ];
 
@@ -484,11 +490,13 @@ const CartView = () => {
             <div className="animate-fadeUp">
               <div className="bg-card mb-4 min-[640px]:mb-5 overflow-hidden rounded-md border border-white/[0.07]">
                 <div className="flex flex-col min-[480px]:flex-row min-[480px]:items-center min-[480px]:justify-between border-b border-white/[0.07] px-4 min-[480px]:px-5 py-3 min-[480px]:py-4 gap-2 min-[480px]:gap-0">
-                  <h2 className="font-['Syne'] text-sm min-[480px]:text-base font-bold text-white">
-                    💳 Payment Details
+                  <h2 className="font-['Syne'] text-sm min-[480px]:text-base font-bold text-white flex items-center gap-2">
+                    <CreditCard className="h-4 w-4 text-white" />
+                    Payment Details
                   </h2>
                   <span className="border-teal/25 bg-teal/10 text-teal inline-flex items-center gap-1 min-[480px]:gap-1.5 rounded border px-2 min-[480px]:px-2.5 py-0.5 min-[480px]:py-1 text-[0.65rem] min-[480px]:text-[0.72rem] whitespace-nowrap">
-                    🔒 256-bit SSL
+                    <Lock className="h-3 w-3" />
+                    <span>256-bit SSL</span>
                   </span>
                 </div>
                 <div className="px-4 min-[480px]:px-5 py-4 min-[480px]:py-5">
@@ -497,7 +505,7 @@ const CartView = () => {
                       <div
                         key={method.id}
                         onClick={() => setSelectedPayment(method.id)}
-                        className={`flex cursor-pointer items-center gap-2 min-[480px]:gap-3 rounded border px-3 min-[480px]:px-4 py-3 min-[480px]:py-3.5 transition-all ${
+                        className={`flex cursor-pointer items-center gap-1 min-[480px]:gap-2 rounded border px-3 min-[480px]:px-4 py-3 min-[480px]:py-3.5 transition-all ${
                           selectedPayment === method.id
                             ? 'border-teal bg-teal/10'
                             : 'bg-navy3 hover:border-teal/30 border-white/[0.07]'
@@ -512,20 +520,23 @@ const CartView = () => {
                             <div className="bg-teal h-1.5 w-1.5 min-[480px]:h-2 min-[480px]:w-2 rounded-full" />
                           )}
                         </div>
-                        <span className="text-lg min-[480px]:text-xl">{method.icon}</span>
                         <div className="flex-1 min-w-0">
                           <div className="text-[0.8rem] min-[480px]:text-[0.88rem] font-medium text-white">{method.name}</div>
                           <div className="text-gray text-[0.65rem] min-[480px]:text-[0.72rem]">{method.desc}</div>
                         </div>
                         {method.logos.length > 0 && (
-                          <div className="ml-auto hidden min-[480px]:flex gap-1">
-                            {method.logos.map((logo) => (
-                              <span
-                                key={logo}
-                                className="bg-navy2 text-gray2 rounded border border-white/[0.07] px-1.5 py-0.5 text-[0.65rem]"
+                          <div className="ml-auto hidden min-[480px]:flex gap-2 items-center">
+                            {method.logos.map((logo, idx) => (
+                              <div
+                                key={logo.alt || idx}
+                                className="bg-white rounded-sm p-1 border border-white/[0.06] flex items-center justify-center h-6 w-12"
                               >
-                                {logo}
-                              </span>
+                                <img
+                                  src={logo.src || logo}
+                                  alt={logo.alt || `logo-${idx}`}
+                                  className="max-h-full max-w-full object-contain"
+                                />
+                              </div>
                             ))}
                           </div>
                         )}
@@ -580,7 +591,8 @@ const CartView = () => {
                   )}
 
                   <div className="bg-navy3 text-gray mt-4 min-[480px]:mt-5 flex items-center gap-2 rounded border border-white/[0.07] px-3 min-[480px]:px-4 py-2.5 min-[480px]:py-3 text-[0.7rem] min-[480px]:text-[0.78rem]">
-                    🔒 Your payment is secured and encrypted. We never store your card details.
+                    <Lock className="h-4 w-4 text-teal" />
+                    <span>Your payment is secured and encrypted. We never store your card details.</span>
                   </div>
                 </div>
               </div>
@@ -588,8 +600,9 @@ const CartView = () => {
               {/* Billing Address */}
               <div className="bg-card mb-4 min-[640px]:mb-5 overflow-hidden rounded-md border border-white/[0.07]">
                 <div className="border-b border-white/[0.07] px-4 min-[480px]:px-5 py-3 min-[480px]:py-4">
-                  <h2 className="font-['Syne'] text-sm min-[480px]:text-base font-bold text-white">
-                    🏠 Billing Address
+                  <h2 className="font-['Syne'] text-sm min-[480px]:text-base font-bold text-white flex items-center gap-2">
+                    <Home className="h-4 w-4 text-white" />
+                    Billing Address
                   </h2>
                 </div>
                 <div className="px-4 min-[480px]:px-5 py-3 min-[480px]:py-4">
@@ -742,7 +755,8 @@ const CartView = () => {
                     : 'Place Order →'}
             </button>
             <div className="text-gray mt-2.5 min-[640px]:mt-3.5 flex items-center justify-center gap-2 text-[0.65rem] min-[480px]:text-[0.7rem] min-[640px]:text-[0.72rem]">
-              🔒 Secure & encrypted checkout
+              <Lock className="h-4 w-4" />
+              <span>Secure & encrypted checkout</span>
             </div>
           </div>
         )}
