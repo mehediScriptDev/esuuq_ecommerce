@@ -32,13 +32,6 @@ const LoginView = () => {
             <label className="text-gray block text-[0.7rem] font-medium tracking-[0.14em] uppercase">
               Password
             </label>
-            <Link
-              to="/forgot-password"
-              title="Recover account"
-              className="text-teal hover:text-teal2 text-[0.68rem] font-semibold no-underline"
-            >
-              Forgot password?
-            </Link>
           </div>
           <div className="relative">
             <Lock className="text-gray absolute top-3.5 left-3 h-4 w-4" />

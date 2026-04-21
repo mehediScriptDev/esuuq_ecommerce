@@ -3,16 +3,24 @@ import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../../../../components/marketplace/ProductCard';
 
-const toCardProduct = (item) => ({
-  name: item.name,
-  store: item.store || 'Sneaker Hub',
-  price: `৳${Number(item.price).toLocaleString()}`,
-  old: `৳${Number(item.oldPrice).toLocaleString()}`,
-  image: item.images?.[0] || '/img/products/sneaker-black.png',
-  rating: item.rating || 4.5,
-  reviews: item.reviews || 95,
-  badge: item.off ? `-${item.off}%` : '',
-});
+const toCardProduct = (item) => {
+  const old = Number(item.oldPrice || item.comparePrice || 0);
+  const current = Number(item.price || 0);
+  const off = old > current && old > 0 ? Math.round(((old - current) / old) * 100) : 0;
+
+  return {
+    id: item.id,
+    slug: item.slug,
+    name: item.name,
+    store: item.merchant?.storeName || item.store || 'Marketplace Store',
+    price: `$${current.toFixed(2)}`,
+    old: old > 0 ? `$${old.toFixed(2)}` : '',
+    image: item.images?.[0] || '/img/products/sneaker-black.png',
+    rating: item.rating ?? item.avgRating ?? 0,
+    reviews: item.reviews ?? item.reviewCount ?? 0,
+    badge: off >= 30 ? 'SALE' : item.isFeatured ? 'HOT' : '',
+  };
+};
 
 const RelatedProducts = ({ items = [] }) => {
   return (

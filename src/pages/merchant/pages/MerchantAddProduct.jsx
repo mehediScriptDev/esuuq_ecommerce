@@ -1,177 +1,267 @@
-import React from 'react';
-import { Save, X, Plus, Image as ImageIcon, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { Save } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
+import { createProduct } from '../../../services/productService';
 
-const MerchantAddProduct = ({ onNav }) => (
-  <div className="animate-[fadeUp_0.4s_ease_both]">
-    <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-      <MerchantPageHeader
-        title={
-          <>
-            Add New <span className="text-teal">Product</span>
-          </>
-        }
-        subtitle="Create a new listing for your store"
-      />
-      <div className="flex gap-2.5">
-        <button
-          onClick={() => onNav?.('products')}
-          className="text-gray hover:border-teal hover:text-teal rounded border border-white/10 px-4 py-1.5 text-[0.8rem] font-bold transition-all"
-        >
-          Cancel
-        </button>
-        <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded border border-transparent px-4 py-1.5 text-[0.8rem] font-bold transition-all">
-          <Save size={14} strokeWidth={3} /> Save & Publish
-        </button>
-      </div>
-    </div>
-    
-    <div className="grid grid-cols-1 gap-6 min-[1100px]:grid-cols-[1fr_340px]">
-      <div className="space-y-6">
-        <div className="bg-card hover:border-teal/20 transition-colors rounded-lg border border-white/[0.07] p-6 lg:p-8">
-          <h3 className="mb-5 font-syne text-[1.1rem] font-bold text-white">
-            📝 Product Details
-          </h3>
-          <div className="mb-5">
-            <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">
-              Product Name
-            </label>
-            <input
-              className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none transition-colors"
-              placeholder="e.g. Wireless Earbuds Pro Max"
-            />
-          </div>
-          <div className="mb-5">
-            <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">
-              Description
-            </label>
-            <textarea
-              className="bg-navy3 focus:border-teal h-32 w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none transition-colors resize-none leading-relaxed"
-              placeholder="Describe your product specs..."
-            />
-          </div>
-          <div className="grid grid-cols-1 gap-5 min-[580px]:grid-cols-2">
-            <div>
-              <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">
-                Category
-              </label>
-              <select className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none cursor-pointer transition-colors">
-                <option>Electronics</option>
-                <option>Fashion</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">
-                SKU
-              </label>
-              <input
-                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none transition-colors"
-                placeholder="e.g. TZ-EAR-006"
-              />
-            </div>
-            <div>
-              <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">
-                Price ($)
-              </label>
-              <input
-                type="number"
-                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] font-black text-white outline-none transition-colors"
-                placeholder="49.99"
-              />
-            </div>
-            <div>
-              <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">
-                Compare At ($)
-              </label>
-              <input
-                type="number"
-                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none transition-colors"
-                placeholder="89.99"
-              />
-            </div>
-            <div>
-              <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">
-                Stock Quantity
-              </label>
-              <input
-                type="number"
-                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] font-bold text-white outline-none transition-colors"
-                placeholder="100"
-              />
-            </div>
-            <div>
-              <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">
-                Alert At
-              </label>
-              <input
-                type="number"
-                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none transition-colors"
-                placeholder="10"
-              />
-            </div>
-          </div>
+const initialForm = {
+  name: '',
+  description: '',
+  categoryId: 'electronics',
+  sku: '',
+  price: '',
+  comparePrice: '',
+  stock: '',
+  lowStockAt: '10',
+  imageUrl: '',
+  isFeatured: false,
+  colors: '',
+  sizes: '',
+};
+
+const MerchantAddProduct = ({ onNav }) => {
+  const [form, setForm] = useState(initialForm);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+
+  const update = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
+
+  const parseList = (value) =>
+    String(value || '')
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+  const submit = async () => {
+    try {
+      setSaving(true);
+      setError('');
+      setMessage('');
+
+      if (!form.name.trim() || !form.description.trim() || !form.price || !form.stock) {
+        setError('Please fill name, description, price, and stock.');
+        return;
+      }
+
+      const colors = parseList(form.colors);
+      const sizes = parseList(form.sizes);
+      const variants = [
+        ...(colors.length
+          ? [{ type: 'color', label: 'Color', values: colors.map((color) => ({ id: color.toLowerCase().replace(/\s+/g, '-'), value: color })) }]
+          : []),
+        ...(sizes.length
+          ? [{ type: 'size', label: 'Size', values: sizes.map((size) => ({ id: size.toLowerCase().replace(/\s+/g, '-'), value: size })) }]
+          : []),
+      ];
+
+      const payload = {
+        name: form.name.trim(),
+        description: form.description.trim(),
+        categoryId: form.categoryId,
+        price: Number(form.price),
+        stock: Number(form.stock),
+        lowStockAt: Number(form.lowStockAt || 10),
+        sku: form.sku.trim() || undefined,
+        comparePrice: form.comparePrice ? Number(form.comparePrice) : undefined,
+        images: form.imageUrl.trim() ? [form.imageUrl.trim()] : undefined,
+        isFeatured: form.isFeatured,
+        variants: variants.length ? variants : undefined,
+      };
+
+      await createProduct(payload);
+      setMessage('Product submitted successfully and is now pending admin review.');
+      setForm(initialForm);
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || 'Failed to create product.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="animate-[fadeUp_0.4s_ease_both]">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <MerchantPageHeader
+          title={<><span>Add New </span><span className="text-teal">Product</span></>}
+          subtitle="Create a new listing for your store"
+        />
+        <div className="flex gap-2.5">
+          <button
+            onClick={() => onNav?.('products')}
+            className="text-gray hover:border-teal hover:text-teal rounded border border-white/10 px-4 py-1.5 text-[0.8rem] font-bold transition-all"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={submit}
+            disabled={saving}
+            className="bg-teal text-navy hover:bg-teal2 disabled:opacity-70 flex items-center gap-1.5 rounded border border-transparent px-4 py-1.5 text-[0.8rem] font-bold transition-all"
+          >
+            <Save size={14} strokeWidth={3} /> {saving ? 'Submitting...' : 'Submit for Review'}
+          </button>
         </div>
-        
-        <div className="bg-card hover:border-teal/20 transition-colors rounded-lg border border-white/[0.07] p-6 lg:p-8">
-          <h3 className="mb-5 font-syne text-[1.1rem] font-bold text-white">🎨 Variants</h3>
-          <div className="mb-2">
-            <label className="text-gray mb-3 block text-[0.7rem] font-bold tracking-widest uppercase">
-              Colors
-            </label>
-            <div className="mb-4 flex flex-wrap gap-2.5">
-              {['Black', 'White', 'Red'].map((c) => (
-                <span
-                  key={c}
-                  className="bg-navy3 hover:border-white/20 transition-colors inline-flex items-center gap-2 rounded border border-white/[0.07] px-4 py-1.5 text-[0.8rem] font-bold text-white"
+      </div>
+
+      {message ? <div className="mb-4 rounded border border-green-500/30 bg-green-500/10 px-4 py-2 text-sm text-green-300">{message}</div> : null}
+      {error ? <div className="mb-4 rounded border border-red/30 bg-red/10 px-4 py-2 text-sm text-red-300">{error}</div> : null}
+
+      <div className="grid grid-cols-1 gap-6 min-[1100px]:grid-cols-[1fr_340px]">
+        <div className="space-y-6">
+          <div className="bg-card rounded-lg border border-white/[0.07] p-6 lg:p-8">
+            <h3 className="mb-5 font-syne text-[1.1rem] font-bold text-white">Product Details</h3>
+
+            <div className="mb-5">
+              <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">Product Name</label>
+              <input
+                value={form.name}
+                onChange={(e) => update('name', e.target.value)}
+                className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none"
+                placeholder="e.g. Wireless Earbuds Pro Max"
+              />
+            </div>
+
+            <div className="mb-5">
+              <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">Description</label>
+              <textarea
+                value={form.description}
+                onChange={(e) => update('description', e.target.value)}
+                className="bg-navy3 focus:border-teal h-32 w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none resize-none"
+                placeholder="Describe your product specs..."
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 min-[580px]:grid-cols-2">
+              <div>
+                <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">Category</label>
+                <select
+                  value={form.categoryId}
+                  onChange={(e) => update('categoryId', e.target.value)}
+                  className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none"
                 >
-                  {c} <X size={14} strokeWidth={3} className="text-gray hover:text-red cursor-pointer transition-colors" />
-                </span>
-              ))}
+                  <option value="electronics">Electronics</option>
+                  <option value="fashion">Fashion</option>
+                  <option value="home-garden">Home & Garden</option>
+                  <option value="beauty">Beauty</option>
+                  <option value="food-grocery">Food & Grocery</option>
+                  <option value="sports">Sports</option>
+                  <option value="books">Books</option>
+                  <option value="toys-kids">Toys & Kids</option>
+                  <option value="tools-diy">Tools & DIY</option>
+                  <option value="pet-supplies">Pet Supplies</option>
+                  <option value="health">Health</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">SKU</label>
+                <input
+                  value={form.sku}
+                  onChange={(e) => update('sku', e.target.value)}
+                  className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none"
+                  placeholder="e.g. TZ-EAR-006"
+                />
+              </div>
+
+              <div>
+                <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">Price ($)</label>
+                <input
+                  type="number"
+                  value={form.price}
+                  onChange={(e) => update('price', e.target.value)}
+                  className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none"
+                  placeholder="49.99"
+                />
+              </div>
+
+              <div>
+                <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">Compare At ($)</label>
+                <input
+                  type="number"
+                  value={form.comparePrice}
+                  onChange={(e) => update('comparePrice', e.target.value)}
+                  className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none"
+                  placeholder="89.99"
+                />
+              </div>
+
+              <div>
+                <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">Stock Quantity</label>
+                <input
+                  type="number"
+                  value={form.stock}
+                  onChange={(e) => update('stock', e.target.value)}
+                  className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none"
+                  placeholder="100"
+                />
+              </div>
+
+              <div>
+                <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">Alert At</label>
+                <input
+                  type="number"
+                  value={form.lowStockAt}
+                  onChange={(e) => update('lowStockAt', e.target.value)}
+                  className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none"
+                  placeholder="10"
+                />
+              </div>
             </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="bg-card rounded-lg border border-white/[0.07] p-6 lg:p-8">
+            <h3 className="mb-5 font-syne text-[1.1rem] font-bold text-white">Product Media</h3>
+            <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">Image URL</label>
             <input
-              className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none transition-colors"
-              placeholder="Add color variant..."
+              value={form.imageUrl}
+              onChange={(e) => update('imageUrl', e.target.value)}
+              className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none"
+              placeholder="https://..."
             />
           </div>
-        </div>
-      </div>
-      
-      <div className="space-y-6">
-        <div className="bg-card hover:border-teal/20 transition-colors rounded-lg border border-white/[0.07] p-6 lg:p-8">
-          <h3 className="mb-5 font-syne text-[1.1rem] font-bold text-white">
-            🖼 Product Images
-          </h3>
-          <div className="bg-navy3/30 hover:border-teal hover:bg-teal/5 flex flex-col items-center justify-center rounded-lg border border-dashed border-white/[0.07] py-10 text-center transition-all cursor-pointer group">
-            <div className="bg-teal/10 text-teal mb-3 rounded-full p-4 transition-transform group-hover:scale-110 shadow-[0_0_15px_rgba(0,201,167,0.1)]">
-              <ImageIcon size={28} />
-            </div>
-            <div className="text-[0.88rem] font-bold text-white mb-1">Click or Drop images here</div>
-            <div className="text-gray text-[0.7rem] font-medium tracking-wider uppercase">PNG, JPG up to 10MB</div>
+
+          <div className="bg-card rounded-lg border border-white/[0.07] p-6 lg:p-8">
+            <h3 className="mb-5 font-syne text-[1.1rem] font-bold text-white">Visibility</h3>
+            <label className="text-gray2 inline-flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.isFeatured}
+                onChange={(e) => update('isFeatured', e.target.checked)}
+                className="accent-teal"
+              />
+              Mark as featured product
+            </label>
           </div>
-        </div>
-        
-        <div className="bg-card hover:border-teal/20 transition-colors rounded-lg border border-white/[0.07] p-6 lg:p-8">
-          <h3 className="mb-5 font-syne text-[1.1rem] font-bold text-white">⚙️ Visibility</h3>
-          <div className="space-y-4">
-            {[
-              { l: 'Published', d: 'Visible to customers' },
-              { l: 'Featured', d: 'Show on shopfront' },
-            ].map((item, id) => (
-              <div key={item.l} className="flex items-center justify-between p-3 bg-navy3 rounded-md border border-white/[0.07]">
-                <div>
-                  <div className="text-[0.88rem] font-bold text-white">{item.l}</div>
-                  <div className="text-gray mt-1 text-[0.65rem] font-bold uppercase tracking-widest">{item.d}</div>
-                </div>
-                <button className={`relative h-6 w-11 rounded-full cursor-pointer transition-colors ${id === 0 ? 'bg-teal shadow-[0_0_15px_rgba(0,201,167,0.3)]' : 'bg-white/10'}`}>
-                  <span className={`absolute top-[2px] h-5 w-5 rounded-full shadow-sm transition-transform ${id === 0 ? 'bg-navy right-[2px]' : 'bg-gray left-[2px] w-[20px] h-[20px] rounded-full'}`} />
-                </button>
+
+          <div className="bg-card rounded-lg border border-white/[0.07] p-6 lg:p-8">
+            <h3 className="mb-5 font-syne text-[1.1rem] font-bold text-white">Variants</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">Colors</label>
+                <input
+                  value={form.colors}
+                  onChange={(e) => update('colors', e.target.value)}
+                  className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none"
+                  placeholder="e.g. Red, Black, White"
+                />
               </div>
-            ))}
+
+              <div>
+                <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">Sizes</label>
+                <input
+                  value={form.sizes}
+                  onChange={(e) => update('sizes', e.target.value)}
+                  className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none"
+                  placeholder="e.g. S, M, L, XL"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default MerchantAddProduct;

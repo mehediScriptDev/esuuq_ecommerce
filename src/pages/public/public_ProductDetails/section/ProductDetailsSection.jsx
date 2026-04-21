@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
-import axios from 'axios';
 import ProductGallery from '../components/ProductGallery';
 import ProductInfo from '../components/ProductInfo';
 import ProductTabs from '../components/ProductTabs';
 import RelatedProducts from '../components/RelatedProducts';
+import { getProductById, getProductBySlug, getRelatedProducts } from '../../../../services/productService';
 
 const toSlug = (value = '') =>
   value
@@ -14,60 +14,88 @@ const toSlug = (value = '') =>
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '');
 
+const toUiProduct = (item = {}) => {
+  const price = Number(item.price || 0);
+  const oldPrice = Number(item.comparePrice || 0);
+  const off = oldPrice > price && oldPrice > 0
+    ? Math.round(((oldPrice - price) / oldPrice) * 100)
+    : 0;
+
+  const variants = Array.isArray(item.variants) ? item.variants : [];
+  const colors = variants.find((variant) => variant?.type === 'color')?.values || [];
+  const sizes = variants.find((variant) => variant?.type === 'size')?.values || [];
+
+  return {
+    ...item,
+    category: item.category?.name || 'Category',
+    reviews: item.reviewCount || 0,
+    rating: item.avgRating || 0,
+    oldPrice,
+    price,
+    off,
+    colors: colors.map((variant) => variant.value || variant.label).filter(Boolean),
+    sizes: sizes.map((variant) => variant.value || variant.label).filter(Boolean),
+    materials: item.metadata?.materials || 'Standard materials',
+    care: item.metadata?.care || 'Handle with care',
+    shipping: item.metadata?.shipping || {
+      dhaka: '24-48 hours',
+      outside: '2-5 days',
+      free_threshold: 2000,
+    },
+  };
+};
+
 const ProductDetailsSection = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
-  const [allProducts, setAllProducts] = useState({});
+  const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [wishlisted, setWishlisted] = useState(false);
 
   useEffect(() => {
+    let active = true;
+
     const fetchProduct = async () => {
       try {
         setLoading(true);
         setError('');
 
-        const response = await axios.get('/data/product_details.json');
-        const products = response.data || {};
+        let result;
+        try {
+          result = await getProductBySlug(id);
+        } catch {
+          result = await getProductById(id);
+        }
 
-        setAllProducts(products);
-        setProduct(products[id] || products.default || null);
+        if (!active) return;
+
+        const uiProduct = toUiProduct(result);
+        setProduct(uiProduct);
+
+        const related = await getRelatedProducts(result.id, 4);
+        if (!active) return;
+        setRelatedProducts((related || []).map(toUiProduct));
       } catch (err) {
-        setError('Unable to load product details right now.');
-        console.error(err);
+        if (!active) return;
+        setError(err?.response?.data?.message || 'Unable to load product details right now.');
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
 
     fetchProduct();
     window.scrollTo(0, 0);
+
+    return () => {
+      active = false;
+    };
   }, [id]);
 
-  const relatedProducts = useMemo(() => {
-    const list = Object.entries(allProducts)
-      .filter(([key]) => key !== id && key !== 'default')
-      .map(([key, value]) => ({ id: key, ...value }));
-
-    if (list.length > 0) {
-      return list.slice(0, 4);
-    }
-
-    if (!product) {
-      return [];
-    }
-
-    return Array.from({ length: 4 }).map((_, index) => ({
-      id: `${toSlug(product.name)}-${index + 1}`,
-      ...product,
-      name: `${product.name} ${index + 1}`,
-      price: Number(product.price) + (index + 1) * 5,
-      oldPrice: Number(product.oldPrice) + (index + 1) * 8,
-      rating: Math.min(5, Number(product.rating) + 0.1 * (index % 2)),
-      reviews: Number(product.reviews) + (index + 1) * 37,
-    }));
-  }, [allProducts, id, product]);
+  const categoryLink = useMemo(
+    () => `/${toSlug(product?.category || 'category')}`,
+    [product?.category]
+  );
 
   if (loading) {
     return (
@@ -101,8 +129,6 @@ const ProductDetailsSection = () => {
       </div>
     );
   }
-
-  const categoryLink = `/${toSlug(product.category || 'category')}`;
 
   return (
     <div className="bg-navy min-h-screen pb-12 selection:bg-teal selection:text-navy">

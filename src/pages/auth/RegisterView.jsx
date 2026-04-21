@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CreditCard, Gift, MailCheck, RotateCcw } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { register } from '../../services/authService';
+import { register, startGoogleOAuth } from '../../services/authService';
 import AuthLayout from './components/AuthLayout';
 import {
   AuthButton,
@@ -38,6 +38,16 @@ const RegisterView = () => {
     setFormData((prev) => ({ ...prev, [field]: event.target.value }));
   };
 
+  const normalizePhone = (value) => {
+    const trimmed = value.trim();
+    if (!trimmed) return undefined;
+
+    const digits = trimmed.replace(/\D/g, '');
+    if (!digits) return undefined;
+
+    return trimmed.startsWith('+') ? `+${digits}` : `+${digits}`;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
@@ -49,12 +59,24 @@ const RegisterView = () => {
 
     setLoading(true);
     try {
-      const { token, user } = await register({ ...formData, marketingOptIn });
-      localStorage.setItem('pendingToken', token);
-      localStorage.setItem('pendingUser', JSON.stringify(user));
-      navigate('/auth/otp', { state: { email: formData.email } });
+      const payload = {
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
+      };
+
+      const phone = normalizePhone(formData.phone);
+      if (phone) {
+        payload.phone = phone;
+      }
+
+      const response = await register(payload);
+      localStorage.setItem('pendingUserId', response.userId);
+      localStorage.setItem('pendingEmail', payload.email);
+      navigate('/auth/otp', { state: { email: payload.email, userId: response.userId } });
     } catch (err) {
-      setError(err.message || 'Unable to create account.');
+      setError(err?.response?.data?.message || err.message || 'Unable to create account.');
     } finally {
       setLoading(false);
     }
@@ -73,7 +95,7 @@ const RegisterView = () => {
       leftPerks={registerPerks}
     >
       <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <SocialButton provider="google">Continue with Google</SocialButton>
+        <SocialButton provider="google" onClick={startGoogleOAuth}>Continue with Google</SocialButton>
         <SocialButton provider="facebook">Continue with Facebook</SocialButton>
       </div>
 

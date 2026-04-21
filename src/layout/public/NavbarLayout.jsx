@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   ShoppingBag,
@@ -22,23 +22,110 @@ import {
 } from 'lucide-react';
 import Sidebar from './Sidebar';
 import { getCurrentUser, logout } from '../../services/authService';
+import { getTrendingSearches, searchAutocomplete } from '../../services/productService';
+import { getCartItems, getWishlistItems } from '../../services/shopStorageService';
 
 const NavbarLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [searchText, setSearchText] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All Departments');
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [trendingSearches, setTrendingSearches] = useState([]);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
+  const searchBoxRef = useRef(null);
+
+  const refreshCounts = () => {
+    setWishlistCount(getWishlistItems().length);
+    setCartCount(getCartItems().reduce((sum, item) => sum + Number(item.qty || 1), 0));
+  };
 
   useEffect(() => {
     // Load current user from localStorage on mount
     const user = getCurrentUser();
     setCurrentUser(user);
+    refreshCounts();
   }, [location]);
+
+  useEffect(() => {
+    const onShopUpdate = () => refreshCounts();
+    window.addEventListener('esuuq:shop-updated', onShopUpdate);
+    return () => window.removeEventListener('esuuq:shop-updated', onShopUpdate);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadTrending = async () => {
+      try {
+        const data = await getTrendingSearches(6);
+        if (active) {
+          setTrendingSearches(Array.isArray(data) ? data : []);
+        }
+      } catch {
+        if (active) setTrendingSearches([]);
+      }
+    };
+
+    loadTrending();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    const timer = setTimeout(async () => {
+      if (!searchText.trim()) {
+        if (active) setSearchSuggestions([]);
+        return;
+      }
+
+      try {
+        const categoryFilter = selectedCategory !== 'All Departments' ? selectedCategory : '';
+        const data = await searchAutocomplete(searchText.trim(), 8, categoryFilter);
+        if (active) {
+          setSearchSuggestions(Array.isArray(data) ? data : []);
+        }
+      } catch {
+        if (active) setSearchSuggestions([]);
+      }
+    }, 250);
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [searchText, selectedCategory]);
+
+  useEffect(() => {
+    const onClickOutside = (event) => {
+      if (!searchBoxRef.current?.contains(event.target)) {
+        setSearchOpen(false);
+      }
+    };
+
+    document.addEventListener('click', onClickOutside);
+    return () => document.removeEventListener('click', onClickOutside);
+  }, []);
 
   const handleLogout = async () => {
     await logout();
     setCurrentUser(null);
     navigate('/auth/login');
+  };
+
+  const submitSearch = (query) => {
+    const text = String(query || searchText).trim();
+    if (!text) return;
+
+    setSearchOpen(false);
+    navigate(`/search?q=${encodeURIComponent(text)}`);
   };
 
   const categories = [
@@ -99,26 +186,74 @@ const NavbarLayout = () => {
           ES<span className="text-teal">UUQ</span>
         </Link>
 
-        <div className="search-bar bg-navy3 relative hidden items-center overflow-hidden rounded-sm border border-white/10 min-[900px]:flex">
-          <select className="bg-navy3 text-gray2 h-full cursor-pointer border-r border-white/10 px-3 text-[0.8rem] outline-none">
-            <option>All</option>
-            <option>Electronics</option>
-            <option>Fashion</option>
-            <option>Home</option>
-            <option>Food</option>
-            <option>Beauty</option>
+        <div ref={searchBoxRef} className="search-bar bg-navy3 relative hidden items-center overflow-visible rounded-sm border border-white/10 min-[900px]:flex">
+          <select 
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="bg-navy3 text-gray2 h-full cursor-pointer border-r border-white/10 px-3 text-[0.8rem] outline-none"
+          >
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.name}>{cat.name}</option>
+            ))}
           </select>
           <input
             type="text"
+            name="siteSearch"
+            autoComplete="off"
+            value={searchText}
+            onChange={(event) => setSearchText(event.target.value)}
+            onFocus={() => setSearchOpen(true)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                submitSearch();
+              }
+            }}
             placeholder="Search products, brands, categories..."
             className="placeholder:text-gray flex-1 bg-transparent px-4 py-[0.4rem] lg:py-[0.6rem] text-[0.9rem] text-white outline-none"
           />
           <button
             type="button"
+            onClick={() => submitSearch()}
             className="bg-teal text-navy hover:bg-teal2 absolute right-0 h-full px-5 transition-colors"
           >
             <Search size={18} />
           </button>
+
+          {searchOpen && (
+            <div className="absolute top-[calc(100%+6px)] left-0 right-0 z-[500] rounded-sm border border-white/10 bg-navy2 p-2 shadow-2xl">
+              {searchText.trim() ? (
+                <>
+                  <div className="px-2 py-1 text-[0.65rem] font-bold tracking-widest text-gray uppercase">Suggestions</div>
+                  {(searchSuggestions.length ? searchSuggestions : [searchText]).map((item) => (
+                    <button
+                      type="button"
+                      key={item}
+                      onClick={() => submitSearch(item)}
+                      className="block w-full rounded px-2 py-2 text-left text-[0.8rem] text-gray2 transition-colors hover:bg-white/5 hover:text-white"
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <div className="px-2 py-1 text-[0.65rem] font-bold tracking-widest text-gray uppercase">Trending</div>
+                  {trendingSearches.map((item) => (
+                    <button
+                      type="button"
+                      key={item.query}
+                      onClick={() => submitSearch(item.query)}
+                      className="flex w-full items-center justify-between rounded px-2 py-2 text-left text-[0.8rem] text-gray2 transition-colors hover:bg-white/5 hover:text-white"
+                    >
+                      <span>{item.query}</span>
+                      <span className="text-[0.65rem] text-gray">{item.count}</span>
+                    </button>
+                  ))}
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-1.5 min-[640px]:gap-2">
@@ -157,7 +292,7 @@ const NavbarLayout = () => {
                     </div>
                   </div>
                   <div className="space-y-0.5 p-2">
-                    {currentUser.role === 'user' && (
+                    {(currentUser.role === 'customer' || currentUser.role === 'delivery_partner') && (
                       <Link
                         to="/dashboard"
                         className="text-gray2 hover:bg-teal/10 hover:text-teal flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition"
@@ -165,7 +300,7 @@ const NavbarLayout = () => {
                         <User size={14} /> My Dashboard
                       </Link>
                     )}
-                    {currentUser.role === 'admin' && (
+                    {(currentUser.role === 'admin' || currentUser.role === 'sub_admin' || currentUser.role === 'super_admin') && (
                       <Link
                         to="/admin"
                         className="text-gray2 hover:bg-teal/10 hover:text-teal flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition"
@@ -210,7 +345,7 @@ const NavbarLayout = () => {
           >
             <Heart size={18} className="min-[640px]:size-5" />
             <span className="bg-teal text-navy absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full text-[0.6rem] font-bold">
-              3
+              {wishlistCount}
             </span>
           </Link>
           <Link
@@ -220,7 +355,7 @@ const NavbarLayout = () => {
           >
             <ShoppingCart size={18} className="min-[640px]:size-5" />
             <span className="bg-teal text-navy absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full text-[0.6rem] font-bold">
-              5
+              {cartCount}
             </span>
           </Link>
         </div>
