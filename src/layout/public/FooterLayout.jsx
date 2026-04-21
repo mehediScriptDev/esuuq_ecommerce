@@ -32,33 +32,32 @@ const FooterLayout = () => {
           <div>
             <h4 className="mt-4 lg:mt-0 mb-4 font-['Syne'] text-[0.85rem] font-bold uppercase tracking-[0.08em] text-white">Shop</h4>
             <ul className="space-y-2 lg:text-sm text-xs">
-              <li><a href="#" className="footer-link">Today's Deals</a></li>
-              <li><a href="#" className="footer-link">New Arrivals</a></li>
-              <li><a href="#" className="footer-link">Best Sellers</a></li>
-              <li><a href="#" className="footer-link">Gift Cards</a></li>
-              <li><a href="#" className="footer-link">Coupons</a></li>
+              <li><a href="/search?q=deals" className="footer-link">Today's Deals</a></li>
+              <li><a href="/search?q=new" className="footer-link">New Arrivals</a></li>
+              <li><a href="/search?q=bestseller" className="footer-link">Best Sellers</a></li>
+              <li><a href="/coupons" className="footer-link">Coupons</a></li>
             </ul>
           </div>
 
           <div>
             <h4 className="mb-4 font-['Syne'] text-[0.85rem] font-bold uppercase tracking-[0.08em] text-white">Sell</h4>
             <ul className="space-y-2 lg:text-sm text-xs">
-              <li><a href="#" className="footer-link">Start Selling</a></li>
-              <li><a href="#" className="footer-link">Merchant Portal</a></li>
-              <li><a href="#" className="footer-link">Merchant App</a></li>
-              <li><a href="#" className="footer-link">Commission Info</a></li>
-              <li><a href="#" className="footer-link">Seller Support</a></li>
+              <li><a href="/merchant-register" className="footer-link">Start Selling</a></li>
+              <li><a href="/merchant/dashboard" className="footer-link">Merchant Portal</a></li>
+              <li><a href="/merchant/app" className="footer-link">Merchant App</a></li>
+              <li><a href="/merchant/commission" className="footer-link">Commission Info</a></li>
+              <li><a href="/support" className="footer-link">Seller Support</a></li>
             </ul>
           </div>
 
           <div>
             <h4 className="mb-4 font-['Syne'] text-[0.85rem] md:text-[0.875rem] xl:text-[1rem] font-bold uppercase tracking-[0.08em] text-white">Help</h4>
             <ul className="space-y-2 lg:text-sm text-xs">
-              <li><a href="#" className="footer-link">Track Order</a></li>
-              <li><a href="#" className="footer-link">Returns</a></li>
-              <li><a href="#" className="footer-link">FAQ</a></li>
-              <li><a href="#" className="footer-link">Contact Us</a></li>
-              <li><a href="#" className="footer-link">Privacy Policy</a></li>
+              <li><a href="/account/orders" className="footer-link">Track Order</a></li>
+              <li><a href="/support/returns" className="footer-link">Returns</a></li>
+              <li><a href="/help/faq" className="footer-link">FAQ</a></li>
+              <li><a href="/support/contact" className="footer-link">Contact Us</a></li>
+              <li><a href="/legal/privacy" className="footer-link">Privacy Policy</a></li>
             </ul>
           </div>
         </div>
@@ -72,8 +71,8 @@ const FooterLayout = () => {
             </span>
             <span className="pay-icon">VISA</span>
             <span className="pay-icon">MC</span>
-            <span className="pay-icon">Stripe</span>
-            <span className="pay-icon">PayPal</span>
+            <span className="pay-icon">Amex</span>
+            <span className="pay-icon">Discover</span>
           </div>
         </div>
       </div>

@@ -19,6 +19,7 @@ const ToolsDIYView = lazy(() => import('../pages/public/public_ToolsDIY/ToolsDIY
 const PetSuppliesView = lazy(() => import('../pages/public/public_PetSupplies/PetSuppliesView'));
 const HealthView = lazy(() => import('../pages/public/public_Health/HealthView'));
 const CartView = lazy(() => import('../pages/public/public_Cart/CartView'));
+const SearchView = lazy(() => import('../pages/public/public_Search/SearchView'));
 const ProductDetailsView = lazy(
   () => import('../pages/public/public_ProductDetails/ProductDetailsView')
 );
@@ -27,6 +28,7 @@ const ProductDetailsView = lazy(
 const LoginView = lazy(() => import('../pages/auth/LoginView'));
 const RegisterView = lazy(() => import('../pages/auth/RegisterView'));
 const OTPView = lazy(() => import('../pages/auth/otp/OTPView'));
+const OAuthCallbackView = lazy(() => import('../pages/auth/OAuthCallbackView'));
 
 // User Dashboard
 const UserView = lazy(() => import('../pages/users/UserView'));
@@ -86,6 +88,7 @@ const merchantPathMap = {
   orders: '/merchant/orders',
   payouts: '/merchant/payouts',
   products: '/merchant/products',
+  inventory: '/merchant/inventory',
 };
 
 const userPathMap = {
@@ -153,12 +156,11 @@ const router = createBrowserRouter(
         <Route path="tools-diy" element={wrap(ToolsDIYView)} />
         <Route path="pet-supplies" element={wrap(PetSuppliesView)} />
         <Route path="health" element={wrap(HealthView)} />
+        <Route path="search" element={wrap(SearchView)} />
         <Route path="cart" element={<ProtectedRoute>{wrap(CartView)}</ProtectedRoute>} />
         <Route
           path="product/:id"
-          element=
-              {wrap(ProductDetailsView)}
-            
+          element={wrap(ProductDetailsView)}
         />
         <Route path="*" element={wrap(NotFound)} />
       </Route>
@@ -168,6 +170,7 @@ const router = createBrowserRouter(
         <Route path="login" element={<LoginView />} />
         <Route path="register" element={wrap(RegisterView)} />
         <Route path="otp" element={wrap(OTPView)} />
+        <Route path="callback" element={wrap(OAuthCallbackView)} />
       </Route>
       <Route path="dashboard" element={
         <ProtectedRoute>
@@ -188,7 +191,7 @@ const router = createBrowserRouter(
         <Route path="settings" element={wrap(UserSettings)} />
       </Route>
       <Route path="admin" element={
-        <ProtectedRoute>
+        <ProtectedRoute allowedRoles={['admin', 'sub_admin', 'super_admin']}>
           {wrap(AdminView)}
         </ProtectedRoute>
       }>
@@ -208,7 +211,7 @@ const router = createBrowserRouter(
         <Route path="analytics" element={<AdminPlaceholder title="Analytics Reports" icon="📊" />} /> */}
       </Route>
       <Route path="merchant" element={
-        <ProtectedRoute>
+        <ProtectedRoute allowedRoles={['merchant']}>
           {wrap(MerchantView)}
         </ProtectedRoute>
       }>

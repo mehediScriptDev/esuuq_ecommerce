@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   CheckCircle2,
   Heart,
@@ -11,14 +11,33 @@ import {
   Star,
   Truck,
 } from 'lucide-react';
+import { addToCart, isWishlisted, toggleWishlistItem } from '../../../../services/shopStorageService';
 
 const ProductInfo = ({ product }) => {
   const [qty, setQty] = useState(1);
   const [selectedColor, setSelectedColor] = useState(0);
   const [selectedSize, setSelectedSize] = useState(0);
+  const [added, setAdded] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
+  const [wishlisted, setWishlisted] = useState(() => {
+    const key = product?.id || product?.slug || product?.name;
+    return key ? isWishlisted(String(key)) : false;
+  });
+
+  useEffect(() => {
+    const key = product?.id || product?.slug || product?.name;
+    setWishlisted(key ? isWishlisted(String(key)) : false);
+  }, [product?.id, product?.slug, product?.name]);
+
+  useEffect(() => {
+    setSelectedColor(0);
+    setSelectedSize(0);
+  }, [product?.id, product?.slug, product?.name]);
 
   const colors = Array.isArray(product.colors) ? product.colors : [];
   const sizes = Array.isArray(product.sizes) ? product.sizes : [];
+  const selectedColorValue = colors[selectedColor] || '';
+  const selectedSizeValue = sizes[selectedSize] || '';
 
   const savings = useMemo(() => {
     const current = Number(product.price) || 0;
@@ -28,6 +47,49 @@ const ProductInfo = ({ product }) => {
     }
     return old - current;
   }, [product.oldPrice, product.price]);
+
+  const handleAddToCart = () => {
+    addToCart(product, qty);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1600);
+  };
+
+  const handleWishlist = () => {
+    const result = toggleWishlistItem(product);
+    setWishlisted(result.wishlisted);
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 1800);
+    } catch {
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: product?.name || 'Product',
+            text: product?.name || 'Check out this product',
+            url,
+          });
+          return;
+        }
+
+        const fallbackInput = document.createElement('input');
+        fallbackInput.value = url;
+        document.body.appendChild(fallbackInput);
+        fallbackInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(fallbackInput);
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 1800);
+      } catch {
+        // No-op: copying failed, but the button should still be safe to click.
+      }
+    }
+  };
 
   return (
     <div className="flex flex-col space-y-5">
@@ -54,65 +116,71 @@ const ProductInfo = ({ product }) => {
       <div className="space-y-3.5">
         <div className="flex items-baseline gap-3.5">
           <span className="font-['Syne'] text-2xl font-bold text-white lg:text-3xl">
-            ৳{Number(product.price).toLocaleString()}
+            ${Number(product.price).toLocaleString()}
           </span>
           <span className="text-gray/30 text-base line-through lg:text-lg">
-            ৳{Number(product.oldPrice).toLocaleString()}
+            ${Number(product.oldPrice).toLocaleString()}
           </span>
           <span className="bg-teal/10 text-teal px-2 py-0.5 text-xs lg:text-sm font-bold leading-none">
-            Save ৳{savings.toLocaleString()}
+            Save ${savings.toLocaleString()}
           </span>
         </div>
 
         {/* Color Selection - Circles */}
-        <div className="space-y-2.5">
-          <h3 className="text-gray/70 text-xs lg:text-sm font-bold uppercase tracking-wider">
-            Color: <span className="text-white ml-0.5 lowercase font-normal">Select</span>
-          </h3>
-          <div className="flex flex-wrap gap-2.5">
-            {colors.map((color, idx) => (
-              <button
-                key={color}
-                type="button"
-                onClick={() => setSelectedColor(idx)}
-                className={`group relative h-7 w-7 overflow-hidden rounded-full border ring-2 ring-offset-2 ring-offset-navy transition-all lg:h-8 lg:w-8 ${
-                  selectedColor === idx
-                    ? 'border-teal ring-teal'
-                    : 'border-white/10 ring-transparent hover:border-white/30'
-                }`}
-                title={color}
-              >
-                <span 
-                  className="absolute inset-0" 
-                  style={{ backgroundColor: color.toLowerCase() === 'gray' ? '#666' : color.toLowerCase() }}
-                />
-              </button>
-            ))}
+        {colors.length > 0 && (
+          <div className="space-y-2.5">
+            <h3 className="text-gray/70 text-xs lg:text-sm font-bold uppercase tracking-wider">
+              Color:{' '}
+              <span className="text-white ml-0.5 normal-case font-normal">{selectedColorValue || 'N/A'}</span>
+            </h3>
+            <div className="flex flex-wrap gap-2.5">
+              {colors.map((color, idx) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setSelectedColor(idx)}
+                  className={`group relative h-7 w-7 overflow-hidden rounded-full border ring-2 ring-offset-2 ring-offset-navy transition-all lg:h-8 lg:w-8 ${
+                    selectedColor === idx
+                      ? 'border-teal ring-teal'
+                      : 'border-white/10 ring-transparent hover:border-white/30'
+                  }`}
+                  title={color}
+                >
+                  <span
+                    className="absolute inset-0"
+                    style={{ backgroundColor: color.toLowerCase() === 'gray' ? '#666' : color.toLowerCase() }}
+                  />
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Size Selection - Boxes */}
-        <div className="space-y-2.5">
-          <h3 className="text-gray/70 text-xs lg:text-sm font-bold uppercase tracking-wider">
-            Size: <span className="text-white ml-0.5 lowercase font-normal">Select</span>
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {sizes.map((size, idx) => (
-              <button
-                key={size}
-                type="button"
-                onClick={() => setSelectedSize(idx)}
-                className={`flex h-9 w-11 items-center justify-center rounded-xs border text-xs lg:text-sm font-bold transition-all lg:h-10 lg:w-12 ${
-                  selectedSize === idx
-                    ? 'border-teal bg-teal/10 text-white'
-                    : 'border-white/10 text-gray2 hover:border-white/30'
-                }`}
-              >
-                {size}
-              </button>
-            ))}
+        {sizes.length > 0 && (
+          <div className="space-y-2.5">
+            <h3 className="text-gray/70 text-xs lg:text-sm font-bold uppercase tracking-wider">
+              Size:{' '}
+              <span className="text-white ml-0.5 normal-case font-normal">{selectedSizeValue || 'N/A'}</span>
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {sizes.map((size, idx) => (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() => setSelectedSize(idx)}
+                  className={`flex h-9 w-11 items-center justify-center rounded-xs border text-xs lg:text-sm font-bold transition-all lg:h-10 lg:w-12 ${
+                    selectedSize === idx
+                      ? 'border-teal bg-teal/10 text-white'
+                      : 'border-white/10 text-gray2 hover:border-white/30'
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Buttons and Actions */}
@@ -138,15 +206,26 @@ const ProductInfo = ({ product }) => {
           
           <button
             type="button"
+            onClick={handleAddToCart}
             className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xs bg-teal px-6 text-xs lg:text-sm font-bold uppercase tracking-widest text-navy transition-all active:scale-95 lg:h-12 lg:px-8"
           >
-            <ShoppingCart size={16} /> Select a Size
+            <ShoppingCart size={16} /> {added ? 'Added to Cart' : 'Add to Cart'}
           </button>
 
-          <button className="bg-navy2/50 hover:bg-navy2 flex h-11 w-11 items-center justify-center rounded-xs border border-white/10 text-gray2 transition-colors hover:text-white lg:h-12 lg:w-12">
-            <Heart size={18} />
+          <button
+            type="button"
+            onClick={handleWishlist}
+            className="bg-navy2/50 hover:bg-navy2 flex h-11 w-11 items-center justify-center rounded-xs border border-white/10 text-gray2 transition-colors hover:text-white lg:h-12 lg:w-12"
+          >
+            <Heart size={18} fill={wishlisted ? 'currentColor' : 'none'} className={wishlisted ? 'text-red' : ''} />
           </button>
-          <button className="bg-navy2/50 hover:bg-navy2 flex h-11 w-11 items-center justify-center rounded-xs border border-white/10 text-gray2 transition-colors hover:text-white lg:h-12 lg:w-12">
+          <button
+            type="button"
+            onClick={handleShare}
+            className="bg-navy2/50 hover:bg-navy2 flex h-11 w-11 items-center justify-center rounded-xs border border-white/10 text-gray2 transition-colors hover:text-white lg:h-12 lg:w-12"
+            aria-label="Share product link"
+            title={shareCopied ? 'Link copied' : 'Share product'}
+          >
             <Share2 size={18} />
           </button>
         </div>
@@ -159,7 +238,7 @@ const ProductInfo = ({ product }) => {
       {/* Trust Badges */}
       <div className="bg-navy2/30 grid grid-cols-1 gap-3.5 rounded-xs border border-white/5 p-4 sm:grid-cols-3">
         {[
-          { icon: Truck, title: 'Free Delivery', text: 'Orders over ৳2000', color: 'text-blue-400' },
+          { icon: Truck, title: 'Free Delivery', text: 'Orders over $2000', color: 'text-blue-400' },
           { icon: RotateCcw, title: 'Easy Returns', text: '7-day return policy', color: 'text-green-500' },
           { icon: Shield, title: 'Authentic', text: '100% genuine product', color: 'text-purple-400' },
         ].map((item, i) => (

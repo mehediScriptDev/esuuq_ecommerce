@@ -1,16 +1,19 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { GET } from '../../services/httpMethods';
-import { ENDPOINT } from '../../services/httpEndpoint';
-import { apiExecutor } from '../../services/apiExecutor';
+import { browseProducts } from '../../services/productService';
 
 export const fetchProducts = createAsyncThunk(
   'products/fetchAll',
-  async (_, { rejectWithValue, signal }) =>
-    apiExecutor((signal) => GET(ENDPOINT.PUBLIC.PRODUCTS, { signal }), rejectWithValue, signal),
+  async (_, { rejectWithValue, signal }) => {
+    try {
+      return await browseProducts({ limit: 24, sort: 'popular', inStock: true, featured: true }, signal);
+    } catch (error) {
+      return rejectWithValue(error?.response?.data || error.message);
+    }
+  },
   {
     condition: (_, { getState }) => {
-      const { status } = getState().products;
-      return status !== 'loading' && status !== 'succeeded';
+      const { loading, success } = getState().products;
+      return !loading && !success;
     },
   }
 );

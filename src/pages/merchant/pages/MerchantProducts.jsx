@@ -1,224 +1,309 @@
-import React from 'react';
-import { Upload, Plus, Edit, Eye } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Upload, Plus, Edit, Trash2 } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
 import MerchantPill from '../components/MerchantPill';
+import {
+  createMyMerchantProduct,
+  deleteMyMerchantProduct,
+  getMyMerchantProducts,
+  updateMyMerchantProduct,
+} from '../../../services/merchantService';
 
-const Pill = ({ children, c }) => (
-  <MerchantPill className={c}>{children}</MerchantPill>
-);
+const Pill = ({ children, c }) => <MerchantPill className={c}>{children}</MerchantPill>;
 
-const products = [
-  {
-    name: 'Wireless Earbuds Pro Max',
-    sku: 'TZ-EAR-001',
-    price: '$49.99',
-    stock: 4,
-    stockPct: '3%',
-    stockC: 'bg-red',
-    stockColor: 'text-red',
-    sales: 834,
-    rev: '$41,693',
-    status: 'Low Stock',
-    sc: 'text-yellow bg-yellow/10',
-  },
-  {
-    name: 'Studio Headphones Deep Bass',
-    sku: 'TZ-HEAD-002',
-    price: '$79.99',
-    stock: 142,
-    stockPct: '75%',
-    stockC: 'bg-green-500',
-    stockColor: 'text-green-500',
-    sales: 592,
-    rev: '$47,354',
-    status: 'Active',
-    sc: 'text-green-500 bg-green-500/10',
-  },
-  {
-    name: 'Adjustable Laptop Stand',
-    sku: 'TZ-STAND-003',
-    price: '$34.99',
-    stock: 28,
-    stockPct: '30%',
-    stockC: 'bg-yellow',
-    stockColor: 'text-yellow',
-    sales: 312,
-    rev: '$10,917',
-    status: 'Active',
-    sc: 'text-green-500 bg-green-500/10',
-  },
-  {
-    name: 'USB-C Hub 7-in-1',
-    sku: 'TZ-HUB-004',
-    price: '$34.99',
-    stock: 84,
-    stockPct: '60%',
-    stockC: 'bg-green-500',
-    stockColor: 'text-green-500',
-    sales: 198,
-    rev: '$6,928',
-    status: 'Active',
-    sc: 'text-green-500 bg-green-500/10',
-  },
-  {
-    name: 'Ring Light 12-inch',
-    sku: 'TZ-LIGHT-005',
-    price: '$29.99',
-    stock: 0,
-    stockPct: '0%',
-    stockC: 'bg-red',
-    stockColor: 'text-red',
-    sales: 156,
-    rev: '$4,678',
-    status: 'Out of Stock',
-    sc: 'text-red bg-red/10',
-  },
-];
+const toPrice = (value) => `$${Number(value || 0).toFixed(2)}`;
 
-const MerchantProducts = ({ onNav }) => (
-  <div className="animate-[fadeUp_0.4s_ease_both]">
-    <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-      <MerchantPageHeader
-        title={
-          <>
-            My <span className="text-teal">Products</span>
-          </>
+const moderationMeta = (product) => {
+  const rawStatus = String(product?.status || '').toLowerCase();
+  const stock = Number(product?.stock || 0);
+  const lowStockAt = Number(product?.lowStockAt || 10);
+
+  if (rawStatus === 'pending_review') return { label: 'Pending Review', className: 'text-yellow bg-yellow/10' };
+  if (rawStatus === 'rejected') return { label: 'Rejected', className: 'text-red bg-red/10' };
+  if (rawStatus === 'inactive') return { label: 'Inactive', className: 'text-gray2 bg-white/10' };
+
+  if (stock === 0) return { label: 'Out of Stock', className: 'text-red bg-red/10' };
+  if (stock <= lowStockAt) return { label: 'Low Stock', className: 'text-yellow bg-yellow/10' };
+
+  return { label: 'Active', className: 'text-green-500 bg-green-500/10' };
+};
+
+const toBoolean = (value) => {
+  const text = String(value ?? '').trim().toLowerCase();
+  return ['1', 'true', 'yes', 'y'].includes(text);
+};
+
+const parseCsv = (text) => {
+  const rows = [];
+  let field = '';
+  let row = [];
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+    const next = text[i + 1];
+
+    if (char === '"') {
+      if (inQuotes && next === '"') {
+        field += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+
+    if (char === ',' && !inQuotes) {
+      row.push(field.trim());
+      field = '';
+      continue;
+    }
+
+    if ((char === '\n' || char === '\r') && !inQuotes) {
+      if (char === '\r' && next === '\n') i += 1;
+      if (field.length || row.length) {
+        row.push(field.trim());
+        rows.push(row);
+      }
+      row = [];
+      field = '';
+      continue;
+    }
+
+    field += char;
+  }
+
+  if (field.length || row.length) {
+    row.push(field.trim());
+    rows.push(row);
+  }
+
+  return rows;
+};
+
+const MerchantProducts = ({ onNav }) => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const fileInputRef = useRef(null);
+
+  const load = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const payload = await getMyMerchantProducts({ limit: 100, sort: 'newest' });
+      setProducts(Array.isArray(payload?.data) ? payload.data : []);
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Failed to load products.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const remove = async (id) => {
+    if (!window.confirm('Delete this product?')) return;
+    try {
+      setError('');
+      setMessage('');
+      await deleteMyMerchantProduct(id);
+      setMessage('Product deleted.');
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Delete failed.');
+    }
+  };
+
+  const quickEdit = async (item) => {
+    const nextPrice = window.prompt('Enter new price', String(item.price || '0'));
+    if (nextPrice == null) return;
+    try {
+      setError('');
+      setMessage('');
+      const updated = await updateMyMerchantProduct(item.id, { price: Number(nextPrice) });
+      setMessage('Product updated.');
+      setProducts((prev) => prev.map((p) => (p.id === item.id ? { ...p, ...updated } : p)));
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Update failed.');
+    }
+  };
+
+  const handleBulkCsvSelect = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    try {
+      setLoading(true);
+      setError('');
+      setMessage('');
+
+      const content = await file.text();
+      const parsed = parseCsv(content);
+      if (!parsed.length) {
+        setError('CSV file is empty.');
+        return;
+      }
+
+      const header = parsed[0].map((h) => String(h || '').trim());
+      const required = ['name', 'description', 'categoryId', 'price', 'stock'];
+      const missing = required.filter((key) => !header.includes(key));
+      if (missing.length) {
+        setError(`CSV missing required columns: ${missing.join(', ')}`);
+        return;
+      }
+
+      const records = parsed.slice(1)
+        .filter((cols) => cols.some((value) => String(value || '').trim().length > 0))
+        .map((cols) => {
+          const entry = {};
+          header.forEach((key, index) => {
+            entry[key] = cols[index] ?? '';
+          });
+          return entry;
+        });
+
+      if (!records.length) {
+        setError('No data rows found in CSV.');
+        return;
+      }
+
+      const payloads = records.map((row, index) => {
+        const item = {
+          name: String(row.name || '').trim(),
+          description: String(row.description || '').trim(),
+          categoryId: String(row.categoryId || '').trim(),
+          price: Number(row.price),
+          stock: Number(row.stock),
+        };
+
+        if (row.sku) item.sku = String(row.sku).trim();
+        if (row.comparePrice !== '' && row.comparePrice != null) item.comparePrice = Number(row.comparePrice);
+        if (row.lowStockAt !== '' && row.lowStockAt != null) item.lowStockAt = Number(row.lowStockAt);
+        if (row.imageUrl) item.images = [String(row.imageUrl).trim()];
+        if (row.isFeatured !== '' && row.isFeatured != null) item.isFeatured = toBoolean(row.isFeatured);
+
+        if (!item.name || !item.description || !item.categoryId || Number.isNaN(item.price) || Number.isNaN(item.stock)) {
+          throw new Error(`Invalid row ${index + 2}. Required: name, description, categoryId, price, stock.`);
         }
-        subtitle="Manage all your product listings"
-      />
-      <div className="flex gap-2.5">
-        <button className="text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border border-white/[0.07] px-4 py-1.5 text-[0.8rem] transition-colors">
-          <Upload size={14} /> Bulk Upload CSV
-        </button>
-        <button
-          onClick={() => onNav?.('add-product')}
-          className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded border border-transparent px-4 py-1.5 text-[0.8rem] font-bold transition-colors"
-        >
-          <Plus size={14} strokeWidth={3} /> Add Product
-        </button>
-      </div>
-    </div>
-    
-    <div className="bg-card overflow-hidden rounded-lg border border-white/[0.07]">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-6 py-4">
-        <h3 className="font-syne text-[1rem] font-bold text-white">All Products (248)</h3>
-        <div className="flex gap-2">
+
+        return item;
+      });
+
+      let created = 0;
+      const failures = [];
+
+      for (let i = 0; i < payloads.length; i += 1) {
+        try {
+          await createMyMerchantProduct(payloads[i]);
+          created += 1;
+        } catch (uploadErr) {
+          failures.push(`Row ${i + 2}: ${uploadErr?.response?.data?.message || uploadErr?.message || 'Failed to create product'}`);
+        }
+      }
+
+      if (!created) {
+        setError(`Bulk upload failed. ${failures[0] || ''}`.trim());
+        return;
+      }
+
+      const failureNote = failures.length ? ` ${failures.length} row(s) failed.` : '';
+      setMessage(`Bulk upload complete: ${created} product(s) created.${failureNote}`);
+      await load();
+    } catch (err) {
+      setError(err?.message || 'Bulk CSV upload failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const rows = useMemo(() => products.slice(0, 100), [products]);
+
+  return (
+    <div className="animate-[fadeUp_0.4s_ease_both]">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <MerchantPageHeader
+          title={<><span>My </span><span className="text-teal">Products</span></>}
+          subtitle="Manage all your product listings"
+        />
+        <div className="flex gap-2.5">
           <input
-            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.8rem] text-white outline-none transition-colors"
-            placeholder="Search products..."
+            ref={fileInputRef}
+            type="file"
+            accept=".csv,text/csv"
+            className="hidden"
+            onChange={handleBulkCsvSelect}
           />
-          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.8rem] outline-none cursor-pointer hover:border-white/20 transition-colors">
-            <option>All</option>
-            <option>Active</option>
-            <option>Low Stock</option>
-          </select>
+          <button
+            type="button"
+            disabled={loading}
+            onClick={() => fileInputRef.current?.click()}
+            className="text-gray2 hover:border-teal hover:text-teal disabled:opacity-60 flex items-center gap-1.5 rounded border border-white/[0.07] px-4 py-1.5 text-[0.8rem] transition-colors"
+          >
+            <Upload size={14} /> Bulk Upload CSV
+          </button>
+          <button
+            onClick={() => onNav?.('add-product')}
+            className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded border border-transparent px-4 py-1.5 text-[0.8rem] font-bold transition-colors"
+          >
+            <Plus size={14} strokeWidth={3} /> Add Product
+          </button>
         </div>
       </div>
-      
-      {/* Desktop Table */}
-      <div className="hidden min-[800px]:block overflow-x-auto">
-        <table className="w-full text-left">
-          <thead className="bg-navy3/50 text-gray text-[0.7rem] font-bold tracking-widest uppercase">
-            <tr className="border-b border-white/[0.07]">
-              {['Product', 'SKU', 'Price', 'Stock', 'Sales', 'Revenue', 'Status', 'Actions'].map(
-                (h) => (
-                  <th key={h} className="px-6 py-4">{h}</th>
-                )
-              )}
-            </tr>
-          </thead>
-          <tbody className="text-[0.88rem] text-white">
-            {products.map((p) => (
-              <tr
-                key={p.sku}
-                className="border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-white/2"
-              >
-                <td className="px-6 py-4 font-bold max-w-[180px] truncate">{p.name}</td>
-                <td className="text-gray px-6 py-4 text-[0.8rem] tracking-wider">{p.sku}</td>
-                <td className="px-6 py-4 font-black">{p.price}</td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <div className="h-1.5 w-16 overflow-hidden rounded-full bg-navy3">
-                      <div
-                        className={`h-full rounded-full transition-all duration-1000 ${p.stockC}`}
-                        style={{ width: p.stockPct }}
-                      />
-                    </div>
-                    <span className={`text-[0.75rem] font-bold ${p.stockColor}`}>{p.stock}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">{p.sales}</td>
-                <td className="text-teal px-6 py-4 font-bold">{p.rev}</td>
-                <td className="px-6 py-4">
-                  <Pill c={p.sc}>{p.status}</Pill>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex gap-1">
-                    <button className="text-gray hover:text-teal hover:border-teal rounded border border-white/10 p-1.5 transition-colors">
-                      <Edit size={14} />
-                    </button>
-                    <button className="text-gray hover:text-teal hover:border-teal rounded border border-white/10 p-1.5 transition-colors">
-                      <Eye size={14} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
 
-      {/* Mobile Cards */}
-      <div className="min-[800px]:hidden divide-y divide-white/[0.07]">
-        {products.map((p) => (
-          <div key={p.sku} className="p-5 space-y-4 hover:bg-white/2 transition-colors">
-            <div className="flex items-center justify-between">
-              <span className="font-bold text-[0.95rem] max-w-[180px] truncate">{p.name}</span>
-              <Pill c={p.sc}>{p.status}</Pill>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-gray text-[0.62rem] font-bold tracking-widest uppercase mb-1">SKU</p>
-                <p className="text-gray2 text-sm font-medium tracking-wide">{p.sku}</p>
-              </div>
-              <div>
-                <p className="text-gray text-[0.62rem] font-bold tracking-widest uppercase mb-1">Price</p>
-                <p className="text-white text-sm font-black">{p.price}</p>
-              </div>
-              <div>
-                <p className="text-gray text-[0.62rem] font-bold tracking-widest uppercase mb-1">Sales</p>
-                <p className="text-white text-sm font-bold">{p.sales} <span className="text-gray text-[0.65rem] font-medium lowercase">sold</span></p>
-              </div>
-              <div>
-                <p className="text-gray text-[0.62rem] font-bold tracking-widest uppercase mb-1">Revenue</p>
-                <p className="text-teal text-sm font-bold">{p.rev}</p>
-              </div>
-            </div>
-            <div className="pt-2 flex justify-between items-center border-t border-white/[0.07]">
-               <div className="flex items-center gap-2 flex-1">
-                 <span className="text-gray text-[0.65rem] font-bold uppercase tracking-widest">Stock:</span>
-                 <div className="h-1.5 w-16 overflow-hidden rounded-full bg-navy3">
-                    <div
-                      className={`h-full rounded-full transition-all duration-1000 ${p.stockC}`}
-                      style={{ width: p.stockPct }}
-                    />
-                 </div>
-                 <span className={`text-[0.75rem] font-bold ${p.stockColor}`}>{p.stock}</span>
-               </div>
-               
-               <div className="flex gap-1.5">
-                  <button className="text-gray hover:text-teal hover:border-teal rounded border border-white/10 p-1.5 transition-colors">
-                    <Edit size={14} />
-                  </button>
-                  <button className="text-gray hover:text-teal hover:border-teal rounded border border-white/10 p-1.5 transition-colors">
-                    <Eye size={14} />
-                  </button>
-               </div>
-            </div>
-          </div>
-        ))}
+      {message ? <div className="mb-4 rounded border border-green-500/30 bg-green-500/10 px-4 py-2 text-sm text-green-300">{message}</div> : null}
+      {error ? <div className="mb-4 rounded border border-red/30 bg-red/10 px-4 py-2 text-sm text-red-300">{error}</div> : null}
+
+      <div className="bg-card overflow-hidden rounded-lg border border-white/[0.07]">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-6 py-4">
+          <h3 className="font-syne text-[1rem] font-bold text-white">All Products ({rows.length})</h3>
+          <button onClick={load} className="text-gray2 hover:text-teal text-xs">Refresh</button>
+        </div>
+
+        {loading ? <div className="p-6 text-gray2 text-sm">Loading products...</div> : null}
+
+        <div className="hidden min-[800px]:block overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-navy3/50 text-gray text-[0.7rem] font-bold tracking-widest uppercase">
+              <tr className="border-b border-white/[0.07]">
+                {['Product', 'Price', 'Stock', 'Status', 'Actions'].map((h) => (
+                  <th key={h} className="px-6 py-4">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="text-[0.88rem] text-white">
+              {rows.map((p, index) => {
+                const stock = Number(p.stock || 0);
+                const meta = moderationMeta(p);
+                return (
+                  <tr key={p.id || `${p.sku || 'product'}-${index}`} className="border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-white/2">
+                    <td className="px-6 py-4 font-bold max-w-[220px] truncate">{p.name}</td>
+                    <td className="px-6 py-4 font-black">{toPrice(p.price)}</td>
+                    <td className="px-6 py-4">{stock}</td>
+                    <td className="px-6 py-4"><Pill c={meta.className}>{meta.label}</Pill></td>
+                    <td className="px-6 py-4">
+                      <div className="flex gap-1">
+                        <button onClick={() => quickEdit(p)} className="text-gray hover:text-teal hover:border-teal rounded border border-white/10 p-1.5 transition-colors">
+                          <Edit size={14} />
+                        </button>
+                        <button onClick={() => remove(p.id)} className="text-gray hover:text-red hover:border-red rounded border border-white/10 p-1.5 transition-colors">
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
+
 export default MerchantProducts;

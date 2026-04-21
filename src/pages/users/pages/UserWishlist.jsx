@@ -1,15 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import UserPageHeader from '../components/UserPageHeader';
-
-const wishlistItems = [
-  { id: 1, image: 'https://loremflickr.com/300/300/fashion?seed=4', name: 'Premium Polarized Sunglasses', price: '$28.99' },
-  { id: 2, image: 'https://loremflickr.com/300/300/furniture?seed=3', name: 'Adjustable Laptop Stand', price: '$34.99' },
-  { id: 3, image: 'https://loremflickr.com/300/300/fashion?seed=5', name: 'Leather Crossbody Bag', price: '$54.99' },
-  { id: 4, image: 'https://loremflickr.com/300/300/plants?seed=1', name: 'Indoor Plant Collection 3-Pack', price: '$39.99' },
-  { id: 5, image: 'https://loremflickr.com/300/300/food?seed=1', name: 'Non-Stick Cookware Set 5pc', price: '$89.00' },
-];
+import { addToCart, getWishlistItems, removeFromWishlist } from '../../../services/shopStorageService';
 
 const UserWishlist = () => {
+  const [wishlistItems, setWishlistItems] = useState([]);
+
+  useEffect(() => {
+    setWishlistItems(getWishlistItems());
+  }, []);
+
+  const removeItem = (id) => {
+    setWishlistItems(removeFromWishlist(id));
+  };
+
+  const addItemToCart = (item) => {
+    addToCart(item, 1);
+  };
+
   return (
     <div className="animate-[fadeUp_0.4s_ease_both]">
       <div className="mb-5">
@@ -19,9 +27,19 @@ const UserWishlist = () => {
               My <span className="text-teal">Wishlist</span>
             </span>
           }
-          subtitle="5 items saved · Share or add to cart"
+          subtitle={`${wishlistItems.length} items saved · Share or add to cart`}
         />
       </div>
+
+      {!wishlistItems.length ? (
+        <div className="bg-card rounded-md border border-white/[0.07] p-8 text-center">
+          <div className="text-white text-lg font-semibold">Your wishlist is empty</div>
+          <div className="text-gray2 mt-2 text-sm">Browse products and tap the heart icon to save items.</div>
+          <Link to="/" className="bg-teal text-navy hover:bg-teal2 mt-4 inline-block rounded px-4 py-2 text-sm font-medium no-underline">
+            Continue Shopping
+          </Link>
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-1 gap-4 min-[580px]:grid-cols-2 min-[900px]:grid-cols-3 min-[1200px]:grid-cols-4">
         {wishlistItems.map((item) => (
@@ -30,13 +48,18 @@ const UserWishlist = () => {
             className="group bg-card overflow-hidden rounded-md border border-white/[0.07] transition-all hover:-translate-y-0.5 hover:border-teal/30"
           >
             <div className="relative flex h-40 items-center justify-center overflow-hidden border-b border-white/[0.07] bg-[#0F172A]">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-              />
+              {item.image ? (
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                />
+              ) : (
+                <span className="text-5xl">{item.icon || '🛍'}</span>
+              )}
               <button
                 type="button"
+                onClick={() => removeItem(item.id)}
                 className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-red/80 hover:bg-red text-white text-[0.85rem] font-bold transition-all hover:scale-110"
               >
                 ✕
@@ -44,9 +67,10 @@ const UserWishlist = () => {
             </div>
             <div className="p-3">
               <div className="mb-1 text-[0.875rem] xl:text-[1rem] font-medium text-white">{item.name}</div>
-              <div className="font-['Syne'] text-[0.875rem] font-bold text-white">{item.price}</div>
+              <div className="font-['Syne'] text-[0.875rem] font-bold text-white">${Number(item.price || 0).toFixed(2)}</div>
               <button
                 type="button"
+                onClick={() => addItemToCart(item)}
                 className="bg-teal text-navy hover:bg-teal2 mt-2 w-full rounded px-3 py-1.5 text-[0.74rem] font-medium"
               >
                 Add to Cart

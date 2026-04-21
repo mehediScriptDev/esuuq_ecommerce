@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PromoCard = ({ tag, title, subtitle, icon, variant = 'big', buttonText = 'Shop Now', image, imageClass }) => {
+const PromoCard = ({ tag, title, subtitle, icon, variant = 'big', buttonText = 'Shop Now', image, imageClass, onButtonClick }) => {
   const getGradient = () => {
     switch (variant) {
       case 'small':
@@ -58,6 +58,7 @@ const PromoCard = ({ tag, title, subtitle, icon, variant = 'big', buttonText = '
         <h3 className="font-['Syne'] text-xl sm:text-2xl font-bold text-white mb-1.5 leading-tight">{title}</h3>
         <p className="text-sm text-gray mb-4 font-medium">{subtitle}</p>
         <button
+          onClick={onButtonClick}
           className={`text-xs px-5 py-2.5 rounded transition-transform active:scale-95 shadow-lg ${getButtonBg()}`}
         >
           {buttonText}

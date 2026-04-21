@@ -1,5 +1,5 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Package,
@@ -15,8 +15,73 @@ import {
   Bell,
 } from 'lucide-react';
 import DashboardShell from '../common/DashboardShell';
+import {
+  getMyMerchantOrders,
+  getMyMerchantProducts,
+  getMyMerchantStore,
+} from '../../services/merchantService';
+import { fetchCurrentUser, getCurrentUser } from '../../services/authService';
 
-const navSections = [
+const actionButtons = [{ title: 'Notifications', icon: Bell, dot: true }];
+
+const MerchantLayout = () => {
+  const location = useLocation();
+  const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
+  const [merchantName, setMerchantName] = useState('Merchant Account');
+  const [ordersCount, setOrdersCount] = useState(0);
+  const [lowStockCount, setLowStockCount] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadLayoutData = async () => {
+      try {
+        const [user, store] = await Promise.all([
+          fetchCurrentUser().catch(() => getCurrentUser()),
+          getMyMerchantStore(),
+        ]);
+        if (!active) return;
+
+        setCurrentUser(user || getCurrentUser());
+        setMerchantName(store?.storeName || 'Merchant Account');
+
+        const [ordersResult, productsResult] = await Promise.allSettled([
+          getMyMerchantOrders({ page: 1, limit: 200 }),
+          getMyMerchantProducts({ page: 1, limit: 100 }),
+        ]);
+
+        if (!active) return;
+        const ordersPayload = ordersResult.status === 'fulfilled' ? ordersResult.value : { data: [] };
+        const productsPayload = productsResult.status === 'fulfilled' ? productsResult.value : { data: [] };
+        const rows = Array.isArray(ordersPayload?.data) ? ordersPayload.data : [];
+        const products = Array.isArray(productsPayload?.data) ? productsPayload.data : [];
+
+        const actionRequiredStatuses = new Set(['confirmed', 'processing']);
+        const actionRequiredOrderIds = new Set(
+          rows
+            .filter((item) => actionRequiredStatuses.has(String(item?.order?.status || '').toLowerCase()))
+            .map((item) => item?.order?.id)
+            .filter(Boolean)
+        );
+
+        const lowStock = products.filter((item) => Number(item.stock || 0) > 0 && Number(item.stock || 0) <= Number(item.lowStockAt || 10)).length;
+
+        setOrdersCount(actionRequiredOrderIds.size);
+        setLowStockCount(lowStock);
+      } catch {
+        if (!active) return;
+        setOrdersCount(0);
+        setLowStockCount(0);
+      }
+    };
+
+    loadLayoutData();
+    return () => {
+      active = false;
+    };
+  }, [location.pathname]);
+
+  const navSections = useMemo(() => [
     {
       label: 'Overview',
       items: [
@@ -26,8 +91,8 @@ const navSections = [
           icon: Package,
           label: 'Orders',
           to: '/merchant/orders',
-          badge: '5',
-          badgeColor: 'bg-red text-white',
+          badge: String(ordersCount),
+          badgeColor: ordersCount > 0 ? 'bg-red text-white' : 'bg-white/10 text-gray2',
         },
         { id: 'products', icon: ShoppingBag, label: 'Products', to: '/merchant/products' },
         {
@@ -35,7 +100,7 @@ const navSections = [
           icon: ClipboardList,
           label: 'Inventory',
           to: '/merchant/inventory',
-          badge: '3',
+          badge: String(lowStockCount),
           badgeColor: 'bg-teal text-navy',
         },
       ],
@@ -60,17 +125,27 @@ const navSections = [
       label: 'Support',
       items: [{ id: 'support', icon: HelpCircle, label: 'Help & Support', to: '/merchant/support' }],
     },
-  ];
+  ], [lowStockCount, ordersCount]);
 
-const actionButtons = [{ title: 'Notifications', icon: Bell, dot: true }];
+  const headerUser = useMemo(() => {
+    const firstName = String(currentUser?.firstName || '').trim();
+    const lastName = String(currentUser?.lastName || '').trim();
+    const name = [firstName, lastName].filter(Boolean).join(' ') || currentUser?.email || merchantName;
+    const initials = `${firstName.charAt(0) || merchantName.charAt(0) || 'M'}${lastName.charAt(0) || ''}`.toUpperCase();
 
-const MerchantLayout = () => {
+    return {
+      initials,
+      name,
+      subtitle: merchantName || 'Merchant Account',
+    };
+  }, [currentUser, merchantName]);
+
   return (
     <DashboardShell
       panelLabel="Merchant"
       navSections={navSections}
       actionButtons={actionButtons}
-      user={{ initials: 'T', name: 'TechZone MN', subtitle: 'Merchant Account' }}
+      user={headerUser}
     >
       <Outlet />
     </DashboardShell>
