@@ -1,161 +1,157 @@
-import React from 'react';
-import { Plus } from 'lucide-react';
-import DashboardPageHeader from '../components/DashboardPageHeader';
-const Pill = ({ children, c }) => (
-  <span
-    className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}
-  >
-    <span className="h-1.5 w-1.5 rounded-full bg-current" />
-    {children}
-  </span>
-);
-const products = [
-  {
-    name: 'Wireless Earbuds Pro',
-    merchant: 'TechZone MN',
-    cat: 'Electronics',
-    price: '$49.99',
-    stock: 142,
-    sales: 834,
-    status: 'Active',
-    sc: 'text-green-500 bg-green-500/10',
-  },
-  {
-    name: 'Urban Runner Sneakers',
-    merchant: 'SoleStyle',
-    cat: 'Fashion',
-    price: '$64.99',
-    stock: 38,
-    sales: 412,
-    status: 'Active',
-    sc: 'text-green-500 bg-green-500/10',
-  },
-  {
-    name: 'Studio Headphones',
-    merchant: 'AudioPro',
-    cat: 'Electronics',
-    price: '$79.99',
-    stock: 4,
-    sales: 923,
-    status: 'Low Stock',
-    sc: 'text-yellow bg-yellow/10',
-  },
-  {
-    name: 'Non-Stick Cookware 5pc',
-    merchant: 'HomeChef',
-    cat: 'Home',
-    price: '$89.00',
-    stock: 67,
-    sales: 284,
-    status: 'Active',
-    sc: 'text-green-500 bg-green-500/10',
-  },
-  {
-    name: 'Polarized Sunglasses',
-    merchant: 'VisionX',
-    cat: 'Beauty',
-    price: '$28.99',
-    stock: 0,
-    sales: 156,
-    status: 'Out of Stock',
-    sc: 'text-red bg-red/10',
-  },
-];
-const AdminProducts = () => (
-  <div className="animate-[fadeUp_0.4s_ease_both]">
-    <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <DashboardPageHeader
-        title={<span>Product <span className="text-teal">Catalog</span></span>}
-        subtitle="Review and moderate all marketplace listings"
-      />
-      <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded px-4 py-1.5 text-[0.8rem] font-medium">
-        <Plus size={14} /> Add Product
-      </button>
-    </div>
-    <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">All Products (10,420)</h3>
-        <div className="flex min-[400px]:flex-row flex-col gap-2 w-full lg:w-auto lg:ml-auto">
+import React, { useEffect, useMemo, useState } from 'react';
+import { Search, Check, X, Trash2 } from 'lucide-react';
+import AdminPageHeader from '../components/AdminPageHeader';
+import AdminPill from '../components/AdminPill';
+import {
+  approveAdminProduct,
+  deleteAdminProduct,
+  getAdminPendingProducts,
+  rejectAdminProduct,
+} from '../../../services/adminService';
+
+const Pill = ({ children, c }) => <AdminPill className={c}>{children}</AdminPill>;
+
+const AdminProducts = () => {
+  const [allProducts, setAllProducts] = useState([]);
+  const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+
+  const load = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const payload = await getAdminPendingProducts({ page: 1, limit: 100 });
+      setAllProducts(Array.isArray(payload?.data) ? payload.data : []);
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Failed to load products.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return allProducts;
+    return allProducts.filter((p) => {
+      const text = `${p.name || ''} ${p.sku || ''} ${p.id || ''}`.toLowerCase();
+      return text.includes(q);
+    });
+  }, [allProducts, query]);
+
+  const del = async (item) => {
+    if (!window.confirm(`Delete ${item.name}?`)) return;
+    try {
+      setError('');
+      setMessage('');
+      await deleteAdminProduct(item.id);
+      setMessage('Product removed.');
+      setAllProducts((prev) => prev.filter((p) => p.id !== item.id));
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Delete failed.');
+    }
+  };
+
+  const moderate = async (item, status) => {
+    const actionLabel = status === 'active' ? 'approve' : 'reject';
+    if (!window.confirm(`Do you want to ${actionLabel} ${item.name}?`)) return;
+
+    try {
+      setError('');
+      setMessage('');
+      if (status === 'active') {
+        await approveAdminProduct(item.id);
+      } else {
+        await rejectAdminProduct(item.id);
+      }
+      setMessage(`Product ${status === 'active' ? 'approved' : 'rejected'}.`);
+      setAllProducts((prev) => prev.filter((p) => p.id !== item.id));
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Moderation update failed.');
+    }
+  };
+
+  return (
+    <div className="animate-[fadeUp_0.4s_ease_both]">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <AdminPageHeader
+          title={<><span>Product </span><span className="text-gold">Management</span></>}
+          subtitle="Review and moderate products pending approval"
+        />
+      </div>
+
+      {message ? <div className="mb-4 rounded border border-green-500/30 bg-green-500/10 px-4 py-2 text-sm text-green-300">{message}</div> : null}
+      {error ? <div className="mb-4 rounded border border-red/30 bg-red/10 px-4 py-2 text-sm text-red-300">{error}</div> : null}
+
+      <div className="bg-card mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-white/[0.07] p-4">
+        <div className="relative w-full max-w-sm">
+          <Search className="text-gray pointer-events-none absolute top-1/2 left-3 -translate-y-1/2" size={14} />
           <input
-            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none w-full lg:w-auto"
-            placeholder="Search products..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="bg-navy3 focus:border-gold w-full rounded border border-white/[0.08] py-2 pr-3 pl-8 text-sm text-white outline-none"
+            placeholder="Search products by name, SKU, or ID..."
           />
-          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none w-full lg:w-auto">
-            <option>All Categories</option>
-            <option>Electronics</option>
-            <option>Fashion</option>
-          </select>
+        </div>
+        <button onClick={load} className="text-gray2 hover:text-gold text-xs">{loading ? 'Loading...' : 'Refresh'}</button>
+      </div>
+
+      <div className="bg-card overflow-hidden rounded-lg border border-white/[0.07]">
+        <div className="hidden min-[860px]:block overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-navy3/50 text-gray text-[0.7rem] font-bold tracking-widest uppercase">
+              <tr className="border-b border-white/[0.07]">
+                <th className="px-6 py-4">Product</th>
+                <th className="px-6 py-4">Seller</th>
+                <th className="px-6 py-4">Price</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="text-[0.88rem] text-white">
+              {filtered.map((p) => (
+                <tr key={p.id} className="border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-white/2">
+                  <td className="px-6 py-4">
+                    <div className="font-bold">{p.name}</div>
+                    <div className="text-gray2 mt-0.5 text-[0.76rem]">{p.id}</div>
+                  </td>
+                  <td className="text-gray2 px-6 py-4 text-sm">{p.merchant?.storeName || p.merchantId || '-'}</td>
+                  <td className="px-6 py-4 font-black">${Number(p.price || 0).toFixed(2)}</td>
+                  <td className="px-6 py-4">
+                    {String(p.status) === 'active' && <Pill c="text-green-500 bg-green-500/10">active</Pill>}
+                    {String(p.status) === 'pending_review' && <Pill c="text-yellow bg-yellow/10">pending review</Pill>}
+                    {String(p.status) === 'rejected' && <Pill c="text-red bg-red/10">rejected</Pill>}
+                    {String(p.status) === 'inactive' && <Pill c="text-gray2 bg-white/10">inactive</Pill>}
+                    {!['active', 'pending_review', 'rejected', 'inactive'].includes(String(p.status)) && (
+                      <Pill c="text-gray2 bg-white/10">{String(p.status || 'unknown')}</Pill>
+                    )}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex gap-1">
+                      <button onClick={() => moderate(p, 'active')} className="text-gray hover:text-green-500 hover:border-green-500 rounded border border-white/10 p-1.5 transition-colors" title="Approve product">
+                        <Check size={14} />
+                      </button>
+                      <button onClick={() => moderate(p, 'rejected')} className="text-gray hover:text-yellow hover:border-yellow rounded border border-white/10 p-1.5 transition-colors" title="Reject product">
+                        <X size={14} />
+                      </button>
+                      <button onClick={() => del(p)} className="text-gray hover:text-red hover:border-red rounded border border-white/10 p-1.5 transition-colors" title="Delete product permanently">
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-      <div className="space-y-3 p-4 md:hidden">
-        {products.map((p) => (
-          <div key={p.name} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
-            <div className="mb-2 flex items-center justify-between gap-2">
-              <div className="text-[1rem] font-medium text-white">{p.name}</div>
-              <Pill c={p.sc}>{p.status}</Pill>
-            </div>
-            <div className="space-y-1 text-[0.875rem]">
-              <div className="text-gray">Merchant: <span className="text-white">{p.merchant}</span></div>
-              <div className="text-gray">Category: <span className="text-white">{p.cat}</span></div>
-              <div className="text-gray">Price: <span className="text-white">{p.price}</span></div>
-              <div className="text-gray">Stock: <span className="text-white">{p.stock}</span></div>
-              <div className="text-gray">Sales: <span className="text-white">{p.sales}</span></div>
-            </div>
-            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded-md border border-white/[0.07] w-full px-4 py-2 text-[0.85rem] font-medium">
-              Edit
-            </button>
-          </div>
-        ))}
-      </div>
-      <div className="hidden overflow-x-auto md:block">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-navy3">
-              {[
-                'Product',
-                'Merchant',
-                'Category',
-                'Price',
-                'Stock',
-                'Sales',
-                'Status',
-                'Actions',
-              ].map((h) => (
-                <th
-                  key={h}
-                  className="text-gray px-4 py-2.5 text-left text-[0.7rem] font-semibold tracking-widest whitespace-nowrap uppercase"
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((p) => (
-              <tr
-                key={p.name}
-                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/2"
-              >
-                <td className="px-4 py-3 text-[0.82rem] text-white">{p.name}</td>
-                <td className="text-gray px-4 py-3 text-[0.82rem]">{p.merchant}</td>
-                <td className="text-gray px-4 py-3 text-[0.82rem]">{p.cat}</td>
-                <td className="px-4 py-3 text-[0.82rem] text-white">{p.price}</td>
-                <td className="px-4 py-3 text-[0.82rem] text-white">{p.stock}</td>
-                <td className="px-4 py-3 text-[0.82rem] text-white">{p.sales}</td>
-                <td className="px-4 py-3">
-                  <Pill c={p.sc}>{p.status}</Pill>
-                </td>
-                <td className="px-4 py-3">
-                  <button className="block w-full text-gray2 hover:border-teal hover:text-teal rounded-md border border-white/[0.07] px-4 py-2 text-[0.85rem] font-medium">
-                    Edit
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
-  </div>
-);
+  );
+};
+
 export default AdminProducts;

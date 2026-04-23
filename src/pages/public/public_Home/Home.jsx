@@ -5,6 +5,7 @@ import FlashDealsSection from './section/FlashDealsSection';
 import ShopByCategorySection from './section/ShopByCategorySection';
 import PromoSection from './section/PromoSection';
 import FeaturedProductsSection from './section/FeaturedProductsSection';
+import TrendingProductsSection from './section/TrendingProductsSection';
 import MerchantCTASection from './section/MerchantCTASection';
 
 const Home = () => {
@@ -16,6 +17,7 @@ const Home = () => {
       <ShopByCategorySection />
       <PromoSection />
       <FeaturedProductsSection />
+      <TrendingProductsSection />
       <MerchantCTASection />
     </>
   );

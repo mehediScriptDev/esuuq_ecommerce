@@ -1,6 +1,7 @@
 import React from 'react';
 import { HelpCircle, Mail, MessageCircle, Book, ExternalLink, Send, Plus, Phone, Minus } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
+import { getMyMerchantStore } from '../../../services/merchantService';
 
 const faqs = [
   { q: 'How long do payouts take?', a: 'Standard payouts are processed daily and typically arrive in your connected bank account within 2-3 business days. You can also request instant payouts for a 1% fee.' },
@@ -11,6 +12,35 @@ const faqs = [
 
 const MerchantSupport = () => {
   const [openFaq, setOpenFaq] = React.useState(null);
+  const [store, setStore] = React.useState(null);
+  const [message, setMessage] = React.useState('');
+
+  React.useEffect(() => {
+    let active = true;
+    const load = async () => {
+      try {
+        const payload = await getMyMerchantStore();
+        if (active) setStore(payload || null);
+      } catch {
+        if (active) setStore(null);
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const supportPhone = store?.businessInfo?.phone || '+1-612-555-0199';
+  const supportEmail = store?.businessInfo?.email || 'support@esuuq.com';
+
+  const sendMessage = () => {
+    const text = message.trim();
+    if (!text) return;
+    const subject = encodeURIComponent(`Merchant Support: ${store?.storeName || 'Store'}`);
+    const body = encodeURIComponent(text);
+    window.location.href = `mailto:${supportEmail}?subject=${subject}&body=${body}`;
+  };
 
   return (
     <div className="animate-[fadeUp_0.4s_ease_both]">
@@ -34,10 +64,10 @@ const MerchantSupport = () => {
               <h3 className="mb-3 font-syne text-[1.4rem] font-bold text-white">Contact Support</h3>
               <p className="text-gray mb-6 text-[0.88rem] max-w-sm mx-auto leading-relaxed">
                 Call our merchant support team at{' '}
-                <span className="text-teal font-bold">+1-612-555-0199</span> or send an email.
+                <span className="text-teal font-bold">{supportPhone}</span> or send an email.
               </p>
               <a
-                href="tel:+16125550199"
+                href={`tel:${supportPhone}`}
                 className="bg-teal text-navy hover:bg-teal2 rounded-full px-8 py-3.5 text-[0.88rem] font-bold inline-flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(0,201,167,0.3)]"
               >
                 <Phone size={16} /> Call Now
@@ -82,10 +112,12 @@ const MerchantSupport = () => {
             Send us an email and we will get back to you within 24 hours.
           </p>
           <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
             className="bg-navy3 focus:border-teal mb-4 h-32 w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none transition-colors resize-none"
             placeholder="Explain your issue..."
           />
-          <button className="bg-navy3 hover:border-teal hover:text-teal flex w-full items-center justify-center gap-2 rounded border border-white/10 py-3 text-[0.8rem] font-bold tracking-wider uppercase text-white transition-all">
+          <button onClick={sendMessage} className="bg-navy3 hover:border-teal hover:text-teal flex w-full items-center justify-center gap-2 rounded border border-white/10 py-3 text-[0.8rem] font-bold tracking-wider uppercase text-white transition-all">
             <Send size={16} /> Send Message
           </button>
         </div>

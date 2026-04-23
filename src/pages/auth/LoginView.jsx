@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Heart, Package, Rocket, ShieldCheck } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { login } from '../../services/authService';
+import { login, startGoogleOAuth } from '../../services/authService';
 import AuthLayout from './components/AuthLayout';
 import {
   AuthButton,
@@ -28,17 +28,22 @@ const LoginView = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const routeByRole = (role) => {
+    if (role === 'merchant') return '/merchant';
+    if (role === 'admin' || role === 'sub_admin' || role === 'super_admin') return '/admin';
+    return '/dashboard';
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const { token, user } = await login(email, password);
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      const { user } = await login(email, password);
       localStorage.removeItem('pendingToken');
       localStorage.removeItem('pendingUser');
+      localStorage.removeItem('pendingUserId');
 
       if (remember) {
         localStorage.setItem('rememberedEmail', email);
@@ -57,10 +62,28 @@ const LoginView = () => {
       } else if (user?.role === 'merchant') {
         navigate('/merchant');
       } else {
-        navigate('/dashboard');
+        navigate(routeByRole(user?.role));
       }
     } catch (err) {
-      setError(err.message || 'Invalid email or password.');
+      const payload = err?.response?.data || {};
+      const message = payload?.message || err.message || 'Invalid email or password.';
+
+      if (payload?.requiresOtp || String(message).toLowerCase().includes('not verified')) {
+        const pendingUserId = payload?.userId;
+        if (pendingUserId) {
+          localStorage.setItem('pendingUserId', pendingUserId);
+          localStorage.setItem('pendingEmail', payload?.email || email);
+          navigate('/auth/otp', {
+            state: {
+              userId: pendingUserId,
+              email: payload?.email || email,
+            },
+          });
+          return;
+        }
+      }
+
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -95,7 +118,7 @@ const LoginView = () => {
       </div>
 
       <div className="mb-4 grid grid-cols-2 gap-3">
-        <SocialButton provider="google">Google</SocialButton>
+        <SocialButton provider="google" onClick={startGoogleOAuth}>Google</SocialButton>
         <SocialButton provider="facebook">Facebook</SocialButton>
       </div>
 
@@ -122,12 +145,6 @@ const LoginView = () => {
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
-
-        <div className="mb-4 text-right">
-          <Link to="#" className="text-teal text-[0.78rem] no-underline">
-            Forgot password?
-          </Link>
-        </div>
 
         {error ? <p className="mb-3 text-sm text-red">{error}</p> : null}
 

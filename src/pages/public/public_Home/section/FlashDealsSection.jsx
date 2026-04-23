@@ -1,16 +1,13 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import ProductCard from '../../../../components/marketplace/ProductCard';
 import CountdownTimer from '../../../../components/marketplace/CountdownTimer';
+import { mapProductToCard } from '../../../../services/productService';
 
 const FlashDealsSection = () => {
-  const products = [
-    { icon: '\u{1F4F1}', image: 'https://loremflickr.com/300/300/electronics?seed=1', name: 'Wireless Earbuds Pro Max', store: 'TechZone MN', price: '$49.99', old: '$89.99', off: '-44%', rating: '4.8', reviews: '1.2k', badge: 'SALE', wishlist: false },
-    { icon: '\u{1F45F}', image: 'https://loremflickr.com/300/300/fashion?seed=1', name: 'Urban Runner Sneakers', store: 'SoleStyle', price: '$64.99', old: '$110.00', off: '-41%', rating: '4.6', reviews: '847', badge: 'HOT', wishlist: true },
-    { icon: '\u{1F576}\uFE0F', image: 'https://loremflickr.com/300/300/fashion?seed=2', name: 'Premium Polarized Sunglasses', store: 'VisionX', price: '$28.99', old: '$59.99', off: '-52%', rating: '4.7', reviews: '523', badge: 'SALE', wishlist: false },
-    { icon: '\u{1F3A7}', image: 'https://loremflickr.com/300/300/electronics?seed=2', name: 'Studio Headphones - Deep Bass', store: 'AudioPro', price: '$79.99', old: '$149.99', off: '-47%', rating: '4.9', reviews: '2.3k', badge: 'TOP', wishlist: false },
-    { icon: '\u{1F4BB}', image: 'https://loremflickr.com/300/300/furniture?seed=1', name: 'Laptop Stand Adjustable', store: 'DeskMate', price: '$34.99', old: '$55.00', off: '-36%', rating: '4.5', reviews: '312', badge: 'NEW', wishlist: false },
-    { icon: '\u{1F373}', image: 'https://loremflickr.com/300/300/furniture?seed=2', name: 'Non-Stick Cookware Set 5pc', store: 'HomeChef', price: '$89.00', old: '$149.00', off: '-40%', rating: '4.8', reviews: '654', badge: 'SALE', wishlist: false },
-  ];
+  const list = useSelector((state) => state.products.list);
+  const loading = useSelector((state) => state.products.loading);
+  const products = list.map(mapProductToCard).slice(0, 6);
 
   return (
     <section id="featured" className="px-3 py-8 min-[640px]:px-4 min-[900px]:px-8 min-[900px]:py-12">
@@ -23,14 +20,18 @@ const FlashDealsSection = () => {
 
       <div className="mb-6 flex justify-between items-center gap-2 min-[640px]:flex-row min-[640px]:items-baseline min-[640px]:justify-between min-[640px]:gap-4">
         <h2 className="font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">Today's <span className="text-teal">Best Deals</span></h2>
-        <a href="#" className="text-[0.8rem] font-medium text-teal hover:opacity-70 min-[640px]:text-[0.8rem]">See all deals {'\u2192'}</a>
+        <span className="text-[0.8rem] font-medium text-gray2 min-[640px]:text-[0.8rem]">Updated live</span>
       </div>
 
-      <div className="grid grid-cols-1 gap-2 min-[375px]:grid-cols-2 min-[375px]:gap-2 min-[640px]:gap-3 min-[768px]:grid-cols-3 min-[768px]:gap-4 min-[1024px]:grid-cols-4 min-[1280px]:grid-cols-5 min-[1580px]:grid-cols-6">
-        {products.map((product, index) => (
-          <ProductCard key={index} product={product} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="text-gray2 py-6 text-sm">Loading live deals...</div>
+      ) : (
+        <div className="grid grid-cols-1 gap-2 min-[375px]:grid-cols-2 min-[375px]:gap-2 min-[640px]:gap-3 min-[768px]:grid-cols-3 min-[768px]:gap-4 min-[1024px]:grid-cols-4 min-[1280px]:grid-cols-5 min-[1580px]:grid-cols-6">
+          {products.map((product) => (
+            <ProductCard key={product.id || product.slug || product.name} product={product} />
+          ))}
+        </div>
+      )}
       </div>
     </section>
   );

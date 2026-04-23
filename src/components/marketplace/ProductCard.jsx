@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { Heart, ShoppingCart, Eye, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { addToCart, isWishlisted, toggleWishlistItem } from '../../services/shopStorageService';
 
 const ProductCard = ({ product, inScroll = false }) => {
-  const [isWishlisted, setIsWishlisted] = useState(product.wishlist || false);
+  const productKey = product.id || product.slug || product.name;
+  const ratingValue = Math.max(0, Math.min(5, Number(product.rating ?? 0)));
+  const filledStars = Math.round(ratingValue);
+  const [isWishlistedState, setIsWishlistedState] = useState(
+    () => (productKey ? isWishlisted(String(productKey)) : !!product.wishlist)
+  );
   const [isAdded, setIsAdded] = useState(false);
 
-  // Simple slugify for demo purposes
-  const slug =
+  const slug = product.slug || product.id ||
     product.name
       ?.toLowerCase()
       .replace(/ /g, '-')
@@ -16,6 +21,7 @@ const ProductCard = ({ product, inScroll = false }) => {
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    addToCart(product, 1);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 1800);
   };
@@ -23,7 +29,8 @@ const ProductCard = ({ product, inScroll = false }) => {
   const handleWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
+    const result = toggleWishlistItem(product);
+    setIsWishlistedState(result.wishlisted);
   };
 
   const getBadgeClass = (badge) => {
@@ -81,17 +88,17 @@ const ProductCard = ({ product, inScroll = false }) => {
         <button
           onClick={handleWishlist}
           className={`absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-lg transition-all duration-300 ${
-            isWishlisted
+            isWishlistedState
               ? 'bg-red text-white shadow-lg'
               : 'text-gray2 bg-navy/60 hover:text-red border border-white/5 backdrop-blur-md hover:bg-white'
           }`}
-          aria-pressed={isWishlisted}
-          aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+          aria-pressed={isWishlistedState}
+          aria-label={isWishlistedState ? 'Remove from wishlist' : 'Add to wishlist'}
         >
           <Heart
             size={16}
-            className={isWishlisted ? 'text-white' : 'text-white'}
-            fill={isWishlisted ? 'currentColor' : 'none'}
+            className={isWishlistedState ? 'text-white' : 'text-white'}
+            fill={isWishlistedState ? 'currentColor' : 'none'}
           />
         </button>
       </div>
@@ -112,11 +119,15 @@ const ProductCard = ({ product, inScroll = false }) => {
         <div className="mb-3 flex items-center gap-1.5">
           <div className="flex gap-0.5">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} size={14} className={`${i < 4 ? 'text-yellow' : 'text-gray/30'}`} />
+              <Star
+                key={i}
+                size={14}
+                className={i < filledStars ? 'fill-yellow text-yellow' : 'text-gray/30'}
+              />
             ))}
           </div>
-          <span className="text-[0.7rem] font-bold text-white/90">{product.rating || '4.8'}</span>
-          <span className="text-gray/60 text-[0.75rem]">({product.reviews || '120'})</span>
+          <span className="text-[0.7rem] font-bold text-white/90">{ratingValue.toFixed(1)}</span>
+          <span className="text-gray/60 text-[0.75rem]">({product.reviews ?? 0})</span>
         </div>
 
         {/* PRICE */}

@@ -1,273 +1,233 @@
-import React from 'react';
-import { Download, Plus, Check, X } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Download, Plus } from 'lucide-react';
 import DashboardPageHeader from '../components/DashboardPageHeader';
+import { getAdminMerchants } from '../../../services/adminService';
+import { downloadCsv } from '../../../utils/csvExport';
+
 const Pill = ({ children, c }) => (
-  <span
-    className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}
-  >
+  <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${c}`}>
     <span className="h-1.5 w-1.5 rounded-full bg-current" />
     {children}
   </span>
 );
-const pending = [
-  {
-    biz: 'Savana Cuisine',
-    owner: 'Mohamed A.',
-    cat: 'Food & Grocery',
-    date: 'Mar 11, 2026',
-    docs: 'Uploaded',
-    dc: 'text-blue-500 bg-blue-500/10',
-  },
-  {
-    biz: 'FreshThreads Co.',
-    owner: 'Lena M.',
-    cat: 'Fashion',
-    date: 'Mar 10, 2026',
-    docs: 'Uploaded',
-    dc: 'text-blue-500 bg-blue-500/10',
-  },
-  {
-    biz: 'GadgetHub',
-    owner: 'Kevin T.',
-    cat: 'Electronics',
-    date: 'Mar 9, 2026',
-    docs: 'Pending',
-    dc: 'text-yellow bg-yellow/10',
-  },
+
+const merchantStatusMeta = (status = '') => {
+  const normalized = String(status).toLowerCase();
+  if (normalized === 'approved') return { label: 'Approved', className: 'text-green-500 bg-green-500/10' };
+  if (normalized === 'pending') return { label: 'Pending', className: 'text-yellow bg-yellow/10' };
+  if (normalized === 'suspended') return { label: 'Suspended', className: 'text-red bg-red/10' };
+  if (normalized === 'rejected') return { label: 'Rejected', className: 'text-red bg-red/10' };
+  return { label: status || 'Unknown', className: 'text-gray2 bg-white/10' };
+};
+
+const FILTERS = [
+  { label: 'All', value: '' },
+  { label: 'Pending', value: 'pending' },
+  { label: 'Approved', value: 'approved' },
+  { label: 'Suspended', value: 'suspended' },
+  { label: 'Rejected', value: 'rejected' },
 ];
-const merchants = [
-  {
-    name: 'TechZone MN',
-    cat: 'Electronics',
-    prods: 248,
-    rev: '$24,300',
-    comm: '$2,430',
-    rating: '4.9',
-    status: 'Active',
-    sc: 'text-green-500 bg-green-500/10',
-  },
-  {
-    name: 'SoleStyle',
-    cat: 'Fashion',
-    prods: 183,
-    rev: '$18,200',
-    comm: '$1,820',
-    rating: '4.7',
-    status: 'Active',
-    sc: 'text-green-500 bg-green-500/10',
-  },
-  {
-    name: 'HomeChef',
-    cat: 'Home',
-    prods: 96,
-    rev: '$11,400',
-    comm: '$1,140',
-    rating: '4.8',
-    status: 'Active',
-    sc: 'text-green-500 bg-green-500/10',
-  },
-  {
-    name: 'AudioPro',
-    cat: 'Electronics',
-    prods: 64,
-    rev: '$9,800',
-    comm: '$980',
-    rating: '4.6',
-    status: 'Warning',
-    sc: 'text-yellow bg-yellow/10',
-  },
-  {
-    name: 'VisionX',
-    cat: 'Beauty',
-    prods: 41,
-    rev: '$5,200',
-    comm: '$520',
-    rating: '4.5',
-    status: 'Active',
-    sc: 'text-green-500 bg-green-500/10',
-  },
-  {
-    name: 'GreenHome',
-    cat: 'Garden',
-    prods: 28,
-    rev: '$3,100',
-    comm: '$310',
-    rating: '4.3',
-    status: 'Suspended',
-    sc: 'text-red bg-red/10',
-  },
-];
-const AdminMerchants = () => (
-  <div className="animate-[fadeUp_0.4s_ease_both]">
-    <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-      <DashboardPageHeader
-        title={<span>Merchant <span className="text-teal">Management</span></span>}
-        subtitle="Approve, manage and monitor all sellers"
-      />
-      <div className="flex gap-3">
-        <button className="text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border border-white/[0.07] px-4 py-1.5 text-[0.8rem]">
-          <Download size={14} /> Export
-        </button>
-        <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded px-4 py-1.5 text-[0.8rem] font-medium">
-          <Plus size={14} /> Add Merchant
-        </button>
-      </div>
-    </div>
-    {/* Pending */}
-    <div className="border-yellow/30 bg-card mb-4 overflow-hidden rounded-md border">
-      <div className="border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">
-          ⏳ Pending Approvals (3)
-        </h3>
-      </div>
-      <div className="space-y-3 p-4 md:hidden">
-        {pending.map((p) => (
-          <div key={p.biz} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
-            <div className="mb-2 flex items-center justify-between gap-2">
-              <div className="text-[1rem] font-semibold text-white">{p.biz}</div>
-              <Pill c={p.dc}>{p.docs}</Pill>
-            </div>
-            <div className="space-y-1 text-[0.875rem]">
-              <div className="text-gray">Owner: <span className="text-white">{p.owner}</span></div>
-              <div className="text-gray">Category: <span className="text-white">{p.cat}</span></div>
-              <div className="text-gray">Applied: <span className="text-white">{p.date}</span></div>
-            </div>
-            <div className="mt-3 flex flex-col gap-2">
-              <button className="bg-teal text-navy hover:bg-teal2 flex items-center justify-center gap-2 rounded-md w-full px-4 py-2 text-[0.85rem] font-medium">
-                <Check size={12} /> Approve
-              </button>
-              <button className="border-red/20 bg-red/10 text-red hover:bg-red/20 flex items-center justify-center gap-2 rounded-md w-full px-4 py-2 text-[0.85rem]">
-                <X size={12} /> Reject
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="hidden overflow-x-auto md:block">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-navy3">
-              {['Business', 'Owner', 'Category', 'Applied', 'Documents', 'Actions'].map((h) => (
-                <th
-                  key={h}
-                  className="text-gray px-4 py-2.5 text-left text-[0.7rem] font-semibold tracking-widest whitespace-nowrap uppercase"
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {pending.map((p) => (
-              <tr key={p.biz} className="border-b border-white/[0.07] last:border-b-0">
-                <td className="px-4 py-3 text-[0.82rem] font-semibold text-white">{p.biz}</td>
-                <td className="px-4 py-3 text-[0.82rem] text-white">{p.owner}</td>
-                <td className="px-4 py-3 text-[0.82rem] text-white">{p.cat}</td>
-                <td className="text-gray px-4 py-3 text-[0.82rem]">{p.date}</td>
-                <td className="px-4 py-3">
-                  <Pill c={p.dc}>{p.docs}</Pill>
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex flex-col gap-2">
-                    <button className="block w-full bg-teal text-navy hover:bg-teal2 flex items-center justify-center gap-2 rounded-md px-4 py-2 text-[0.85rem] font-medium">
-                      <Check size={12} /> Approve
-                    </button>
-                    <button className="block w-full border-red/20 bg-red/10 text-red hover:bg-red/20 flex items-center justify-center gap-2 rounded-md px-4 py-2 text-[0.85rem]">
-                      <X size={12} /> Reject
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-    {/* Active */}
-    <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-5 py-3.5">
-        <h3 className="font-['Syne'] text-[1rem] font-bold text-white">
-          Active Merchants (312)
-        </h3>
-        <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-          <input
-            className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none w-full"
-            placeholder="Search merchants..."
-          />
-          <select className="bg-navy3 text-gray2 rounded border border-white/[0.07] px-2 py-1.5 text-[0.78rem] outline-none w-full md:w-auto">
-            <option>All Categories</option>
-          </select>
+
+const AdminMerchants = () => {
+  const [items, setItems] = useState([]);
+  const [status, setStatus] = useState('');
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const load = async (nextStatus = status, nextSearch = search) => {
+    try {
+      setLoading(true);
+      setError('');
+      const payload = await getAdminMerchants({
+        page: 1,
+        limit: 100,
+        ...(nextStatus ? { status: nextStatus } : {}),
+        ...(nextSearch.trim() ? { search: nextSearch.trim() } : {}),
+      });
+      setItems(Array.isArray(payload?.data) ? payload.data : []);
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Failed to load merchants.');
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load('', '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const pending = useMemo(() => items.filter((m) => String(m.status) === 'pending'), [items]);
+  const active = useMemo(() => items.filter((m) => String(m.status) !== 'pending'), [items]);
+
+  const exportMerchants = () => {
+    const headers = ['Store', 'Owner', 'Owner Email', 'Status', 'Products', 'Orders', 'Revenue', 'Commission', 'Rating', 'Created At'];
+    const rows = items.map((m) => [
+      m.storeName || '',
+      m.ownerName || '',
+      m.ownerEmail || '',
+      merchantStatusMeta(m.status).label,
+      Number(m.productsCount || 0),
+      Number(m.ordersCount || 0),
+      Number(m.revenue || 0).toFixed(2),
+      Number(m.commission || 0).toFixed(2),
+      Number(m.avgRating || 0).toFixed(1),
+      m.createdAt ? new Date(m.createdAt).toISOString() : '',
+    ]);
+
+    downloadCsv({
+      fileName: `admin-merchants-${new Date().toISOString().slice(0, 10)}.csv`,
+      headers,
+      rows,
+    });
+  };
+
+  return (
+    <div className="animate-[fadeUp_0.4s_ease_both]">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+        <DashboardPageHeader
+          title={<span>Merchant <span className="text-teal">Management</span></span>}
+          subtitle="Approve, manage and monitor all sellers"
+        />
+        <div className="flex gap-3">
+          <button onClick={exportMerchants} className="text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border border-white/[0.07] px-4 py-1.5 text-[0.8rem]">
+            <Download size={14} /> Export
+          </button>
+          <button className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded px-4 py-1.5 text-[0.8rem] font-medium">
+            <Plus size={14} /> Add Merchant
+          </button>
         </div>
       </div>
-      <div className="space-y-3 p-4 md:hidden">
-        {merchants.map((m) => (
-          <div key={m.name} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
-            <div className="mb-2 flex items-center justify-between gap-2">
-              <div className="text-[1rem] font-semibold text-white">{m.name}</div>
-              <Pill c={m.sc}>{m.status}</Pill>
-            </div>
-            <div className="space-y-1 text-[0.875rem]">
-              <div className="text-gray">Category: <span className="text-white">{m.cat}</span></div>
-              <div className="text-gray">Products: <span className="text-white">{m.prods}</span></div>
-              <div className="text-gray">Revenue: <span className="text-teal font-medium">{m.rev}</span></div>
-              <div className="text-gray">Commission: <span className="text-white">{m.comm}</span></div>
-              <div className="text-gray">Rating: <span className="text-white">{m.rating}</span></div>
-            </div>
-            <button className="text-gray2 hover:border-teal hover:text-teal mt-3 rounded-md border border-white/[0.07] w-full px-4 py-2 text-[0.85rem] font-medium">
-              Manage
-            </button>
-          </div>
+
+      {error ? <div className="mb-4 rounded border border-red/30 bg-red/10 px-4 py-2 text-sm text-red-300">{error}</div> : null}
+
+      <div className="mb-4 flex flex-wrap gap-2">
+        {FILTERS.map((f) => (
+          <button
+            key={f.label}
+            type="button"
+            onClick={() => {
+              setStatus(f.value);
+              load(f.value, search);
+            }}
+            className={`rounded px-3 py-1.5 text-[0.75rem] font-medium transition-all ${
+              status === f.value
+                ? 'bg-teal text-navy'
+                : 'text-gray2 hover:border-teal hover:text-teal border border-white/[0.07]'
+            }`}
+          >
+            {f.label}
+          </button>
         ))}
       </div>
-      <div className="hidden overflow-x-auto md:block">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-navy3">
-              {[
-                'Merchant',
-                'Category',
-                'Products',
-                'Revenue',
-                'Commission',
-                'Rating',
-                'Status',
-                'Actions',
-              ].map((h) => (
-                <th
-                  key={h}
-                  className="text-gray px-4 py-2.5 text-left text-[0.7rem] font-semibold tracking-widest whitespace-nowrap uppercase"
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {merchants.map((m) => (
-              <tr
-                key={m.name}
-                className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/2"
-              >
-                <td className="px-4 py-3 text-[0.82rem] font-semibold text-white">{m.name}</td>
-                <td className="text-gray px-4 py-3 text-[0.82rem]">{m.cat}</td>
-                <td className="px-4 py-3 text-[0.82rem] text-white">{m.prods}</td>
-                <td className="text-teal px-4 py-3 text-[0.82rem] font-medium">{m.rev}</td>
-                <td className="text-gray px-4 py-3 text-[0.82rem]">{m.comm}</td>
-                <td className="px-4 py-3 text-[0.82rem] text-white">⭐ {m.rating}</td>
-                <td className="px-4 py-3">
-                  <Pill c={m.sc}>{m.status}</Pill>
-                </td>
-                <td className="px-4 py-3">
-                  <button className="block w-full text-gray2 hover:border-teal hover:text-teal rounded-md border border-white/[0.07] px-4 py-2 text-[0.85rem] font-medium">
-                    Manage
-                  </button>
-                </td>
+
+      <div className="border-yellow/30 bg-card mb-4 overflow-hidden rounded-md border">
+        <div className="border-b border-white/[0.07] px-5 py-3.5">
+          <h3 className="font-['Syne'] text-[1rem] font-bold text-white">Pending Approvals ({pending.length})</h3>
+        </div>
+        <div className="space-y-3 p-4 md:hidden">
+          {loading && <div className="text-sm text-gray2">Loading merchants...</div>}
+          {!loading && !pending.length && <div className="text-sm text-gray2">No pending merchants.</div>}
+          {!loading && pending.map((m) => {
+            const s = merchantStatusMeta(m.status);
+            return (
+              <div key={m.id} className="bg-navy3 rounded-md border border-white/[0.07] p-3">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <div className="text-[1rem] font-semibold text-white">{m.storeName}</div>
+                  <Pill c={s.className}>{s.label}</Pill>
+                </div>
+                <div className="space-y-1 text-[0.875rem]">
+                  <div className="text-gray">Owner: <span className="text-white">{m.ownerName}</span></div>
+                  <div className="text-gray">Email: <span className="text-white">{m.ownerEmail || '-'}</span></div>
+                  <div className="text-gray">Applied: <span className="text-white">{new Date(m.createdAt).toLocaleDateString()}</span></div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="hidden overflow-x-auto md:block">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-navy3">
+                {['Business', 'Owner', 'Email', 'Applied', 'Status'].map((h) => (
+                  <th key={h} className="text-gray px-4 py-2.5 text-left text-[0.7rem] font-semibold tracking-widest whitespace-nowrap uppercase">{h}</th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {loading && (
+                <tr><td colSpan={5} className="text-gray2 px-4 py-3 text-sm">Loading merchants...</td></tr>
+              )}
+              {!loading && !pending.length && (
+                <tr><td colSpan={5} className="text-gray2 px-4 py-3 text-sm">No pending merchants.</td></tr>
+              )}
+              {!loading && pending.map((m) => {
+                const s = merchantStatusMeta(m.status);
+                return (
+                  <tr key={m.id} className="border-b border-white/[0.07] last:border-b-0">
+                    <td className="px-4 py-3 text-[0.82rem] font-semibold text-white">{m.storeName}</td>
+                    <td className="px-4 py-3 text-[0.82rem] text-white">{m.ownerName}</td>
+                    <td className="text-gray px-4 py-3 text-[0.82rem]">{m.ownerEmail || '-'}</td>
+                    <td className="text-gray px-4 py-3 text-[0.82rem]">{new Date(m.createdAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-3"><Pill c={s.className}>{s.label}</Pill></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="bg-card overflow-hidden rounded-md border border-white/[0.07]">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-5 py-3.5">
+          <h3 className="font-['Syne'] text-[1rem] font-bold text-white">Merchant Performance ({active.length})</h3>
+          <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') load(status, search);
+              }}
+              className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.78rem] text-white outline-none w-full"
+              placeholder="Search merchants..."
+            />
+          </div>
+        </div>
+        <div className="hidden overflow-x-auto md:block">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-navy3">
+                {['Merchant', 'Owner', 'Products', 'Orders', 'Revenue', 'Commission', 'Rating', 'Status'].map((h) => (
+                  <th key={h} className="text-gray px-4 py-2.5 text-left text-[0.7rem] font-semibold tracking-widest whitespace-nowrap uppercase">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {loading && <tr><td colSpan={8} className="text-gray2 px-4 py-3 text-sm">Loading merchants...</td></tr>}
+              {!loading && !active.length && <tr><td colSpan={8} className="text-gray2 px-4 py-3 text-sm">No merchants found.</td></tr>}
+              {!loading && active.map((m) => {
+                const s = merchantStatusMeta(m.status);
+                return (
+                  <tr key={m.id} className="border-b border-white/[0.07] last:border-b-0 hover:bg-white/2">
+                    <td className="px-4 py-3 text-[0.82rem] font-semibold text-white">{m.storeName}</td>
+                    <td className="px-4 py-3 text-[0.82rem] text-white">{m.ownerName}</td>
+                    <td className="px-4 py-3 text-[0.82rem] text-white">{Number(m.productsCount || 0)}</td>
+                    <td className="px-4 py-3 text-[0.82rem] text-white">{Number(m.ordersCount || 0)}</td>
+                    <td className="text-teal px-4 py-3 text-[0.82rem] font-medium">${Number(m.revenue || 0).toFixed(2)}</td>
+                    <td className="text-gray px-4 py-3 text-[0.82rem]">${Number(m.commission || 0).toFixed(2)}</td>
+                    <td className="px-4 py-3 text-[0.82rem] text-white">{Number(m.avgRating || 0).toFixed(1)}</td>
+                    <td className="px-4 py-3"><Pill c={s.className}>{s.label}</Pill></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
+
 export default AdminMerchants;

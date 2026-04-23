@@ -1,17 +1,78 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { SlidersHorizontal, X } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import ProductCard from '../marketplace/ProductCard';
 import CategoryFilter from './CategoryFilter';
 import CategoryHeader from './CategoryHeader';
+import { browseCategory, mapProductToCard } from '../../services/productService';
 
-const CategoryPageLayout = ({ title, icon, description, products }) => {
+const toApiSort = (value) => {
+  if (value === 'price-low') return 'price_asc';
+  if (value === 'price-high') return 'price_desc';
+  if (value === 'rating') return 'rating';
+  if (value === 'newest') return 'newest';
+  return 'popular';
+};
+
+const priceRangeToBounds = (label) => {
+  if (label === 'Under $25') return { minPrice: 0, maxPrice: 25 };
+  if (label === '$25 - $50') return { minPrice: 25, maxPrice: 50 };
+  if (label === '$50 - $100') return { minPrice: 50, maxPrice: 100 };
+  if (label === '$100 - $200') return { minPrice: 100, maxPrice: 200 };
+  if (label === 'Over $200') return { minPrice: 200, maxPrice: undefined };
+  return { minPrice: undefined, maxPrice: undefined };
+};
+
+const CategoryPageLayout = ({ title, description, products = [] }) => {
+  const location = useLocation();
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [items, setItems] = useState(products);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [filters, setFilters] = useState({
     priceRange: '',
     rating: null,
     discount: null,
     sort: 'popular',
   });
+
+  const slug = useMemo(
+    () => (location.pathname || '').replace(/^\//, '').trim() || 'electronics',
+    [location.pathname]
+  );
+
+  useEffect(() => {
+    let active = true;
+
+    const loadCategory = async () => {
+      try {
+        setLoading(true);
+        setError('');
+
+        const result = await browseCategory(slug, {
+          page: 1,
+          limit: 32,
+          sort: toApiSort(filters.sort),
+          ...priceRangeToBounds(filters.priceRange),
+          minRating: filters.rating || undefined,
+          minDiscount: filters.discount || undefined,
+        });
+
+        if (!active) return;
+        setItems((result?.products || []).map(mapProductToCard));
+      } catch (err) {
+        if (!active) return;
+        setError(err?.response?.data?.message || err.message || 'Could not load category products.');
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    loadCategory();
+    return () => {
+      active = false;
+    };
+  }, [slug, filters.sort, filters.rating, filters.priceRange, filters.discount]);
 
   const handleFilterChange = (key, value) => {
     if (key === 'reset') {
@@ -31,38 +92,13 @@ const CategoryPageLayout = ({ title, icon, description, products }) => {
     }));
   };
 
-  // Parse price from string (e.g., "$49.99" -> 49.99)
-  const parsePrice = (priceStr) => {
-    return parseFloat(priceStr?.replace(/[\$,]/g, '') || 0);
-  };
-
-  // Get filtered and sorted products
-  const getFilteredAndSortedProducts = () => {
-    let filtered = [...products];
-
-    // Apply sorting
-    if (filters.sort === 'price-low') {
-      filtered.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
-    } else if (filters.sort === 'price-high') {
-      filtered.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
-    } else if (filters.sort === 'rating') {
-      filtered.sort((a, b) => parseFloat(b.rating || 0) - parseFloat(a.rating || 0));
-    }
-    // 'popular' and 'newest' keep original order
-
-    return filtered;
-  };
-
-  const sortedProducts = getFilteredAndSortedProducts();
-
   return (
     <section className="px-3 py-6 min-[640px]:px-4 min-[900px]:px-8 min-[900px]:py-8">
       <div className="container mx-auto">
-        {/* Header */}
         <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <CategoryHeader title={title} description={description} />
           <div className="flex items-center gap-3">
-            <span className="text-gray text-[0.8rem] md:hidden lg:block">{products.length} products</span>
+            <span className="text-gray text-[0.8rem] md:hidden lg:block">{items.length} products</span>
             <select
               value={filters.sort}
               onChange={(e) => handleFilterChange('sort', e.target.value)}
@@ -85,12 +121,10 @@ const CategoryPageLayout = ({ title, icon, description, products }) => {
         </div>
 
         <div className="flex gap-6">
-          {/* Desktop Filter */}
           <div className="hidden min-[900px]:block">
             <CategoryFilter filters={filters} onFilterChange={handleFilterChange} />
           </div>
 
-          {/* Mobile Filter Overlay */}
           {mobileFilterOpen && (
             <>
               <div
@@ -112,11 +146,12 @@ const CategoryPageLayout = ({ title, icon, description, products }) => {
             </>
           )}
 
-          {/* Product Grid */}
           <div className="flex-1">
+            {loading ? <div className="text-gray2 py-4 text-sm">Loading category products...</div> : null}
+            {error ? <div className="text-red py-4 text-sm">{error}</div> : null}
             <div className="grid grid-cols-1 gap-2 min-[375px]:grid-cols-2 min-[375px]:gap-2 min-[640px]:gap-3 min-[768px]:gap-4 min-[1024px]:grid-cols-3 min-[1280px]:grid-cols-4">
-              {sortedProducts.map((product, index) => (
-                <ProductCard key={index} product={product} />
+              {items.map((product) => (
+                <ProductCard key={product.id || product.slug || product.name} product={product} />
               ))}
             </div>
           </div>

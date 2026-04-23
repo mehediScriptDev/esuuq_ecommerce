@@ -3,6 +3,7 @@ import { RefreshCw, ShieldCheck, Smartphone } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AuthLayout from '../components/AuthLayout';
 import { AuthButton } from '../components/AuthFormComponents';
+import { resendOtp, verifyOtp } from '../../../services/authService';
 
 const otpPerks = [
   { icon: ShieldCheck, text: 'OTP expires in 10 minutes' },
@@ -17,10 +18,18 @@ const OTPView = () => {
 
   const [digits, setDigits] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
   const [loading, setLoading] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(0);
 
-  const email = location.state?.email || JSON.parse(localStorage.getItem('pendingUser') || 'null')?.email;
+  const email = location.state?.email || localStorage.getItem('pendingEmail') || 'your email';
+  const pendingUserId = location.state?.userId || localStorage.getItem('pendingUserId');
+
+  const routeByRole = (role) => {
+    if (role === 'merchant') return '/merchant';
+    if (role === 'admin' || role === 'sub_admin' || role === 'super_admin') return '/admin';
+    return '/dashboard';
+  };
 
   useEffect(() => {
     if (!secondsLeft) return undefined;
@@ -55,43 +64,54 @@ const OTPView = () => {
     }
   };
 
-  const handleResend = () => {
-    setSecondsLeft(60);
+  const handleResend = async () => {
+    if (!pendingUserId || secondsLeft > 0) return;
+
+    setError('');
+    setInfo('');
+    try {
+      await resendOtp(pendingUserId);
+      setInfo('A new OTP has been sent.');
+      setSecondsLeft(60);
+    } catch (err) {
+      setError(err?.response?.data?.message || err.message || 'Could not resend OTP.');
+    }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     setError('');
+    setInfo('');
 
-    setTimeout(() => {
-      const code = digits.join('');
-      if (code.length !== 6) {
-        setError('Please enter a valid 6-digit code.');
-        setLoading(false);
-        return;
-      }
-
-      const pendingToken = localStorage.getItem('pendingToken');
-      const pendingUser = localStorage.getItem('pendingUser');
-
-      let nextPath = '/dashboard';
-      if (pendingToken && pendingUser) {
-        localStorage.setItem('token', pendingToken);
-        localStorage.setItem('user', pendingUser);
-        localStorage.removeItem('pendingToken');
-        localStorage.removeItem('pendingUser');
-
-        try {
-          const u = JSON.parse(pendingUser);
-          if (u?.role === 'admin') nextPath = '/admin';
-          if (u?.role === 'merchant') nextPath = '/merchant';
-        } catch (e) {}
-      }
-
+    if (!pendingUserId) {
+      setError('Missing registration session. Please register again.');
       setLoading(false);
+      return;
+    }
+
+    const code = digits.join('');
+    if (code.length !== 6) {
+      setError('Please enter a valid 6-digit code.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await verifyOtp(pendingUserId, code);
+      const nextPath = routeByRole(response?.user?.role);
+
+      localStorage.removeItem('pendingUserId');
+      localStorage.removeItem('pendingEmail');
+      localStorage.removeItem('pendingToken');
+      localStorage.removeItem('pendingUser');
+
       navigate(nextPath);
-    }, 600);
+    } catch (err) {
+      setError(err?.response?.data?.message || err.message || 'OTP verification failed.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -124,6 +144,7 @@ const OTPView = () => {
         </div>
 
         {error ? <p className="mb-3 text-center text-sm text-red">{error}</p> : null}
+        {info ? <p className="mb-3 text-center text-sm text-teal">{info}</p> : null}
 
         <p className="text-gray mb-5 text-center text-[0.8rem]">
           Didn't receive it?{' '}

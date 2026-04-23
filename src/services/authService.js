@@ -1,91 +1,130 @@
-import { dummyUsers } from '../data/dummyUsers';
+import axiosInstance from './axiosInstance';
+import { API_CONFIG } from '../config/constants';
+import {
+    getToken,
+    getUser,
+    removeToken,
+    removeUser,
+    setToken,
+    setUser,
+} from '../utils/storage';
 
-// Mock JWT token for demonstration
-const MOCK_TOKEN = 'mock-jwt-token-for-esuuq';
+const cleanBase = (API_CONFIG.BASE_URL || '').replace(/\/+$/, '');
+const authBase = /\/v\d+$/.test(cleanBase) ? '/auth' : '/v1/auth';
 
-export const login = (email, password) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const user = dummyUsers.find(u => u.email === email && u.password === password);
-      if (user) {
-        resolve({
-          token: MOCK_TOKEN,
-          user: {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            role: user.role,
-          },
-        });
-      } else {
-        reject(new Error('Invalid email or password'));
-      }
-    }, 500);
-  });
-};
-
-export const register = (userData) => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            const userExists = dummyUsers.some(u => u.email === userData.email);
-            if (userExists) {
-                reject(new Error('User with this email already exists.'));
-            } else {
-                const newUser = {
-                    id: dummyUsers.length + 1,
-                    ...userData,
-                    role: userData.role || 'user',
-                };
-                dummyUsers.push(newUser);
-                resolve({
-                    token: MOCK_TOKEN,
-                    user: {
-                        id: newUser.id,
-                        firstName: newUser.firstName,
-                        lastName: newUser.lastName,
-                        email: newUser.email,
-                        role: newUser.role,
-                    },
-                });
-            }
-        }, 500);
-    });
-};
-
-export const checkAuth = () => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            // In a real app, you'd verify the token
-            const token = localStorage.getItem('token');
-            if (token === MOCK_TOKEN) {
-                // This is simplified. You'd decode the token to get user info.
-                const user = JSON.parse(localStorage.getItem('user'));
-                resolve({ isAuthenticated: true, user });
-            } else {
-                resolve({ isAuthenticated: false, user: null });
-            }
-        }, 200);
-    });
-};
-
-export const logout = () => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            resolve();
-        }, 200);
-    });
-};
-
-export const getCurrentUser = () => {
-    const token = localStorage.getItem('token');
-    if (token === MOCK_TOKEN) {
-        const userStr = localStorage.getItem('user');
-        if (userStr) {
-            return JSON.parse(userStr);
-        }
+const unwrapPayload = (response) => {
+    const body = response?.data;
+    if (body && typeof body === 'object' && Object.prototype.hasOwnProperty.call(body, 'data')) {
+        return body.data;
     }
-    return null;
+    return body;
+};
+
+const persistSession = (accessToken, user) => {
+    if (accessToken) setToken(accessToken);
+    if (user) setUser(user);
+};
+
+export const register = async (userData) => {
+    const response = await axiosInstance.post(`${authBase}/register`, userData, {
+        withCredentials: true,
+    });
+    return unwrapPayload(response);
+};
+
+export const login = async (email, password) => {
+    const response = await axiosInstance.post(
+        `${authBase}/login`,
+        { email, password },
+        { withCredentials: true }
+    );
+    const payload = unwrapPayload(response);
+    const { accessToken, user } = payload || {};
+    persistSession(accessToken, user);
+    return payload;
+};
+
+export const verifyOtp = async (userId, otp) => {
+    const response = await axiosInstance.post(
+        `${authBase}/verify-otp`,
+        { userId, otp },
+        { withCredentials: true }
+    );
+    const payload = unwrapPayload(response);
+    const { accessToken, user } = payload || {};
+    persistSession(accessToken, user);
+    return payload;
+};
+
+export const resendOtp = async (userId) => {
+    const response = await axiosInstance.post(`${authBase}/resend-otp/${userId}`);
+    return unwrapPayload(response);
+};
+
+export const refreshToken = async () => {
+    const response = await axiosInstance.post(
+        `${authBase}/refresh`,
+        {},
+        { withCredentials: true }
+    );
+
+    const payload = unwrapPayload(response);
+
+    if (payload?.accessToken) {
+        setToken(payload.accessToken);
+    }
+
+    return payload;
+};
+
+export const fetchCurrentUser = async () => {
+    const response = await axiosInstance.get(`${authBase}/me`, {
+        withCredentials: true,
+    });
+    const payload = unwrapPayload(response);
+
+    if (payload) {
+        setUser(payload);
+    }
+    return payload;
+};
+
+export const checkAuth = async () => {
+    try {
+        let user;
+        const token = getToken();
+
+        if (!token) {
+            await refreshToken();
+            user = await fetchCurrentUser();
+        } else {
+            try {
+                user = await fetchCurrentUser();
+            } catch {
+                await refreshToken();
+                user = await fetchCurrentUser();
+            }
+        }
+
+        return { isAuthenticated: true, user };
+    } catch {
+        removeToken();
+        removeUser();
+        return { isAuthenticated: false, user: null };
+    }
+};
+
+export const logout = async () => {
+    try {
+        await axiosInstance.post(`${authBase}/logout`, {}, { withCredentials: true });
+    } finally {
+        removeToken();
+        removeUser();
+    }
+};
+
+export const getCurrentUser = () => getUser();
+
+export const startGoogleOAuth = () => {
+    window.location.assign(`${cleanBase}${authBase}/google`);
 };

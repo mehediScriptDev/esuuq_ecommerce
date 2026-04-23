@@ -1,28 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ProductCard from '../../../../components/marketplace/ProductCard';
+import { mapProductToCard } from '../../../../services/productService';
+import { getFeaturedProducts } from '../../../../services/productService';
 
 const FeaturedProductsSection = () => {
-  const products = [
-    { icon: '\u{1F4F1}', image: 'https://loremflickr.com/300/300/electronics?seed=3', name: 'Wireless Earbuds Pro Max', store: 'TechZone MN', price: '$49.99', old: '$89.99', off: '-44%', rating: '4.8', reviews: '1.2k', badge: 'SALE', wishlist: false },
-    { icon: '\u{1F45F}', image: 'https://loremflickr.com/300/300/fashion?seed=3', name: 'Urban Runner Sneakers', store: 'SoleStyle', price: '$64.99', old: '$110.00', off: '-41%', rating: '4.6', reviews: '847', badge: 'HOT', wishlist: true },
-    { icon: '\u{1F576}\uFE0F', image: 'https://loremflickr.com/300/300/fashion?seed=4', name: 'Premium Polarized Sunglasses', store: 'VisionX', price: '$28.99', old: '$59.99', off: '-52%', rating: '4.7', reviews: '523', badge: 'SALE', wishlist: false },
-    { icon: '\u{1F3A7}', image: 'https://loremflickr.com/300/300/electronics?seed=4', name: 'Studio Headphones - Deep Bass', store: 'AudioPro', price: '$79.99', old: '$149.99', off: '-47%', rating: '4.9', reviews: '2.3k', badge: 'TOP', wishlist: false },
-    { icon: '\u{1F4BB}', image: 'https://loremflickr.com/300/300/furniture?seed=3', name: 'Laptop Stand Adjustable', store: 'DeskMate', price: '$34.99', old: '$55.00', off: '-36%', rating: '4.5', reviews: '312', badge: 'NEW', wishlist: false },
-    { icon: '\u{1F373}', image: 'https://loremflickr.com/300/300/food?seed=1', name: 'Non-Stick Cookware Set 5pc', store: 'HomeChef', price: '$89.00', old: '$149.00', off: '-40%', rating: '4.8', reviews: '654', badge: 'SALE', wishlist: false },
-    { icon: '\u{1F45C}', image: 'https://loremflickr.com/300/300/fashion?seed=5', name: 'Leather Crossbody Bag', store: 'LuxeCarry', price: '$54.99', old: '$95.00', off: '-42%', rating: '4.7', reviews: '433', badge: 'HOT', wishlist: true },
-    { icon: '\u{1F33F}', image: 'https://loremflickr.com/300/300/plants?seed=1', name: 'Indoor Plant Collection 3-Pack', store: 'GreenHome', price: '$39.99', old: '$65.00', off: '-38%', rating: '4.6', reviews: '218', badge: 'NEW', wishlist: false },
-  ];
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const loadFeatured = async () => {
+      try {
+        setLoading(true);
+        const data = await getFeaturedProducts(12);
+        setProducts(Array.isArray(data) ? data.map(mapProductToCard) : []);
+      } catch {
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFeatured();
+  }, []);
 
   return (
     <section className="px-3 py-8 min-[640px]:px-4 min-[900px]:px-8 min-[900px]:py-12">
       <div className="container mx-auto">
-      <div className="mb-6 flex items-baseline justify-between gap-2 min-[640px]:mb-7 min-[640px]:gap-4">
-        <h2 className="font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">Featured <span className="text-teal">Products</span></h2>
-        <a href="#" className="whitespace-nowrap text-[0.8rem] font-medium text-teal hover:opacity-70 min-[640px]:text-[0.8rem]">View all {'\u2192'}</a>
-      </div>
-      <div className="grid grid-cols-1 gap-2 min-[375px]:grid-cols-2 min-[375px]:gap-2 min-[640px]:gap-3 min-[768px]:grid-cols-3 min-[768px]:gap-4 min-[1024px]:grid-cols-4 min-[1280px]:grid-cols-5 min-[1580px]:grid-cols-6">
-        {products.map((product, index) => <ProductCard key={index} product={product} />)}
-      </div>
+        <div className="mb-6 flex items-baseline justify-between gap-2 min-[640px]:mb-7 min-[640px]:gap-4">
+          <h2 className="font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">Featured <span className="text-teal">Products</span></h2>
+          <span className="text-[0.8rem] font-medium text-gray2 min-[640px]:text-[0.8rem]">{products.length} loaded</span>
+        </div>
+        {loading ? (
+          <div className="text-gray2 py-6 text-sm">Loading featured products...</div>
+        ) : products.length > 0 ? (
+          <div className="grid grid-cols-1 gap-2 min-[375px]:grid-cols-2 min-[375px]:gap-2 min-[640px]:gap-3 min-[768px]:grid-cols-3 min-[768px]:gap-4 min-[1024px]:grid-cols-4 min-[1280px]:grid-cols-5 min-[1580px]:grid-cols-6">
+            {products.map((product) => <ProductCard key={product.id || product.slug || product.name} product={product} />)}
+          </div>
+        ) : (
+          <div className="text-gray2 py-6 text-sm">No featured products available.</div>
+        )}
       </div>
     </section>
   );

@@ -3,6 +3,7 @@ import { fetchProducts } from './productsAPI';
 
 const initialState = {
   list: [],
+  meta: null,
   success: null,
   error: null,
   loading: false,
@@ -25,11 +26,12 @@ const productsSlice = createSlice({
         state.success = null;
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
-        const { data } = action.payload;
+        const payload = action.payload || {};
         state.loading = false;
         state.success = true;
         state.error = null;
-        state.list = data?.products || [];
+        state.list = payload?.data || [];
+        state.meta = payload?.meta || null;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
