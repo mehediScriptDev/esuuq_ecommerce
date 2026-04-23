@@ -66,6 +66,18 @@ const MerchantPromotions = lazy(() => import('../pages/merchant/pages/MerchantPr
 const MerchantProfile = lazy(() => import('../pages/merchant/pages/MerchantProfile'));
 const MerchantSupport = lazy(() => import('../pages/merchant/pages/MerchantSupport'));
 
+const SubAdminView = lazy(() => import('../pages/subadmin/SubAdminView'));
+const SubAdminDashboard = lazy(() => import('../pages/subadmin/pages/SubAdminDashboard'));
+const SubAdminSupportTickets = lazy(() => import('../pages/subadmin/pages/SubAdminSupportTickets'));
+const SubAdminReviewModeration = lazy(() => import('../pages/subadmin/pages/SubAdminReviewModeration'));
+const SubAdminFlaggedContent = lazy(() => import('../pages/subadmin/pages/SubAdminFlaggedContent'));
+const SubAdminMerchantApprovals = lazy(() => import('../pages/subadmin/pages/SubAdminMerchantApprovals'));
+const SubAdminUserManagement = lazy(() => import('../pages/subadmin/pages/SubAdminUserManagement'));
+const SubAdminOrderDisputes = lazy(() => import('../pages/subadmin/pages/SubAdminOrderDisputes'));
+const SubAdminCustomerMessages = lazy(() => import('../pages/subadmin/pages/SubAdminCustomerMessages'));
+const SubAdminActivityLog = lazy(() => import('../pages/subadmin/pages/SubAdminActivityLog'));
+const SubAdminReports = lazy(() => import('../pages/subadmin/pages/SubAdminReports'));
+
 const NotFound = lazy(() => import('../pages/error/NotFound'));
 
 const wrap = (Component) => (
@@ -226,6 +238,22 @@ const router = createBrowserRouter(
         <Route path="promotions" element={wrap(MerchantPromotions)} />
         <Route path="profile" element={wrap(MerchantProfile)} />
         <Route path="support" element={wrap(MerchantSupport)} />
+      </Route>
+      <Route path="subadmin" element={
+        <ProtectedRoute>
+          {wrap(SubAdminView)}
+        </ProtectedRoute>
+      }>
+        <Route index element={wrap(SubAdminDashboard)} />
+        <Route path="support-tickets" element={wrap(SubAdminSupportTickets)} />
+        <Route path="review-moderation" element={wrap(SubAdminReviewModeration)} />
+        <Route path="flagged-content" element={wrap(SubAdminFlaggedContent)} />
+        <Route path="merchant-approvals" element={wrap(SubAdminMerchantApprovals)} />
+        <Route path="user-management" element={wrap(SubAdminUserManagement)} />
+        <Route path="order-disputes" element={wrap(SubAdminOrderDisputes)} />
+        {/* <Route path="customer-messages" element={wrap(SubAdminCustomerMessages)} /> */}
+        <Route path="activity-log" element={wrap(SubAdminActivityLog)} />
+        <Route path="my-reports" element={wrap(SubAdminReports)} />
       </Route>
     </>
   )

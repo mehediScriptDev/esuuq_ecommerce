@@ -26,4 +26,13 @@ export const dummyUsers = [
     phone: '+15558889999',
     role: 'merchant',
   },
+  {
+    id: 4,
+    email: 'subadmin@esuuq.com',
+    password: 'password123',
+    firstName: 'Fatima',
+    lastName: 'Abdi',
+    phone: '+15556667777',
+    role: 'subadmin',
+  },
 ];
