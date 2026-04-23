@@ -52,6 +52,8 @@ const LoginView = () => {
         navigate(returnTo);
       } else if (user?.role === 'admin') {
         navigate('/admin');
+      } else if (user?.role === 'subadmin') {
+        navigate('/subadmin');
       } else if (user?.role === 'merchant') {
         navigate('/merchant');
       } else {

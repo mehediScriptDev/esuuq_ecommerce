@@ -166,8 +166,8 @@ const ProductInfo = ({ product }) => {
           <div key={i} className="flex items-center gap-3">
             <item.icon size={18} className={item.color} />
             <div className="flex flex-col">
-              <span className="text-[11px] lg:text-xs font-bold text-white leading-tight mb-0.5 uppercase tracking-wide">{item.title}</span>
-              <span className="text-[10px] lg:text-[11px] text-gray/50 leading-tight">{item.text}</span>
+              <span className="text-[14px] font-bold text-white leading-tight mb-0.5 uppercase tracking-wide">{item.title}</span>
+              <span className="text-[12px] text-gray/50 leading-tight">{item.text}</span>
             </div>
           </div>
         ))}
