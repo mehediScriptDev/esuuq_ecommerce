@@ -12,14 +12,32 @@ const Pill = ({ children, c }) => (
 const statusColor = (status) => {
   if (status === 'confirmed') return 'text-teal bg-teal/10';
   if (status === 'processing') return 'text-blue-500 bg-blue-500/10';
-  if (status === 'ready_for_pickup') return 'text-yellow bg-yellow/10';
-  if (status === 'picked_up' || status === 'in_transit') return 'text-purple-300 bg-purple-500/10';
+  if (status === 'ready_for_pickup' || status === 'picked_up' || status === 'in_transit' || status === 'out_for_delivery') {
+    return 'text-purple-300 bg-purple-500/10';
+  }
   if (status === 'delivered') return 'text-green-500 bg-green-500/10';
   if (status === 'cancelled' || status === 'returned' || status === 'refunded') return 'text-red bg-red/10';
   return 'text-gray2 bg-white/10';
 };
 
-const statusLabel = (status) => String(status || '').replace(/_/g, ' ');
+const statusLabel = (status) => {
+  const normalized = String(status || '').toLowerCase();
+  if (normalized === 'in_transit' || normalized === 'out_for_delivery' || normalized === 'ready_for_pickup' || normalized === 'picked_up') {
+    return 'out for delivery';
+  }
+  return String(status || '').replace(/_/g, ' ');
+};
+
+const getNextStatusAction = (status = '') => {
+  const normalized = String(status || '').toLowerCase();
+  if (normalized === 'pending_payment') return { next: 'confirmed', label: 'Confirm' };
+  if (normalized === 'confirmed') return { next: 'processing', label: 'Accept' };
+  if (normalized === 'processing') return { next: 'in_transit', label: 'Out for Delivery' };
+  if (normalized === 'ready_for_pickup' || normalized === 'picked_up' || normalized === 'in_transit' || normalized === 'out_for_delivery') {
+    return { next: 'delivered', label: 'Delivered' };
+  }
+  return null;
+};
 
 const buildOrderGroups = (rows = []) => {
   const grouped = new Map();
@@ -256,7 +274,7 @@ const MerchantOrders = () => {
               >
                   <td className="text-teal px-6 py-4 font-bold">#{o.order?.id}</td>
                   <td className="px-6 py-4 font-medium">{[o.order?.customer?.firstName, o.order?.customer?.lastName].filter(Boolean).join(' ') || o.order?.customer?.email || 'Customer'}</td>
-                  <td className="text-gray2 px-6 py-4 max-w-[220px] truncate">
+                  <td className="text-gray2 px-6 py-4 max-w-55 truncate">
                     {(() => {
                       const names = Array.from(o.productNames || []);
                       if (!names.length) return 'Order items';
@@ -283,11 +301,24 @@ const MerchantOrders = () => {
                     </div>
                   ) : o.order?.status === 'processing' ? (
                     <div className="flex gap-1.5">
-                      <button onClick={() => applyStatus(o.order.id, 'ready_for_pickup')} className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
-                        Ready
+                      <button onClick={() => applyStatus(o.order.id, 'in_transit')} className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
+                        Out for Delivery
                       </button>
                       <button onClick={() => applyStatus(o.order.id, 'cancelled')} className="border-red/20 bg-red/10 text-red hover:bg-red/20 rounded border px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
                         Cancel
+                      </button>
+                      <OrderDetailsButton onClick={() => openOrderDetails(o)} />
+                    </div>
+                  ) : getNextStatusAction(o.order?.status) ? (
+                    <div className="flex gap-1.5">
+                      <button
+                        onClick={() => {
+                          const action = getNextStatusAction(o.order?.status);
+                          if (action) applyStatus(o.order.id, action.next);
+                        }}
+                        className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors"
+                      >
+                        {getNextStatusAction(o.order?.status)?.label}
                       </button>
                       <OrderDetailsButton onClick={() => openOrderDetails(o)} />
                     </div>
@@ -344,11 +375,24 @@ const MerchantOrders = () => {
                   </div>
                 ) : o.order?.status === 'processing' ? (
                   <div className="flex gap-1.5">
-                    <button onClick={() => applyStatus(o.order.id, 'ready_for_pickup')} className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
-                      Ready
+                    <button onClick={() => applyStatus(o.order.id, 'in_transit')} className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
+                      Out for Delivery
                     </button>
                     <button onClick={() => applyStatus(o.order.id, 'cancelled')} className="border-red/20 bg-red/10 text-red hover:bg-red/20 rounded border px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
                       Cancel
+                    </button>
+                    <OrderDetailsButton onClick={() => openOrderDetails(o)} />
+                  </div>
+                ) : getNextStatusAction(o.order?.status) ? (
+                  <div className="flex gap-1.5">
+                    <button
+                      onClick={() => {
+                        const action = getNextStatusAction(o.order?.status);
+                        if (action) applyStatus(o.order.id, action.next);
+                      }}
+                      className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors"
+                    >
+                      {getNextStatusAction(o.order?.status)?.label}
                     </button>
                     <OrderDetailsButton onClick={() => openOrderDetails(o)} />
                   </div>
