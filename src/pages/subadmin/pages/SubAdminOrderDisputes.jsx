@@ -1,15 +1,56 @@
-import React from 'react';
-import { Scale } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Scale, Loader2, Eye, CheckCircle2, MessageSquare } from 'lucide-react';
 import SubAdminPageHeader from '../components/SubAdminPageHeader';
-import { orderDisputes } from '../components/subAdminData';
-
-const statusClass = {
-  Open: 'text-red bg-red/10 border-red/30',
-  Investigating: 'text-yellow bg-yellow/10 border-yellow/40',
-  Resolved: 'text-green-500 bg-green-500/10 border-green-500/30',
-};
+import subAdminService from '../../../services/subAdminService';
+import { toast } from 'react-toastify';
 
 const SubAdminOrderDisputes = () => {
+  const [disputes, setDisputes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [processingId, setProcessingId] = useState(null);
+
+  const fetchDisputes = async () => {
+    try {
+      setLoading(true);
+      const response = await subAdminService.listDisputes();
+      setDisputes(response.data.data || []);
+    } catch (error) {
+      console.error('Failed to fetch disputes:', error);
+      toast.error('Failed to load disputes');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDisputes();
+  }, []);
+
+  const handleResolve = async (id) => {
+    const resolution = prompt('Enter resolution summary:');
+    if (!resolution) return;
+    const notes = prompt('Internal notes (optional):');
+
+    try {
+      setProcessingId(id);
+      await subAdminService.resolveDispute(id, resolution, notes);
+      toast.success('Dispute marked as resolved');
+      fetchDisputes();
+    } catch (error) {
+      toast.error('Failed to resolve dispute');
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex h-[60vh] items-center justify-center">
+        <Loader2 className="text-teal animate-spin" size={40} />
+      </div>
+    );
+  }
+
   return (
     <div className="animate-[fadeUp_0.4s_ease_both]">
       <SubAdminPageHeader
@@ -22,28 +63,61 @@ const SubAdminOrderDisputes = () => {
           <table className="w-full min-w-[760px]">
             <thead>
               <tr className="bg-navy3">
-                {['Dispute ID', 'Order', 'Issue', 'Customer', 'Amount', 'Status', 'Actions'].map((head) => (
+                {['ID', 'Order', 'Customer', 'Merchant', 'Status', 'Actions'].map((head) => (
                   <th key={head} className="text-gray px-3 py-2 text-left text-[0.7rem] font-semibold tracking-[0.08em] uppercase">{head}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {orderDisputes.map((row) => (
+              {disputes.length > 0 ? disputes.map((row) => (
                 <tr key={row.id} className="border-border border-b last:border-none">
-                  <td className="px-3 py-2.5 text-[0.875rem] text-white inline-flex items-center gap-1.5"><Scale size={13} className="text-teal" />{row.id}</td>
-                  <td className="px-3 py-2.5 text-[0.875rem] text-gray2">{row.order}</td>
-                  <td className="px-3 py-2.5 text-[0.875rem] text-white">{row.issue}</td>
-                  <td className="px-3 py-2.5 text-[0.875rem] text-gray2">{row.customer}</td>
-                  <td className="px-3 py-2.5 text-[0.875rem] font-semibold text-white">{row.amount}</td>
-                  <td className="px-3 py-2.5"><span className={`${statusClass[row.status]} rounded-full border px-2 py-0.5 text-[0.7rem] font-semibold`}>{row.status}</span></td>
+                  <td className="px-3 py-2.5 text-[0.875rem] text-white">
+                    <div className="flex items-center gap-1.5">
+                      <Scale size={13} className="text-teal" />
+                      #{row.id.slice(-6)}
+                    </div>
+                  </td>
+                  <td className="px-3 py-2.5">
+                    <div className="text-[0.875rem] text-gray2">#{row.orderId.slice(-8)}</div>
+                    <div className="text-[0.7rem] text-gray">{new Date(row.createdAt).toLocaleDateString()}</div>
+                  </td>
+                  <td className="px-3 py-2.5">
+                    <div className="text-[0.875rem] text-white">{row.customer?.firstName} {row.customer?.lastName}</div>
+                  </td>
+                  <td className="px-3 py-2.5">
+                    <div className="text-[0.875rem] text-white">{row.merchant?.storeName}</div>
+                  </td>
+                  <td className="px-3 py-2.5">
+                    <span className={`rounded-full px-2 py-0.5 text-[0.7rem] font-semibold capitalize ${
+                      row.status === 'open' ? 'text-red bg-red/10 border border-red/30' : 
+                      row.status === 'resolved' ? 'text-green-500 bg-green-500/10 border border-green-500/30' : 
+                      'text-yellow bg-yellow/10 border border-yellow/40'
+                    }`}>
+                      {row.status}
+                    </span>
+                  </td>
                   <td className="px-3 py-2.5">
                     <div className="flex gap-1.5">
-                      <button className="text-blue-500 bg-blue-500/10 rounded border border-blue-500/30 px-2 py-1 text-[0.7rem] font-semibold">Investigate</button>
-                      <button className="text-green-500 bg-green-500/10 rounded border border-green-500/30 px-2 py-1 text-[0.7rem] font-semibold">Resolve</button>
+                      <button className="text-blue-500 bg-blue-500/10 rounded border border-blue-500/30 px-2 py-1 text-[0.7rem] font-semibold flex items-center gap-1">
+                        <Eye size={12} /> View
+                      </button>
+                      {row.status !== 'resolved' && (
+                        <button 
+                          onClick={() => handleResolve(row.id)}
+                          disabled={processingId === row.id}
+                          className="text-green-500 bg-green-500/10 rounded border border-green-500/30 px-2 py-1 text-[0.7rem] font-semibold flex items-center gap-1"
+                        >
+                          <CheckCircle2 size={12} /> Resolve
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan="6" className="text-gray py-20 text-center">No dispute cases found</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

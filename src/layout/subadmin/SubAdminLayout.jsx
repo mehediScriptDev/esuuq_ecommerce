@@ -14,6 +14,7 @@ import {
   UserRoundCog,
 } from 'lucide-react';
 import DashboardShell from '../common/DashboardShell';
+import { getCurrentUser } from '../../services/authService';
 
 const navSections = [
   {
@@ -74,12 +75,16 @@ const navSections = [
 const actionButtons = [{ title: 'Notifications', icon: Bell, dot: true }];
 
 const SubAdminLayout = () => {
+  const user = getCurrentUser();
+  const name = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email : 'Sub-Admin';
+  const initials = user ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase() || 'SA' : 'SA';
+
   return (
     <DashboardShell
       panelLabel="Sub-Admin"
       navSections={navSections}
       actionButtons={actionButtons}
-      user={{ initials: 'FA', name: 'Fatima A.', subtitle: 'Sub-Admin' }}
+      user={{ initials, name, subtitle: 'Sub-Admin Portal' }}
     >
       <Outlet />
     </DashboardShell>
