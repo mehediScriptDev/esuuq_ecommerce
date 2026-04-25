@@ -19,7 +19,7 @@ const MerchantCTASection = () => {
             </span>
           ))}
         </div>
-        <Link to="/login" className="self-start min-[900px]:self-auto w-full min-[900px]:w-auto text-center inline-block bg-teal px-6 py-2 min-[640px]:px-8 min-[640px]:py-3 text-[0.8rem] min-[640px]:text-[0.85rem] font-medium tracking-[0.06em] text-navy transition hover:bg-teal2">
+        <Link to="/merchant-register" className="self-start min-[900px]:self-auto w-full min-[900px]:w-auto text-center inline-block bg-teal px-6 py-2 min-[640px]:px-8 min-[640px]:py-3 text-[0.8rem] min-[640px]:text-[0.85rem] font-medium tracking-[0.06em] text-navy transition hover:bg-teal2">
           Become a Merchant
         </Link>
       </div>
