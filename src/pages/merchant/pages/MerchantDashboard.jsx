@@ -20,6 +20,7 @@ import {
   getMyMerchantProducts,
   getMyMerchantReviews,
   getMyMerchantStore,
+  updateMerchantOrderStatus,
 } from '../../../services/merchantService';
 
 const statusColor = (status = '') => {
@@ -27,12 +28,32 @@ const statusColor = (status = '') => {
   if (normalized === 'pending_payment') return 'text-yellow bg-yellow/10';
   if (normalized === 'confirmed') return 'text-teal bg-teal/10';
   if (normalized === 'processing') return 'text-blue-500 bg-blue-500/10';
-  if (normalized === 'ready_for_pickup') return 'text-yellow bg-yellow/10';
-  if (normalized === 'picked_up' || normalized === 'in_transit') return 'text-purple-300 bg-purple-500/10';
+  if (normalized === 'ready_for_pickup' || normalized === 'picked_up' || normalized === 'in_transit' || normalized === 'out_for_delivery') return 'text-purple-300 bg-purple-500/10';
   if (normalized === 'delivered') return 'text-green-500 bg-green-500/10';
   if (normalized === 'cancelled' || normalized === 'returned' || normalized === 'refunded') return 'text-red bg-red/10';
   if (normalized === 'return_requested') return 'text-orange-300 bg-orange-500/10';
   return 'text-gray2 bg-white/10';
+};
+
+const statusLabel = (status = '') => {
+  const normalized = String(status || '').toLowerCase();
+  if (normalized === 'in_transit' || normalized === 'out_for_delivery' || normalized === 'ready_for_pickup' || normalized === 'picked_up') {
+    return 'Out for Delivery';
+  }
+  return String(status || '')
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
+const getNextStatusAction = (status = '') => {
+  const normalized = String(status || '').toLowerCase();
+  if (normalized === 'pending_payment') return { next: 'confirmed', label: 'Confirm Order' };
+  if (normalized === 'confirmed') return { next: 'processing', label: 'Start Processing' };
+  if (normalized === 'processing') return { next: 'in_transit', label: 'Out for Delivery' };
+  if (normalized === 'ready_for_pickup' || normalized === 'picked_up' || normalized === 'in_transit' || normalized === 'out_for_delivery') {
+    return { next: 'delivered', label: 'Mark Delivered' };
+  }
+  return null;
 };
 
 const loadAllMerchantOrderRows = async () => {
@@ -113,6 +134,9 @@ const MerchantDashboard = ({ onNav }) => {
   const [error, setError] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [updatingOrderId, setUpdatingOrderId] = useState('');
+  const [updateMessage, setUpdateMessage] = useState('');
+  const [updateError, setUpdateError] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -265,11 +289,38 @@ const MerchantDashboard = ({ onNav }) => {
         customer: item.customer,
         product: productLabel,
         total: `$${Number(item.total || 0).toFixed(2)}`,
-        status: String(item.status || '').replace(/_/g, ' '),
+        status: statusLabel(item.status),
+        statusRaw: item.status,
         sc: statusColor(item.status),
       };
     });
   }, [orderSummaries]);
+
+  const applyStatus = async (orderId, status) => {
+    try {
+      setUpdateError('');
+      setUpdateMessage('');
+      setUpdatingOrderId(orderId);
+      await updateMerchantOrderStatus(orderId, status);
+
+      setOrders((prev) => prev.map((item) => {
+        if (item?.order?.id !== orderId) return item;
+        return {
+          ...item,
+          order: {
+            ...item.order,
+            status,
+          },
+        };
+      }));
+
+      setUpdateMessage(`Order ${orderId} updated to ${statusLabel(status)}.`);
+    } catch (err) {
+      setUpdateError(err?.response?.data?.message || 'Could not update order status.');
+    } finally {
+      setUpdatingOrderId('');
+    }
+  };
 
   const quickLinks = [
     { id: 'orders', label: 'Process New Orders' },
@@ -302,6 +353,9 @@ const MerchantDashboard = ({ onNav }) => {
         }
         subtitle={`Welcome back${store?.storeName ? `, ${store.storeName}` : ''}`}
       />
+
+      {updateMessage ? <div className="mt-4 rounded border border-green-500/30 bg-green-500/10 px-4 py-2 text-sm text-green-300">{updateMessage}</div> : null}
+      {updateError ? <div className="mt-4 rounded border border-red/30 bg-red/10 px-4 py-2 text-sm text-red-300">{updateError}</div> : null}
 
       <DashboardStats stats={stats} />
 
@@ -387,10 +441,25 @@ const MerchantDashboard = ({ onNav }) => {
                         <MerchantPill className={order.sc}>{order.status}</MerchantPill>
                       </td>
                       <td className="px-6 py-4">
-                        <OrderDetailsButton onClick={() => {
-                          setSelectedOrder(order.order);
-                          setIsDetailOpen(true);
-                        }} label="View" />
+                        <div className="flex flex-wrap gap-1.5">
+                          {getNextStatusAction(order.statusRaw) ? (
+                            <button
+                              type="button"
+                              disabled={updatingOrderId === order.id}
+                              onClick={() => {
+                                const action = getNextStatusAction(order.statusRaw);
+                                if (action) applyStatus(order.id, action.next);
+                              }}
+                              className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                              {getNextStatusAction(order.statusRaw)?.label}
+                            </button>
+                          ) : null}
+                          <OrderDetailsButton onClick={() => {
+                            setSelectedOrder(order.order);
+                            setIsDetailOpen(true);
+                          }} label="View" />
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -426,10 +495,25 @@ const MerchantDashboard = ({ onNav }) => {
                     <p className="text-white text-sm truncate">{order.product}</p>
                   </div>
                   <div className="pt-3 border-t border-white/[0.07]">
-                    <OrderDetailsButton onClick={() => {
-                      setSelectedOrder(order.order);
-                      setIsDetailOpen(true);
-                    }} />
+                    <div className="flex flex-wrap gap-1.5">
+                      {getNextStatusAction(order.statusRaw) ? (
+                        <button
+                          type="button"
+                          disabled={updatingOrderId === order.id}
+                          onClick={() => {
+                            const action = getNextStatusAction(order.statusRaw);
+                            if (action) applyStatus(order.id, action.next);
+                          }}
+                          className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          {getNextStatusAction(order.statusRaw)?.label}
+                        </button>
+                      ) : null}
+                      <OrderDetailsButton onClick={() => {
+                        setSelectedOrder(order.order);
+                        setIsDetailOpen(true);
+                      }} />
+                    </div>
                   </div>
                 </div>
               ))}

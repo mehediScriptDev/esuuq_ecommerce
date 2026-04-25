@@ -78,6 +78,7 @@ const SubAdminCustomerMessages = lazy(() => import('../pages/subadmin/pages/SubA
 const SubAdminActivityLog = lazy(() => import('../pages/subadmin/pages/SubAdminActivityLog'));
 const SubAdminReports = lazy(() => import('../pages/subadmin/pages/SubAdminReports'));
 
+const MerchantRegister = lazy(() => import('../pages/public/public_MerchantRegister/MerchantRegister'));
 const NotFound = lazy(() => import('../pages/error/NotFound'));
 
 const wrap = (Component) => (
@@ -174,8 +175,12 @@ const router = createBrowserRouter(
           path="product/:id"
           element={wrap(ProductDetailsView)}
         />
+
         <Route path="*" element={wrap(NotFound)} />
       </Route>
+
+      {/* Standalone pages - No marketplace layout */}
+      <Route path="merchant-register" element={wrap(MerchantRegister)} />
 
       {/* Auth & Dashboards - No marketplace layout */}
       <Route path="auth">

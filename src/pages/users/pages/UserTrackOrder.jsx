@@ -7,11 +7,8 @@ import LoadingFallback from '../../../router/components/LoadingFallback';
 import { getMyOrderTracking, getMyOrders } from '../../../services/checkoutService';
 
 const TRACKING_FLOW = [
-  'pending_payment',
   'confirmed',
   'processing',
-  'ready_for_pickup',
-  'picked_up',
   'in_transit',
   'delivered',
 ];
@@ -37,11 +34,17 @@ const titleClass = {
 };
 
 const prettify = (status = '') => String(status)
-  .split('_')
-  .map((token) => token.charAt(0).toUpperCase() + token.slice(1))
-  .join(' ');
+  .toLowerCase() === 'in_transit'
+  ? 'Out for Delivery'
+  : String(status)
+    .split('_')
+    .map((token) => token.charAt(0).toUpperCase() + token.slice(1))
+    .join(' ');
 
 const orderStatusMapIndex = (status) => {
+  const normalized = String(status || '').toLowerCase();
+  if (normalized === 'pending_payment') return 0;
+  if (normalized === 'ready_for_pickup' || normalized === 'picked_up' || normalized === 'out_for_delivery') return TRACKING_FLOW.indexOf('in_transit');
   const index = TRACKING_FLOW.indexOf(status);
   return index >= 0 ? index : 0;
 };

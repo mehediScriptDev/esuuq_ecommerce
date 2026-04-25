@@ -10,6 +10,7 @@ const ACTIVE_STATUSES = [
   'pending_payment',
   'confirmed',
   'processing',
+  'out_for_delivery',
   'ready_for_pickup',
   'picked_up',
   'in_transit',
@@ -196,7 +197,7 @@ const UserOrders = () => {
                 ))}
               </div>
 
-              <div className="min-w-[170px] flex-1">
+              <div className="min-w-42.5 flex-1">
                 <div className="text-[0.875rem] lg:text-[1rem] font-medium text-white">{getOrderDescription(order.items)}</div>
                 <div className="text-gray mt-0.5 text-[0.875rem]">{getOrderMeta(order)}</div>
               </div>
