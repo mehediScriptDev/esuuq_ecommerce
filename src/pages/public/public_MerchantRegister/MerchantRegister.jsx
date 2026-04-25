@@ -1,5 +1,26 @@
 import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { 
+  Store, 
+  Rocket, 
+  Image as ImageIcon, 
+  Palette, 
+  User, 
+  Building2, 
+  Lock, 
+  ClipboardCheck, 
+  Send, 
+  Banknote, 
+  Globe, 
+  Package, 
+  CreditCard, 
+  ShieldCheck, 
+  BarChart3, 
+  Zap, 
+  PartyPopper, 
+  ArrowLeft,
+  CheckCircle2
+} from 'lucide-react';
 
 const CATEGORIES = [
   'Electronics', 'Fashion & Clothing', 'Home & Garden', 'Beauty & Health',
@@ -15,11 +36,11 @@ const COUNTRIES = [
 ];
 
 const BENEFITS = [
-  { icon: '💸', title: 'Low Commission — Only 8%', desc: 'Lower than any other platform' },
-  { icon: '🌍', title: 'East African Audience', desc: 'Reach thousands of buyers in your community' },
-  { icon: '📦', title: 'Full Dashboard', desc: 'Manage orders, products & earnings in one place' },
-  { icon: '💳', title: 'Fast Payouts', desc: 'Paid directly to your bank account' },
-  { icon: '🛡️', title: 'Seller Protection', desc: 'Dispute resolution and seller support included' },
+  { icon: <Banknote size={16} />, title: 'Low Commission — Only 8%', desc: 'Lower than any other platform' },
+  { icon: <Globe size={16} />, title: 'East African Audience', desc: 'Reach thousands of buyers in your community' },
+  { icon: <Package size={16} />, title: 'Full Dashboard', desc: 'Manage orders, products & earnings in one place' },
+  { icon: <CreditCard size={16} />, title: 'Fast Payouts', desc: 'Paid directly to your bank account' },
+  { icon: <ShieldCheck size={16} />, title: 'Seller Protection', desc: 'Dispute resolution and seller support included' },
 ];
 
 const STATS = [
@@ -44,30 +65,30 @@ const STEPS = [
   { num: 4, label: 'Go Live' },
 ];
 
-/* ── Reusable tiny components ── */
+/* ── Reusable components ── */
 const InputField = ({ label, required, optional, hint, ...props }) => (
-  <div className="mb-3.5">
-    <label className="mb-1.5 block text-[0.77rem] font-semibold text-gray2">
+  <div className="mb-4">
+    <label className="mb-1.5 block text-[0.82rem] font-semibold text-gray2 min-[640px]:text-[0.875rem]">
       {label}
       {required && <span className="ml-0.5 text-teal">*</span>}
-      {optional && <span className="ml-1 text-[0.7rem] font-normal text-gray">(optional)</span>}
+      {optional && <span className="ml-1 text-[0.72rem] font-normal text-gray">(optional)</span>}
     </label>
     <input
-      className="w-full rounded-lg border border-white/[0.07] bg-navy3 px-3.5 py-2.5 font-['DM_Sans'] text-[0.875rem] text-white outline-none placeholder:text-gray transition-all duration-150 focus:border-teal focus:shadow-[0_0_0_3px_rgba(0,201,167,0.1)]"
+      className="w-full rounded-lg border border-white/[0.07] bg-navy3 px-4 py-3 font-['DM_Sans'] text-base text-white outline-none placeholder:text-gray transition-all duration-150 focus:border-teal focus:shadow-[0_0_0_3px_rgba(0,201,167,0.1)]"
       {...props}
     />
-    {hint && <div className="mt-1 text-[0.71rem] text-gray">{hint}</div>}
+    {hint && <div className="mt-1.5 text-[0.75rem] text-gray">{hint}</div>}
   </div>
 );
 
 const SelectField = ({ label, required, options, placeholder, ...props }) => (
-  <div className="mb-3.5">
-    <label className="mb-1.5 block text-[0.77rem] font-semibold text-gray2">
+  <div className="mb-4">
+    <label className="mb-1.5 block text-[0.82rem] font-semibold text-gray2 min-[640px]:text-[0.875rem]">
       {label}
       {required && <span className="ml-0.5 text-teal">*</span>}
     </label>
     <select
-      className="w-full cursor-pointer appearance-none rounded-lg border border-white/[0.07] bg-navy3 bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20fill=%27%2364748B%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20d=%27M1.5%205.5l6.5%206%206.5-6%27/%3E%3C/svg%3E')] bg-[length:12px] bg-[right_13px_center] bg-no-repeat px-3.5 py-2.5 font-['DM_Sans'] text-[0.875rem] text-white outline-none transition-all duration-150 focus:border-teal focus:shadow-[0_0_0_3px_rgba(0,201,167,0.1)]"
+      className="w-full cursor-pointer appearance-none rounded-lg border border-white/[0.07] bg-navy3 bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20fill=%27%2364748B%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20d=%27M1.5%205.5l6.5%206%206.5-6%27/%3E%3C/svg%3E')] bg-[length:12px] bg-[right_13px_center] bg-no-repeat px-4 py-3 font-['DM_Sans'] text-base text-white outline-none transition-all duration-150 focus:border-teal focus:shadow-[0_0_0_3px_rgba(0,201,167,0.1)]"
       {...props}
     >
       {placeholder && <option value="">{placeholder}</option>}
@@ -78,12 +99,14 @@ const SelectField = ({ label, required, options, placeholder, ...props }) => (
   </div>
 );
 
-const UploadZone = ({ icon, text, sub }) => (
-  <div className="mb-3.5">
-    <div className="cursor-pointer rounded-[10px] border-2 border-dashed border-white/[0.07] p-6 text-center transition-all duration-150 hover:border-[rgba(0,201,167,0.25)] hover:bg-[rgba(0,201,167,0.08)]">
-      <div className="mb-1.5 text-[1.8rem]">{icon}</div>
-      <div className="mb-0.5 text-[0.8rem] text-gray2">{text}</div>
-      <div className="text-[0.7rem] text-gray">{sub}</div>
+const UploadZone = ({ icon: Icon, text, sub }) => (
+  <div className="mb-4">
+    <div className="cursor-pointer rounded-xl border-2 border-dashed border-white/[0.07] p-8 text-center transition-all duration-150 hover:border-[rgba(0,201,167,0.25)] hover:bg-[rgba(0,201,167,0.08)] group">
+      <div className="mb-3 flex justify-center text-gray transition-colors group-hover:text-teal">
+        <Icon size={32} strokeWidth={1.5} />
+      </div>
+      <div className="mb-1 text-[0.875rem] font-medium text-gray2">{text}</div>
+      <div className="text-[0.75rem] text-gray">{sub}</div>
     </div>
   </div>
 );
@@ -126,48 +149,47 @@ const MerchantRegister = () => {
 
       {/* ───── NAV ───── */}
       <nav className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-white/[0.07] bg-navy2 px-4 min-[640px]:px-10">
-        <Link to="/" className="font-['Syne'] text-[1.7rem] font-extrabold text-white no-underline">
+        <Link to="/" className="font-['Syne'] text-[1.5rem] font-extrabold text-white no-underline min-[640px]:text-[1.7rem]">
           <span className="text-teal">ES</span>UUQ
         </Link>
         <div className="flex gap-3">
-          <Link to="/auth/login" className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.07] bg-transparent px-5 py-2 text-[0.85rem] font-semibold text-gray2 transition-all duration-150 hover:border-[rgba(0,201,167,0.25)] hover:text-white">
+          <Link to="/" className="inline-flex items-center gap-2 rounded-lg border border-white/[0.07] bg-transparent px-5 py-2 text-[0.85rem] font-semibold text-gray2 transition-all duration-150 hover:border-[rgba(0,201,167,0.25)] hover:text-white">
+            <ArrowLeft size={16} />
+            Back to Home
+          </Link>
+          <Link to="/auth/login" className="hidden items-center gap-1.5 rounded-lg bg-teal px-5 py-2 text-[0.85rem] font-semibold text-navy transition-all duration-150 hover:bg-teal2 min-[500px]:inline-flex">
             Sign In
           </Link>
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border-none bg-teal px-5 py-2 font-['DM_Sans'] text-[0.85rem] font-semibold text-navy transition-all duration-150 hover:bg-teal2"
-          >
-            🏪 Apply Now
-          </button>
         </div>
       </nav>
 
       {/* ───── HERO ───── */}
-      <div className="border-b border-white/[0.07] bg-[linear-gradient(135deg,var(--color-navy2)_0%,var(--color-navy)_100%)] px-4 py-12 text-center min-[640px]:px-10">
-        <div className="mb-4.5 inline-flex items-center gap-1.5 rounded-[20px] border border-[rgba(0,201,167,0.25)] bg-[rgba(0,201,167,0.08)] px-3.5 py-1 text-[0.75rem] font-semibold tracking-[0.08em] text-teal">
-          🚀 Join 500+ Merchants on ESUUQ
+      <div className="border-b border-white/[0.07] bg-[linear-gradient(135deg,var(--color-navy2)_0%,var(--color-navy)_100%)] px-4 py-12 text-center min-[640px]:px-10 min-[900px]:py-20">
+        <div className="mb-5 inline-flex items-center gap-2 rounded-[20px] border border-[rgba(0,201,167,0.25)] bg-[rgba(0,201,167,0.08)] px-4 py-1.5 text-[0.75rem] font-semibold tracking-[0.1em] text-teal">
+          <Rocket size={14} />
+          JOIN 500+ MERCHANTS ON ESUUQ
         </div>
-        <h1 className="mb-3 font-['Syne'] text-[1.6rem] font-extrabold leading-[1.15] text-white min-[640px]:text-[2.6rem]">
+        <h1 className="mb-4 font-['Syne'] text-[1.8rem] font-extrabold leading-[1.1] text-white min-[640px]:text-[3rem] min-[900px]:text-[3.6rem]">
           Start Selling on <span className="text-teal">ESUUQ</span>
         </h1>
-        <p className="mx-auto mb-7 max-w-[500px] text-[0.95rem] leading-[1.7] text-gray">
+        <p className="mx-auto mb-8 max-w-[600px] text-base leading-[1.8] text-gray min-[640px]:text-lg">
           Reach thousands of East African customers. Set up your store in minutes and start earning today.
         </p>
 
         {/* Steps */}
-        <div className="flex flex-wrap items-center justify-center">
+        <div className="flex flex-wrap items-center justify-center gap-y-4">
           {STEPS.map((s, i) => (
             <React.Fragment key={s.num}>
-              <div className="flex items-center gap-2">
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[0.8rem] font-bold ${s.num === 1 ? 'bg-teal text-navy' : 'border border-white/[0.07] bg-navy3 text-gray'}`}>
+              <div className="flex items-center gap-2.5">
+                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.9rem] font-bold ${s.num === 1 ? 'bg-teal text-navy' : 'border border-white/[0.07] bg-navy3 text-gray'}`}>
                   {s.num}
                 </div>
-                <div className={`text-[0.78rem] font-semibold ${s.num === 1 ? 'text-teal' : 'text-gray'}`}>
+                <div className={`text-[0.85rem] font-semibold min-[640px]:text-[0.9rem] ${s.num === 1 ? 'text-teal' : 'text-gray'}`}>
                   {s.label}
                 </div>
               </div>
               {i < STEPS.length - 1 && (
-                <div className="mx-1 h-0.5 w-6 bg-white/[0.07] min-[640px]:w-11" />
+                <div className="mx-2 h-0.5 w-6 bg-white/[0.07] min-[640px]:mx-4 min-[640px]:w-12" />
               )}
             </React.Fragment>
           ))}
@@ -175,78 +197,85 @@ const MerchantRegister = () => {
       </div>
 
       {/* ───── BODY ───── */}
-      <div className="mx-auto grid max-w-[1080px] items-start gap-6 px-4 py-8 min-[640px]:px-10 min-[860px]:grid-cols-[1fr_340px]">
+      <div className="mx-auto grid max-w-[1440px] items-start gap-8 px-4 py-10 min-[640px]:px-10 min-[900px]:grid-cols-[1fr_380px] min-[900px]:py-16">
 
         {/* ─── FORM ─── */}
-        <form className="overflow-hidden rounded-2xl border border-white/[0.07] bg-navy2" onSubmit={handleSubmit}>
+        <form className="overflow-hidden rounded-2xl border border-white/[0.07] bg-navy2 shadow-2xl" onSubmit={handleSubmit}>
 
           {/* Store Information */}
-          <div className="border-b border-white/[0.07] px-5 py-6 min-[640px]:px-[30px]">
-            <div className="mb-1 font-['Syne'] text-[0.95rem] font-bold text-white">🏪 Store Information</div>
-            <div className="mb-4.5 text-[0.78rem] text-gray">This is what customers will see when they visit your store.</div>
+          <div className="border-b border-white/[0.07] px-6 py-8 min-[640px]:px-10">
+            <div className="mb-1.5 flex items-center gap-2.5 font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">
+              <Store className="text-teal" size={20} />
+              Store Information
+            </div>
+            <div className="mb-6 text-[0.875rem] leading-relaxed text-gray min-[640px]:text-base">This is what customers will see when they visit your store.</div>
 
             <InputField label="Store Name" required name="storeName" value={form.storeName} onChange={handleChange} placeholder="e.g. Barwaaqo Electronics" hint="This will be your public store name on ESUUQ" />
 
-            <div className="mb-3.5">
-              <label className="mb-1.5 block text-[0.77rem] font-semibold text-gray2">
+            <div className="mb-4">
+              <label className="mb-1.5 block text-[0.82rem] font-semibold text-gray2 min-[640px]:text-[0.875rem]">
                 Store Description <span className="ml-0.5 text-teal">*</span>
               </label>
               <textarea
-                className="min-h-[85px] w-full resize-y rounded-lg border border-white/[0.07] bg-navy3 px-3.5 py-2.5 font-['DM_Sans'] text-[0.875rem] text-white outline-none placeholder:text-gray transition-all duration-150 focus:border-teal focus:shadow-[0_0_0_3px_rgba(0,201,167,0.1)]"
+                className="min-h-[110px] w-full resize-y rounded-lg border border-white/[0.07] bg-navy3 px-4 py-3 font-['DM_Sans'] text-base text-white outline-none placeholder:text-gray transition-all duration-150 focus:border-teal focus:shadow-[0_0_0_3px_rgba(0,201,167,0.1)]"
                 name="storeDescription" value={form.storeDescription} onChange={handleChange}
                 placeholder="Describe what you sell and what makes your store special..."
                 required
               />
             </div>
 
-            <div className="grid gap-3.5 min-[640px]:grid-cols-2">
+            <div className="grid gap-4 min-[640px]:grid-cols-2">
               <SelectField label="Main Category" required name="category" value={form.category} onChange={handleChange} placeholder="Select category" options={CATEGORIES} />
               <SelectField label="Return Policy" required name="returnPolicy" value={form.returnPolicy} onChange={handleChange} options={RETURN_POLICIES} />
             </div>
 
-            <div className="grid gap-3.5 min-[640px]:grid-cols-2">
+            <div className="mt-2 grid gap-4 min-[640px]:grid-cols-2">
               <div>
-                <label className="mb-1.5 block text-[0.77rem] font-semibold text-gray2">
-                  Store Logo <span className="ml-1 text-[0.7rem] font-normal text-gray">(optional)</span>
+                <label className="mb-1.5 block text-[0.82rem] font-semibold text-gray2 min-[640px]:text-[0.875rem]">
+                  Store Logo <span className="ml-1 text-[0.72rem] font-normal text-gray">(optional)</span>
                 </label>
-                <UploadZone icon="🖼️" text="Upload store logo" sub="PNG, JPG — max 2MB" />
+                <UploadZone icon={ImageIcon} text="Upload store logo" sub="PNG, JPG — max 2MB" />
               </div>
               <div>
-                <label className="mb-1.5 block text-[0.77rem] font-semibold text-gray2">
-                  Store Banner <span className="ml-1 text-[0.7rem] font-normal text-gray">(optional)</span>
+                <label className="mb-1.5 block text-[0.82rem] font-semibold text-gray2 min-[640px]:text-[0.875rem]">
+                  Store Banner <span className="ml-1 text-[0.72rem] font-normal text-gray">(optional)</span>
                 </label>
-                <UploadZone icon="🎨" text="Upload banner image" sub="PNG, JPG — max 5MB" />
+                <UploadZone icon={Palette} text="Upload banner image" sub="PNG, JPG — max 5MB" />
               </div>
             </div>
           </div>
 
           {/* Your Information */}
-          <div className="border-b border-white/[0.07] px-5 py-6 min-[640px]:px-[30px]">
-            <div className="mb-1 font-['Syne'] text-[0.95rem] font-bold text-white">👤 Your Information</div>
-            <div className="mb-4.5 text-[0.78rem] text-gray">Kept private. Used for account verification only.</div>
+          <div className="border-b border-white/[0.07] px-6 py-8 min-[640px]:px-10">
+            <div className="mb-1.5 flex items-center gap-2.5 font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">
+              <User className="text-teal" size={20} />
+              Your Information
+            </div>
+            <div className="mb-6 text-[0.875rem] leading-relaxed text-gray min-[640px]:text-base">Kept private. Used for account verification only.</div>
 
-            <div className="grid gap-3.5 min-[640px]:grid-cols-2">
+            <div className="grid gap-4 min-[640px]:grid-cols-2">
               <InputField label="First Name" required name="firstName" value={form.firstName} onChange={handleChange} placeholder="Ahmed" />
               <InputField label="Last Name" required name="lastName" value={form.lastName} onChange={handleChange} placeholder="Hassan" />
             </div>
-            <div className="grid gap-3.5 min-[640px]:grid-cols-2">
+            <div className="grid gap-4 min-[640px]:grid-cols-2">
               <InputField label="Email Address" required type="email" name="email" value={form.email} onChange={handleChange} placeholder="ahmed@store.com" />
               <InputField label="Phone Number" required type="tel" name="phone" value={form.phone} onChange={handleChange} placeholder="+1 612 555 0198" />
             </div>
-            <div className="grid gap-3.5 min-[640px]:grid-cols-2">
+            <div className="grid gap-4 min-[640px]:grid-cols-2">
               <SelectField label="Country" required name="country" value={form.country} onChange={handleChange} options={COUNTRIES} />
               <InputField label="City" required name="city" value={form.city} onChange={handleChange} placeholder="Minneapolis" />
             </div>
           </div>
 
           {/* Business Details */}
-          <div className="border-b border-white/[0.07] px-5 py-6 min-[640px]:px-[30px]">
-            <div className="mb-1 font-['Syne'] text-[0.95rem] font-bold text-white">
-              🏢 Business Details <span className="ml-1.5 text-[0.7rem] font-normal text-gray">(Optional — speeds up approval)</span>
+          <div className="border-b border-white/[0.07] px-6 py-8 min-[640px]:px-10">
+            <div className="mb-1.5 flex items-center gap-2.5 font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">
+              <Building2 className="text-teal" size={20} />
+              Business Details <span className="ml-2 text-[0.75rem] font-normal text-gray">(Optional)</span>
             </div>
-            <div className="mb-4.5 text-[0.78rem] text-gray">If you have a registered business, enter the details here.</div>
+            <div className="mb-6 text-[0.875rem] leading-relaxed text-gray min-[640px]:text-base">If you have a registered business, enter the details here.</div>
 
-            <div className="grid gap-3.5 min-[640px]:grid-cols-2">
+            <div className="grid gap-4 min-[640px]:grid-cols-2">
               <InputField label="Business Name" optional name="businessName" value={form.businessName} onChange={handleChange} placeholder="Barwaaqo LLC" />
               <InputField label="Tax ID / Business Number" optional name="taxId" value={form.taxId} onChange={handleChange} placeholder="EIN or Business Number" />
             </div>
@@ -254,53 +283,66 @@ const MerchantRegister = () => {
           </div>
 
           {/* Password */}
-          <div className="border-b border-white/[0.07] px-5 py-6 min-[640px]:px-[30px]">
-            <div className="mb-1 font-['Syne'] text-[0.95rem] font-bold text-white">🔐 Create Your Password</div>
-            <div className="mb-4.5 text-[0.78rem] text-gray">Set a strong password to protect your merchant account.</div>
+          <div className="border-b border-white/[0.07] px-6 py-8 min-[640px]:px-10">
+            <div className="mb-1.5 flex items-center gap-2.5 font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">
+              <Lock className="text-teal" size={20} />
+              Create Your Password
+            </div>
+            <div className="mb-6 text-[0.875rem] leading-relaxed text-gray min-[640px]:text-base">Set a strong password to protect your merchant account.</div>
 
-            <div className="grid gap-3.5 min-[640px]:grid-cols-2">
+            <div className="grid gap-4 min-[640px]:grid-cols-2">
               <InputField label="Password" required type="password" name="password" value={form.password} onChange={handleChange} placeholder="Min. 8 characters" />
               <InputField label="Confirm Password" required type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} placeholder="Repeat password" />
             </div>
           </div>
 
           {/* Agreement */}
-          <div className="px-5 py-6 min-[640px]:px-[30px]">
-            <div className="mb-4 font-['Syne'] text-[0.95rem] font-bold text-white">📋 Agreement</div>
+          <div className="px-6 py-8 min-[640px]:px-10">
+            <div className="mb-5 flex items-center gap-2.5 font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">
+              <ClipboardCheck className="text-teal" size={20} />
+              Agreement
+            </div>
 
             <div
               onClick={() => toggleAgreement('terms')}
-              className="mb-3 flex cursor-pointer items-start gap-3 rounded-[10px] border border-white/[0.07] bg-navy3 p-3.5 transition-colors duration-150 hover:border-[rgba(0,201,167,0.25)]"
+              className="group mb-4 flex cursor-pointer items-start gap-4 rounded-xl border border-white/[0.07] bg-navy3 p-5 transition-all duration-150 hover:border-[rgba(0,201,167,0.25)] hover:bg-navy3/80"
             >
-              <div className={`mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded text-[0.7rem] transition-all duration-150 ${agreements.terms ? 'border-teal bg-teal font-black text-navy' : 'border border-gray'}`}>
+              <div className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded text-[0.8rem] transition-all duration-150 ${agreements.terms ? 'border-teal bg-teal font-black text-navy shadow-[0_0_10px_rgba(0,201,167,0.3)]' : 'border border-gray'}`}>
                 {agreements.terms && '✓'}
               </div>
-              <div className="text-[0.79rem] leading-[1.6] text-gray2">
+              <div className="text-[0.875rem] leading-[1.6] text-gray2">
                 I agree to the <a href="#" className="text-teal no-underline hover:underline">ESUUQ Merchant Terms &amp; Conditions</a> and understand that ESUUQ charges a commission on each sale. My store will be reviewed before going live.
               </div>
             </div>
 
             <div
               onClick={() => toggleAgreement('products')}
-              className="mb-3 flex cursor-pointer items-start gap-3 rounded-[10px] border border-white/[0.07] bg-navy3 p-3.5 transition-colors duration-150 hover:border-[rgba(0,201,167,0.25)]"
+              className="group mb-4 flex cursor-pointer items-start gap-4 rounded-xl border border-white/[0.07] bg-navy3 p-5 transition-all duration-150 hover:border-[rgba(0,201,167,0.25)] hover:bg-navy3/80"
             >
-              <div className={`mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded text-[0.7rem] transition-all duration-150 ${agreements.products ? 'border-teal bg-teal font-black text-navy' : 'border border-gray'}`}>
+              <div className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded text-[0.8rem] transition-all duration-150 ${agreements.products ? 'border-teal bg-teal font-black text-navy shadow-[0_0_10px_rgba(0,201,167,0.3)]' : 'border border-gray'}`}>
                 {agreements.products && '✓'}
               </div>
-              <div className="text-[0.79rem] leading-[1.6] text-gray2">
+              <div className="text-[0.875rem] leading-[1.6] text-gray2">
                 I confirm that all products I list comply with <a href="#" className="text-teal no-underline hover:underline">ESUUQ's product guidelines</a> and that I will not sell prohibited or counterfeit items.
               </div>
             </div>
 
-            <div className="mt-4.5">
+            <div className="mt-8">
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full cursor-pointer rounded-[10px] border-none bg-teal px-4 py-3.5 font-['Syne'] text-[0.95rem] font-bold text-navy transition-all duration-150 hover:bg-teal2 disabled:cursor-wait disabled:opacity-70"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-none bg-teal px-3 md:px-6 py-3 md:py-4.5 font-['Syne'] text-sm md:text-[1rem] font-bold text-navy transition-all duration-150 hover:bg-teal2 hover:shadow-[0_0_20px_rgba(0,201,167,0.2)] disabled:cursor-wait disabled:opacity-70"
               >
-                {submitting ? '⏳ Submitting...' : '🚀 Submit Application'}
+                {submitting ? (
+                  <>⏳ Submitting...</>
+                ) : (
+                  <>
+                    <Send size={18} />
+                    Submit Application
+                  </>
+                )}
               </button>
-              <div className="mt-2 text-center text-[0.73rem] text-gray">
+              <div className="mt-3 text-center text-[0.8rem] text-gray">
                 Applications are reviewed within 1–2 business days
               </div>
             </div>
@@ -308,49 +350,61 @@ const MerchantRegister = () => {
         </form>
 
         {/* ─── SIDEBAR ─── */}
-        <aside className="flex flex-col gap-4 max-[859px]:order-first">
+        <aside className="flex flex-col gap-5 max-[899px]:order-first">
 
           {/* Benefits */}
-          <div className="rounded-[14px] border border-white/[0.07] bg-navy2 p-5">
-            <div className="mb-3.5 font-['Syne'] text-[0.88rem] font-bold text-white">🎯 Why Sell on ESUUQ?</div>
-            {BENEFITS.map((b) => (
-              <div className="mb-2.5 flex items-start gap-2.5 last:mb-0" key={b.title}>
-                <div className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-[6px] border border-[rgba(0,201,167,0.25)] bg-[rgba(0,201,167,0.08)] text-[0.75rem]">
-                  {b.icon}
+          <div className="rounded-2xl border border-white/[0.07] bg-navy2 p-6 min-[640px]:p-8">
+            <div className="mb-5 font-['Syne'] text-[1rem] font-bold text-white min-[640px]:text-[1.1rem]">🎯 Why Sell on ESUUQ?</div>
+            <div className="flex flex-col gap-5">
+              {BENEFITS.map((b) => (
+                <div className="flex items-start gap-4" key={b.title}>
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[rgba(0,201,167,0.25)] bg-[rgba(0,201,167,0.08)] text-teal">
+                    {b.icon}
+                  </div>
+                  <div className="text-[0.875rem] leading-[1.5] text-gray2">
+                    <strong className="mb-0.5 block text-[0.9rem] text-white">{b.title}</strong>
+                    {b.desc}
+                  </div>
                 </div>
-                <div className="text-[0.8rem] leading-[1.5] text-gray2">
-                  <strong className="block text-[0.81rem] text-white">{b.title}</strong>
-                  {b.desc}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           {/* Stats */}
-          <div className="rounded-[14px] border border-white/[0.07] bg-navy2 p-5">
-            <div className="mb-3.5 font-['Syne'] text-[0.88rem] font-bold text-white">📊 Platform Stats</div>
-            {STATS.map((s) => (
-              <div className="flex justify-between border-b border-white/[0.07] py-2 last:border-b-0" key={s.label}>
-                <span className="text-[0.77rem] text-gray">{s.label}</span>
-                <span className="text-[0.83rem] font-bold text-teal">{s.value}</span>
-              </div>
-            ))}
+          <div className="rounded-2xl border border-white/[0.07] bg-navy2 p-6 min-[640px]:p-8">
+            <div className="mb-5 flex items-center gap-2 font-['Syne'] text-[1rem] font-bold text-white min-[640px]:text-[1.1rem]">
+              <BarChart3 className="text-teal" size={18} />
+              Platform Stats
+            </div>
+            <div className="flex flex-col gap-3">
+              {STATS.map((s) => (
+                <div className="flex justify-between border-b border-white/[0.07] pb-3 last:border-b-0 last:pb-0" key={s.label}>
+                  <span className="text-[0.85rem] text-gray">{s.label}</span>
+                  <span className="text-[0.95rem] font-bold text-teal">{s.value}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* How it works */}
-          <div className="rounded-[14px] border border-white/[0.07] bg-navy2 p-5">
-            <div className="mb-3.5 font-['Syne'] text-[0.88rem] font-bold text-white">⚡ How It Works</div>
-            {TIMELINE.map((t) => (
-              <div className="mb-3 flex gap-2.5 last:mb-0" key={t.step}>
-                <div className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full border-2 border-[rgba(0,201,167,0.25)] bg-[rgba(0,201,167,0.08)] text-[0.73rem] font-bold text-teal">
-                  {t.step}
+          <div className="rounded-2xl border border-white/[0.07] bg-navy2 p-6 min-[640px]:p-8">
+            <div className="mb-5 flex items-center gap-2 font-['Syne'] text-[1rem] font-bold text-white min-[640px]:text-[1.1rem]">
+              <Zap className="text-teal" size={18} />
+              How It Works
+            </div>
+            <div className="flex flex-col gap-5">
+              {TIMELINE.map((t) => (
+                <div className="flex gap-4" key={t.step}>
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-[rgba(0,201,167,0.25)] bg-[rgba(0,201,167,0.08)] text-[0.85rem] font-bold text-teal">
+                    {t.step}
+                  </div>
+                  <div className="pt-0.5 text-[0.875rem] leading-[1.6] text-gray2">
+                    <strong className="mb-0.5 block text-white">{t.title}</strong>
+                    {t.desc}
+                  </div>
                 </div>
-                <div className="pt-0.5 text-[0.79rem] leading-[1.5] text-gray2">
-                  <strong className="block text-white">{t.title}</strong>
-                  {t.desc}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </aside>
       </div>
@@ -358,22 +412,25 @@ const MerchantRegister = () => {
       {/* ───── SUCCESS MODAL ───── */}
       {showModal && (
         <div
-          className="fixed inset-0 z-[200] flex animate-[fadeIn_0.25s_ease] items-center justify-center bg-black/75"
+          className="fixed inset-0 z-[200] flex animate-[fadeIn_0.25s_ease] items-center justify-center bg-black/80 px-4"
           onClick={() => setShowModal(false)}
         >
           <div
-            className="mx-5 max-w-[400px] animate-[slideUp_0.35s_ease] rounded-[20px] border border-[rgba(0,201,167,0.25)] bg-navy2 px-9 py-11 text-center"
+            className="w-full max-w-[440px] animate-[slideUp_0.35s_ease] rounded-3xl border border-[rgba(0,201,167,0.25)] bg-navy2 px-8 py-12 text-center shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-3.5 text-5xl">🎉</div>
-            <div className="mb-2.5 font-['Syne'] text-[1.4rem] font-bold text-white">Application Submitted!</div>
-            <div className="mb-6 text-[0.87rem] leading-[1.6] text-gray">
-              Our team will review your application and contact you within 1–2 business days.
+            <div className="mb-5 flex justify-center text-teal">
+              <PartyPopper size={64} strokeWidth={1.5} />
+            </div>
+            <div className="mb-3 font-['Syne'] text-[1.6rem] font-bold text-white">Application Submitted!</div>
+            <div className="mb-8 text-base leading-[1.7] text-gray">
+              Welcome to the ESUUQ merchant community! Our team will review your application and contact you within 1–2 business days.
             </div>
             <button
               onClick={() => navigate('/')}
-              className="w-full cursor-pointer rounded-lg border-none bg-teal px-5 py-3 font-['DM_Sans'] text-[0.85rem] font-semibold text-navy transition-all duration-150 hover:bg-teal2"
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-none bg-teal px-6 py-4 font-['DM_Sans'] text-[1rem] font-semibold text-navy transition-all duration-150 hover:bg-teal2"
             >
+              <CheckCircle2 size={18} />
               Back to Home
             </button>
           </div>
