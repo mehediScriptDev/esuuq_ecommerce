@@ -8,6 +8,7 @@ const SubAdminOrderDisputes = () => {
   const [disputes, setDisputes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState(null);
+  const [selectedDispute, setSelectedDispute] = useState(null);
 
   const fetchDisputes = async () => {
     try {
@@ -98,7 +99,10 @@ const SubAdminOrderDisputes = () => {
                   </td>
                   <td className="px-3 py-2.5">
                     <div className="flex gap-1.5">
-                      <button className="text-blue-500 bg-blue-500/10 rounded border border-blue-500/30 px-2 py-1 text-[0.7rem] font-semibold flex items-center gap-1">
+                      <button 
+                        onClick={() => setSelectedDispute(row)}
+                        className="text-blue-500 bg-blue-500/10 rounded border border-blue-500/30 px-2 py-1 text-[0.7rem] font-semibold flex items-center gap-1"
+                      >
                         <Eye size={12} /> View
                       </button>
                       {row.status !== 'resolved' && (
@@ -122,6 +126,52 @@ const SubAdminOrderDisputes = () => {
           </table>
         </div>
       </div>
+
+      {/* Details Modal */}
+      {selectedDispute && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-card w-full max-w-lg rounded-xl border border-white/10 p-6 shadow-2xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="font-['Syne'] text-lg font-bold text-white">Dispute Details</h3>
+              <button onClick={() => setSelectedDispute(null)} className="text-gray hover:text-white">✕</button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <div className="text-xs text-gray uppercase tracking-wider mb-1">Reason</div>
+                <div className="text-sm text-teal font-semibold capitalize">{selectedDispute.reason?.replace(/_/g, ' ')}</div>
+              </div>
+              
+              <div>
+                <div className="text-xs text-gray uppercase tracking-wider mb-1">Description</div>
+                <div className="text-sm text-gray2 bg-navy3 p-3 rounded border border-white/5">{selectedDispute.description}</div>
+              </div>
+
+              <div>
+                <div className="text-xs text-gray uppercase tracking-wider mb-1">Status History / Notes</div>
+                <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                  {(selectedDispute.notes || []).map((note, idx) => (
+                    <div key={idx} className="text-xs border-l-2 border-teal pl-3 py-1">
+                      <div className="text-white font-semibold">{note.authorName} <span className="text-[10px] text-gray font-normal">{new Date(note.createdAt).toLocaleString()}</span></div>
+                      <div className="text-gray2 italic">"{note.content}"</div>
+                    </div>
+                  ))}
+                  {(!selectedDispute.notes || selectedDispute.notes.length === 0) && <div className="text-xs text-gray italic">No internal notes yet.</div>}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <button 
+                onClick={() => setSelectedDispute(null)}
+                className="bg-navy3 hover:bg-navy4 border border-white/10 px-4 py-2 rounded text-sm text-white transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
