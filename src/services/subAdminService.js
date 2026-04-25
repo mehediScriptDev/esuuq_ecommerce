@@ -3,90 +3,130 @@ import axiosInstance from './axiosInstance';
 const SUB_ADMIN_BASE = '/v1/sub-admin';
 const SUPPORT_BASE = '/v1/support';
 
+const unwrapPayload = (response) => {
+  const body = response?.data;
+  if (body && typeof body === 'object' && Object.prototype.hasOwnProperty.call(body, 'data')) {
+    return body.data;
+  }
+  return body;
+};
+
 const subAdminService = {
   // --- Dashboard Stats ---
   getDashboardStats: async () => {
     // We combine multiple count endpoints for the dashboard cards.
     // Each request is caught individually to prevent a 403 (Forbidden) on one permission from breaking the whole dashboard.
-    const [merchants, reviews, content, disputes] = await Promise.all([
-      axiosInstance.get(`${SUB_ADMIN_BASE}/merchants/pending/count`).catch(() => ({ data: { count: 0 } })),
-      axiosInstance.get(`${SUB_ADMIN_BASE}/moderation/flagged-reviews/count`).catch(() => ({ data: { count: 0 } })),
-      axiosInstance.get(`${SUB_ADMIN_BASE}/moderation/flagged-content/count`).catch(() => ({ data: { count: 0 } })),
-      axiosInstance.get(`${SUB_ADMIN_BASE}/disputes`).catch(() => ({ data: { meta: { total: 0 } } })),
+    const [merchants, reviews, content, disputes, tickets] = await Promise.all([
+      axiosInstance.get(`${SUB_ADMIN_BASE}/merchants/pending/count`).catch((err) => { console.error('Merchants count error:', err.response?.status, err.message); return { data: { data: { count: 0 } } }; }),
+      axiosInstance.get(`${SUB_ADMIN_BASE}/moderation/flagged-reviews/count`).catch((err) => { console.error('Reviews count error:', err.response?.status, err.message); return { data: { data: { count: 0 } } }; }),
+      axiosInstance.get(`${SUB_ADMIN_BASE}/moderation/flagged-content/count`).catch((err) => { console.error('Content count error:', err.response?.status, err.message); return { data: { data: { count: 0 } } }; }),
+      axiosInstance.get(`${SUB_ADMIN_BASE}/disputes`).catch((err) => { console.error('Disputes error:', err.response?.status, err.message); return { data: { data: { meta: { total: 0 } } } }; }),
+      axiosInstance.get(`${SUPPORT_BASE}/tickets/counts`).catch((err) => { console.error('Tickets error:', err.response?.status, err.message); return { data: { data: { open: 0 } } }; }),
     ]);
 
-    return {
-      pendingMerchants: merchants.data.count || 0,
-      flaggedReviews: reviews.data.count || 0,
-      flaggedContent: content.data.count || 0,
-      activeDisputes: disputes.data.meta?.total || 0,
+    const stats = {
+      pendingMerchants: unwrapPayload(merchants).count || 0,
+      flaggedReviews: unwrapPayload(reviews).count || 0,
+      flaggedContent: unwrapPayload(content).count || 0,
+      activeDisputes: unwrapPayload(disputes).meta?.total || 0,
+      openTickets: unwrapPayload(tickets).open || 0,
     };
+    console.log('[subAdminService] Dashboard Stats:', stats);
+    return stats;
   },
 
   // --- Merchant Approvals ---
-  listPendingMerchants: (page = 1, limit = 20, search = '') => 
-    axiosInstance.get(`${SUB_ADMIN_BASE}/merchants/pending`, { params: { page, limit, search } }),
+  listPendingMerchants: async (params) => {
+    const response = await axiosInstance.get(`${SUB_ADMIN_BASE}/merchants/pending`, { params });
+    return unwrapPayload(response);
+  },
 
-  getMerchantDetail: (id) => axiosInstance.get(`${SUB_ADMIN_BASE}/merchants/${id}`),
+  getMerchantDetail: async (id) => {
+    const response = await axiosInstance.get(`${SUB_ADMIN_BASE}/merchants/${id}`);
+    return unwrapPayload(response);
+  },
 
-  approveMerchant: (id, commissionRate) => 
-    axiosInstance.patch(`${SUB_ADMIN_BASE}/merchants/${id}/approve`, { commissionRate }),
+  approveMerchant: async (id, commissionRate) => {
+    const response = await axiosInstance.patch(`${SUB_ADMIN_BASE}/merchants/${id}/approve`, { commissionRate });
+    return unwrapPayload(response);
+  },
 
-  rejectMerchant: (id, reason) => 
-    axiosInstance.patch(`${SUB_ADMIN_BASE}/merchants/${id}/reject`, { reason }),
+  rejectMerchant: async (id, reason) => {
+    const response = await axiosInstance.patch(`${SUB_ADMIN_BASE}/merchants/${id}/reject`, { reason });
+    return unwrapPayload(response);
+  },
 
   // --- Review Moderation ---
-  listFlaggedReviews: (page = 1, limit = 20, minFlags = 1) => 
-    axiosInstance.get(`${SUB_ADMIN_BASE}/moderation/flagged-reviews`, { params: { page, limit, minFlags } }),
+  listFlaggedReviews: async (params) => {
+    const response = await axiosInstance.get(`${SUB_ADMIN_BASE}/moderation/flagged-reviews`, { params });
+    return unwrapPayload(response);
+  },
 
-  moderateReview: (id, action, reason) => 
-    axiosInstance.patch(`${SUB_ADMIN_BASE}/moderation/reviews/${id}/action`, { action, reason }),
+  moderateReview: async (id, action, reason) => {
+    const response = await axiosInstance.patch(`${SUB_ADMIN_BASE}/moderation/reviews/${id}/action`, { action, reason });
+    return unwrapPayload(response);
+  },
 
   // --- Content (Product) Moderation ---
-  listFlaggedContent: (page = 1, limit = 20) => 
-    axiosInstance.get(`${SUB_ADMIN_BASE}/moderation/flagged-content`, { params: { page, limit } }),
+  listFlaggedContent: async (params) => {
+    const response = await axiosInstance.get(`${SUB_ADMIN_BASE}/moderation/flagged-content`, { params });
+    return unwrapPayload(response);
+  },
 
-  moderateContent: (id, action, reason) => 
-    axiosInstance.patch(`${SUB_ADMIN_BASE}/moderation/content/${id}/action`, { action, reason }),
+  moderateContent: async (id, action, reason) => {
+    const response = await axiosInstance.patch(`${SUB_ADMIN_BASE}/moderation/content/${id}/action`, { action, reason });
+    return unwrapPayload(response);
+  },
 
   // --- User Moderation ---
-  listUsers: (params) => axiosInstance.get(`${SUB_ADMIN_BASE}/users`, { params }),
+  listUsers: (params) => axiosInstance.get(`${SUB_ADMIN_BASE}/users`, { params }).then(unwrapPayload),
 
-  moderateUser: (id, action, reason, notes) => 
-    axiosInstance.patch(`${SUB_ADMIN_BASE}/users/${id}/moderate`, { action, reason, notes }),
+  moderateUser: async (id, action, reason, notes) => {
+    const response = await axiosInstance.patch(`${SUB_ADMIN_BASE}/users/${id}/moderate`, { action, reason, notes });
+    return unwrapPayload(response);
+  },
 
   // --- Dispute Management ---
-  listDisputes: (page = 1, limit = 20, status) => 
-    axiosInstance.get(`${SUB_ADMIN_BASE}/disputes`, { params: { page, limit, status } }),
+  listDisputes: async (params) => {
+    const response = await axiosInstance.get(`${SUB_ADMIN_BASE}/disputes`, { params });
+    return unwrapPayload(response);
+  },
 
-  getDispute: (id) => axiosInstance.get(`${SUB_ADMIN_BASE}/disputes/${id}`),
+  getDispute: async (id) => {
+    const response = await axiosInstance.get(`${SUB_ADMIN_BASE}/disputes/${id}`);
+    return unwrapPayload(response);
+  },
 
-  resolveDispute: (id, resolution, notes) => 
-    axiosInstance.patch(`${SUB_ADMIN_BASE}/disputes/${id}/resolve`, { resolution, notes }),
+  resolveDispute: async (id, resolution, notes) => {
+    const response = await axiosInstance.patch(`${SUB_ADMIN_BASE}/disputes/${id}/resolve`, { resolution, notes });
+    return unwrapPayload(response);
+  },
 
-  addDisputeNote: (id, note) => 
-    axiosInstance.post(`${SUB_ADMIN_BASE}/disputes/${id}/notes`, { note }),
+  addDisputeNote: async (id, note) => {
+    const response = await axiosInstance.post(`${SUB_ADMIN_BASE}/disputes/${id}/notes`, { note });
+    return unwrapPayload(response);
+  },
 
   // --- Support Tickets ---
-  listSupportTickets: (params) => axiosInstance.get(`${SUPPORT_BASE}/tickets`, { params }),
+  listSupportTickets: (params) => axiosInstance.get(`${SUPPORT_BASE}/tickets`, { params }).then(unwrapPayload),
 
-  getTicketDetails: (id) => axiosInstance.get(`${SUPPORT_BASE}/tickets/${id}`),
+  getTicketDetails: (id) => axiosInstance.get(`${SUPPORT_BASE}/tickets/${id}`).then(unwrapPayload),
 
-  updateTicketStatus: (id, status) => axiosInstance.patch(`${SUPPORT_BASE}/tickets/${id}/status`, { status }),
+  updateTicketStatus: (id, status) => axiosInstance.patch(`${SUPPORT_BASE}/tickets/${id}/status`, { status }).then(unwrapPayload),
 
-  addTicketReply: (id, content) => axiosInstance.post(`${SUPPORT_BASE}/tickets/${id}/replies`, { content }),
+  addTicketReply: (id, content) => axiosInstance.post(`${SUPPORT_BASE}/tickets/${id}/replies`, { content }).then(unwrapPayload),
 
-  assignTicket: (id, assignedToId) => axiosInstance.patch(`${SUPPORT_BASE}/tickets/${id}/assign`, { assignedToId }),
+  assignTicket: (id, assignedToId) => axiosInstance.patch(`${SUPPORT_BASE}/tickets/${id}/assign`, { assignedToId }).then(unwrapPayload),
 
   // --- Activity Logs ---
   getActivityLogs: (page = 1, limit = 50, adminId) => 
-    axiosInstance.get(`${SUB_ADMIN_BASE}/activity-logs`, { params: { page, limit, adminId } }),
+    axiosInstance.get(`${SUB_ADMIN_BASE}/activity-logs`, { params: { page, limit, adminId } }).then(unwrapPayload),
 
   // --- Permissions ---
-  getPermissions: (userId) => axiosInstance.get(`${SUB_ADMIN_BASE}/permissions/${userId}`),
+  getPermissions: (userId) => axiosInstance.get(`${SUB_ADMIN_BASE}/permissions/${userId}`).then(unwrapPayload),
 
   updatePermissions: (userId, permissions) => 
-    axiosInstance.patch(`${SUB_ADMIN_BASE}/permissions/${userId}`, permissions),
+    axiosInstance.patch(`${SUB_ADMIN_BASE}/permissions/${userId}`, permissions).then(unwrapPayload),
 };
 
 export default subAdminService;

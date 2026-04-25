@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { getMyOrders } from '../../../../services/checkoutService';
 import { getToken } from '../../../../utils/storage';
-import { getProductReviews, submitProductReview, toggleReviewHelpful } from '../../../../services/reviewService';
+import { getProductReviews, submitProductReview, toggleReviewHelpful, flagReview } from '../../../../services/reviewService';
+import { MoreVertical, AlertTriangle } from 'lucide-react';
+import ReportModal from '../../../../components/ui/modals/ReportModal';
 
 const ProductTabs = ({ product }) => {
   const [activeTab, setActiveTab] = useState('description');
@@ -21,6 +23,8 @@ const ProductTabs = ({ product }) => {
   const [eligibleOrders, setEligibleOrders] = useState([]);
   const [formState, setFormState] = useState({ loading: false, error: '', success: '' });
   const [helpfulBusyId, setHelpfulBusyId] = useState('');
+  const [reportingReview, setReportingReview] = useState(null);
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const isAuthenticated = Boolean(getToken());
 
   const productId = product?.id;
@@ -444,6 +448,32 @@ const ProductTabs = ({ product }) => {
                         >
                           {helpfulBusyId === review.id ? '...' : 'Helpful'} ({review.helpfulCount || 0})
                         </button>
+
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setActiveDropdown(activeDropdown === review.id ? null : review.id)}
+                            className="text-gray/40 hover:text-white transition-colors p-1"
+                          >
+                            <MoreVertical size={16} />
+                          </button>
+                          
+                          {activeDropdown === review.id && (
+                            <div className="absolute right-0 top-full mt-1 w-40 bg-navy2 border border-white/10 rounded-xs shadow-xl z-10 animate-in fade-in slide-in-from-top-1">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setReportingReview(review);
+                                  setActiveDropdown(null);
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest text-red/80 hover:text-red hover:bg-white/5 transition-colors text-left"
+                              >
+                                <AlertTriangle size={14} />
+                                Report Review
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       <div className="flex gap-0.5">
@@ -517,6 +547,14 @@ const ProductTabs = ({ product }) => {
           </div>
         )}
       </div>
+
+      <ReportModal
+        isOpen={Boolean(reportingReview)}
+        onClose={() => setReportingReview(null)}
+        onSubmit={(data) => flagReview(reportingReview?.id, data)}
+        targetType="Review"
+        targetId={reportingReview?.id}
+      />
     </section>
   );
 };

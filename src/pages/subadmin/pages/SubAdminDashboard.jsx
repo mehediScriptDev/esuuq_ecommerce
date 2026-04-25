@@ -45,10 +45,10 @@ const SubAdminDashboard = () => {
   }, []);
 
   const dashboardCards = stats ? [
-    { label: 'Pending Merchants', value: stats.pendingMerchants, note: 'Awaiting approval', icon: Store, iconTone: 'text-teal', tone: 'text-teal', link: '/subadmin/merchants' },
-    { label: 'Flagged Reviews', value: stats.flaggedReviews, note: 'Needs moderation', icon: AlertTriangle, iconTone: 'text-yellow', tone: 'text-yellow', link: '/subadmin/reviews' },
-    { label: 'Flagged Products', value: stats.flaggedContent, note: 'Violation reports', icon: Flag, iconTone: 'text-red', tone: 'text-red', link: '/subadmin/content' },
-    { label: 'Order Disputes', value: stats.activeDisputes, note: 'Customer issues', icon: Ticket, iconTone: 'text-purple-400', tone: 'text-purple-400', link: '/subadmin/disputes' },
+    { label: 'Pending Merchants', value: stats.pendingMerchants, note: 'Awaiting approval', icon: Store, iconTone: 'text-teal', tone: 'text-teal', link: '/subadmin/merchant-approvals' },
+    { label: 'Flagged Reviews', value: stats.flaggedReviews, note: 'Needs moderation', icon: AlertTriangle, iconTone: 'text-yellow', tone: 'text-yellow', link: '/subadmin/review-moderation' },
+    { label: 'Flagged Products', value: stats.flaggedContent, note: 'Violation reports', icon: Flag, iconTone: 'text-red', tone: 'text-red', link: '/subadmin/flagged-content' },
+    { label: 'Order Disputes', value: stats.activeDisputes, note: 'Customer issues', icon: Ticket, iconTone: 'text-purple-400', tone: 'text-purple-400', link: '/subadmin/order-disputes' },
   ] : [];
 
   if (loading && !stats) {
@@ -141,10 +141,10 @@ const SubAdminDashboard = () => {
             <h3 className="mb-2 font-['Syne'] text-[1rem] font-bold text-white">Quick Actions</h3>
             <div className="space-y-1.5">
               {[
-                { icon: Store, text: 'Review Merchant Applications', link: '/subadmin/merchants' },
-                { icon: AlertTriangle, text: 'Moderate Flagged Reviews', link: '/subadmin/reviews' },
-                { icon: Flag, text: 'Review Flagged Content', link: '/subadmin/content' },
-                { icon: Ticket, text: 'View Order Disputes', link: '/subadmin/disputes' },
+                { icon: Store, text: 'Review Merchant Applications', link: '/subadmin/merchant-approvals' },
+                { icon: AlertTriangle, text: 'Moderate Flagged Reviews', link: '/subadmin/review-moderation' },
+                { icon: Flag, text: 'Review Flagged Content', link: '/subadmin/flagged-content' },
+                { icon: Ticket, text: 'View Order Disputes', link: '/subadmin/order-disputes' },
               ].map((action) => {
                 const Icon = action.icon;
                 return (

@@ -26,3 +26,8 @@ export const toggleReviewHelpful = async (reviewId) => {
   const response = await axiosInstance.post(`${apiBase}/reviews/${reviewId}/helpful`);
   return unwrapPayload(response);
 };
+
+export const flagReview = async (reviewId, payload) => {
+  const response = await axiosInstance.post(`${apiBase}/reviews/${reviewId}/flag`, payload);
+  return unwrapPayload(response);
+};
