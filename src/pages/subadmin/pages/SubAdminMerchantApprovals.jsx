@@ -13,9 +13,9 @@ const SubAdminMerchantApprovals = () => {
     try {
       setLoading(true);
       const response = await subAdminService.listPendingMerchants();
-      const merchantsArray = Array.isArray(response.data.data) 
-        ? response.data.data 
-        : (Array.isArray(response.data) ? response.data : []);
+      const merchantsArray = Array.isArray(response.data) 
+        ? response.data 
+        : (Array.isArray(response) ? response : []);
       
       setMerchants(merchantsArray);
     } catch (error) {

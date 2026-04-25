@@ -5,10 +5,11 @@ const SUPPORT_BASE = '/v1/support';
 
 const unwrapPayload = (response) => {
   const body = response?.data;
-  if (body && typeof body === 'object' && Object.prototype.hasOwnProperty.call(body, 'data')) {
-    return body.data;
-  }
-  return body;
+  const data = (body && typeof body === 'object' && Object.prototype.hasOwnProperty.call(body, 'data')) 
+    ? body.data 
+    : body;
+  console.log(`[API Response] ${response?.config?.url}:`, data);
+  return data;
 };
 
 const subAdminService = {

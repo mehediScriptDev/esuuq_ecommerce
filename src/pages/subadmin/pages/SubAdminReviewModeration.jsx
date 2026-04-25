@@ -13,7 +13,7 @@ const SubAdminReviewModeration = () => {
     try {
       setLoading(true);
       const response = await subAdminService.listFlaggedReviews();
-      setReviews(response.data.data || []);
+      setReviews(response.data || []);
     } catch (error) {
       console.error('Failed to fetch flagged reviews:', error);
       toast.error('Failed to load flagged reviews');

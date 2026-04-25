@@ -12,9 +12,9 @@ const SubAdminActivityLog = () => {
       try {
         setLoading(true);
         const response = await subAdminService.getActivityLogs();
-        const logsArray = Array.isArray(response.data.data) 
-          ? response.data.data 
-          : (Array.isArray(response.data) ? response.data : []);
+        const logsArray = Array.isArray(response.data) 
+          ? response.data 
+          : (Array.isArray(response) ? response : []);
         
         setLogs(logsArray);
       } catch (error) {

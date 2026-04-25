@@ -6,6 +6,7 @@ import {
   approveAdminProduct,
   deleteAdminProduct,
   getAdminPendingProducts,
+  getAdminProducts,
   rejectAdminProduct,
 } from '../../../services/adminService';
 
@@ -17,12 +18,17 @@ const AdminProducts = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [statusFilter, setStatusFilter] = useState(''); // Empty means all
 
   const load = async () => {
     try {
       setLoading(true);
       setError('');
-      const payload = await getAdminPendingProducts({ page: 1, limit: 100 });
+      const params = { page: 1, limit: 100 };
+      if (statusFilter) params.status = statusFilter;
+      if (query) params.search = query;
+      
+      const payload = await getAdminProducts(params);
       setAllProducts(Array.isArray(payload?.data) ? payload.data : []);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load products.');
@@ -33,16 +39,14 @@ const AdminProducts = () => {
 
   useEffect(() => {
     load();
-  }, []);
+  }, [statusFilter]); // Reload when filter changes
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return allProducts;
-    return allProducts.filter((p) => {
-      const text = `${p.name || ''} ${p.sku || ''} ${p.id || ''}`.toLowerCase();
-      return text.includes(q);
-    });
-  }, [allProducts, query]);
+    // Search is now handled by the server for better performance, 
+    // but we can still keep local filtering for instant feedback if desired.
+    // However, since we reload on query change in 'load', local filtering is redundant.
+    return allProducts;
+  }, [allProducts]);
 
   const del = async (item) => {
     if (!window.confirm(`Delete ${item.name}?`)) return;
@@ -98,7 +102,20 @@ const AdminProducts = () => {
             placeholder="Search products by name, SKU, or ID..."
           />
         </div>
-        <button onClick={load} className="text-gray2 hover:text-gold text-xs">{loading ? 'Loading...' : 'Refresh'}</button>
+        <div className="flex items-center gap-2">
+          <select 
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="bg-navy3 focus:border-gold rounded border border-white/[0.08] px-3 py-2 text-xs text-white outline-none"
+          >
+            <option value="">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="pending_review">Pending Review</option>
+            <option value="rejected">Rejected</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <button onClick={load} className="text-gray2 hover:text-gold text-xs">{loading ? 'Loading...' : 'Refresh'}</button>
+        </div>
       </div>
 
       <div className="bg-card overflow-hidden rounded-lg border border-white/[0.07]">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Flag, ShieldAlert, Loader2, Check, Trash2, Eye } from 'lucide-react';
 import SubAdminPageHeader from '../components/SubAdminPageHeader';
 import subAdminService from '../../../services/subAdminService';
@@ -13,7 +14,7 @@ const SubAdminFlaggedContent = () => {
     try {
       setLoading(true);
       const response = await subAdminService.listFlaggedContent();
-      setProducts(response.data.data || []);
+      setProducts(response.data || []);
     } catch (error) {
       console.error('Failed to fetch flagged content:', error);
       toast.error('Failed to load flagged content');
@@ -108,9 +109,14 @@ const SubAdminFlaggedContent = () => {
                       >
                         <Trash2 size={12} /> Remove
                       </button>
-                      <button className="border-border text-gray2 hover:border-teal hover:text-teal rounded border px-2 py-1 text-[0.7rem] font-semibold">
+                      <Link 
+                        to={`/product/${product.slug}`} 
+                        target="_blank"
+                        className="border-border text-gray2 hover:border-teal hover:text-teal rounded border px-2 py-1 text-[0.7rem] font-semibold flex items-center justify-center"
+                        title="View Product Details"
+                      >
                         <Eye size={12} />
-                      </button>
+                      </Link>
                     </div>
                   </td>
                 </tr>

@@ -14,7 +14,7 @@ const SubAdminUserManagement = () => {
     try {
       setLoading(true);
       const response = await subAdminService.listUsers({ search: searchTerm });
-      setUsers(response.data.data || []);
+      setUsers(response.data || []);
     } catch (error) {
       console.error('Failed to fetch users:', error);
       toast.error('Failed to load users');

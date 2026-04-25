@@ -29,9 +29,9 @@ const SubAdminDashboard = () => {
         
         setStats(statsData);
         
-        const ticketsArray = Array.isArray(ticketsData.data?.data) 
-          ? ticketsData.data.data 
-          : (Array.isArray(ticketsData.data) ? ticketsData.data : []);
+        const ticketsArray = Array.isArray(ticketsData.data) 
+          ? ticketsData.data 
+          : (Array.isArray(ticketsData) ? ticketsData : []);
         
         setTickets(ticketsArray);
       } catch (error) {

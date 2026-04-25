@@ -13,7 +13,7 @@ const SubAdminOrderDisputes = () => {
     try {
       setLoading(true);
       const response = await subAdminService.listDisputes();
-      setDisputes(response.data.data || []);
+      setDisputes(response.data || []);
     } catch (error) {
       console.error('Failed to fetch disputes:', error);
       toast.error('Failed to load disputes');

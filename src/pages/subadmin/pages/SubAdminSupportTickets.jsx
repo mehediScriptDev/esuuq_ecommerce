@@ -15,9 +15,9 @@ const SubAdminSupportTickets = () => {
       setLoading(true);
       const response = await subAdminService.listSupportTickets();
       
-      const ticketsArray = Array.isArray(response.data.data) 
-        ? response.data.data 
-        : (Array.isArray(response.data) ? response.data : []);
+      const ticketsArray = Array.isArray(response.data) 
+        ? response.data 
+        : (Array.isArray(response) ? response : []);
       
       setTickets(ticketsArray);
       
