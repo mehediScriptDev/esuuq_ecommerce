@@ -116,3 +116,8 @@ export const browseCategory = async (slug, params = {}, signal) => {
   const response = await axiosInstance.get(`${apiBase}/search/category/${slug}`, { params, signal });
   return unwrapPayload(response);
 };
+
+export const flagProduct = async (id, payload) => {
+  const response = await axiosInstance.post(`${apiBase}/products/${id}/flag`, payload);
+  return unwrapPayload(response);
+};

@@ -44,6 +44,11 @@ export const getAdminPendingProducts = async (params = {}) => {
   return unwrapPayload(response);
 };
 
+export const getAdminProducts = async (params = {}) => {
+  const response = await axiosInstance.get(`${apiBase}/admin/products`, { params });
+  return unwrapPayload(response);
+};
+
 export const approveAdminProduct = async (productId) => {
   const response = await axiosInstance.patch(`${apiBase}/admin/products/${productId}/approve`);
   return unwrapPayload(response);

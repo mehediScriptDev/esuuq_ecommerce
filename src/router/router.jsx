@@ -208,7 +208,7 @@ const router = createBrowserRouter(
         <Route path="settings" element={wrap(UserSettings)} />
       </Route>
       <Route path="admin" element={
-        <ProtectedRoute allowedRoles={['admin', 'sub_admin', 'super_admin']}>
+        <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
           {wrap(AdminView)}
         </ProtectedRoute>
       }>
@@ -245,7 +245,7 @@ const router = createBrowserRouter(
         <Route path="support" element={wrap(MerchantSupport)} />
       </Route>
       <Route path="subadmin" element={
-        <ProtectedRoute>
+        <ProtectedRoute allowedRoles={['sub_admin', 'super_admin', 'admin']}>
           {wrap(SubAdminView)}
         </ProtectedRoute>
       }>

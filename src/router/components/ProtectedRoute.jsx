@@ -4,7 +4,8 @@ import { checkAuth, getCurrentUser } from '../../services/authService';
 
 const routeByRole = (role) => {
   if (role === 'merchant') return '/merchant';
-  if (role === 'admin' || role === 'sub_admin' || role === 'super_admin') return '/admin';
+  if (role === 'admin' || role === 'super_admin') return '/admin';
+  if (role === 'sub_admin') return '/subadmin';
   return '/dashboard';
 };
 
