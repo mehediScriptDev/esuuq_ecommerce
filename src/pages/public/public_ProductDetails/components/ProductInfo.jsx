@@ -10,8 +10,12 @@ import {
   ShoppingCart,
   Star,
   Truck,
+  MoreVertical,
+  AlertTriangle,
 } from 'lucide-react';
 import { addToCart, isWishlisted, toggleWishlistItem } from '../../../../services/shopStorageService';
+import { flagProduct } from '../../../../services/productService';
+import ReportModal from '../../../../components/ui/modals/ReportModal';
 
 const ProductInfo = ({ product }) => {
   const [qty, setQty] = useState(1);
@@ -19,6 +23,8 @@ const ProductInfo = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState(0);
   const [added, setAdded] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [wishlisted, setWishlisted] = useState(() => {
     const key = product?.id || product?.slug || product?.name;
     return key ? isWishlisted(String(key)) : false;
@@ -228,7 +234,42 @@ const ProductInfo = ({ product }) => {
           >
             <Share2 size={18} />
           </button>
+          
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="bg-navy2/50 hover:bg-navy2 flex h-11 w-11 items-center justify-center rounded-xs border border-white/10 text-gray2 transition-colors hover:text-white lg:h-12 lg:w-12"
+              aria-label="More options"
+            >
+              <MoreVertical size={18} />
+            </button>
+            
+            {showDropdown && (
+              <div className="absolute right-0 bottom-full mb-2 w-48 bg-navy2 border border-white/10 rounded-xs shadow-xl z-10 animate-in fade-in slide-in-from-bottom-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowReportModal(true);
+                    setShowDropdown(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-widest text-red/80 hover:text-red hover:bg-white/5 transition-colors text-left"
+                >
+                  <AlertTriangle size={14} />
+                  Report Product
+                </button>
+              </div>
+            )}
+          </div>
         </div>
+
+        <ReportModal
+          isOpen={showReportModal}
+          onClose={() => setShowReportModal(false)}
+          onSubmit={(data) => flagProduct(product.id, data)}
+          targetType="Product"
+          targetId={product.id}
+        />
 
         <div className="flex items-center gap-2 text-xs lg:text-sm font-bold text-teal">
           <CheckCircle2 size={16} /> In Stock ({product.stock} available)

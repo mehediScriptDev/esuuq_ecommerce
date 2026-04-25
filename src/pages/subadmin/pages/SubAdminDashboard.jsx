@@ -1,20 +1,96 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AlertTriangle,
-  CheckCircle,
   Clock3,
   Flag,
   Headset,
   ShieldAlert,
   Store,
   Ticket,
+  Loader2,
 } from 'lucide-react';
 import SubAdminPageHeader from '../components/SubAdminPageHeader';
-import { dashboardStats, supportTickets } from '../components/subAdminData';
-
-const statIcons = [Ticket, Store, Flag, CheckCircle, Clock3];
+import subAdminService from '../../../services/subAdminService';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const SubAdminDashboard = () => {
+  const [stats, setStats] = useState(null);
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [statsData, ticketsData] = await Promise.all([
+          subAdminService.getDashboardStats(),
+          subAdminService.listSupportTickets({ limit: 5, status: 'open' }),
+        ]);
+        
+        setStats(statsData);
+        
+        const ticketsArray = Array.isArray(ticketsData.data) 
+          ? ticketsData.data 
+          : (Array.isArray(ticketsData) ? ticketsData : []);
+        
+        setTickets(ticketsArray);
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleExportLog = async () => {
+    try {
+      const result = await subAdminService.exportActivityLog();
+      const blob = new Blob([JSON.stringify(result.data, null, 2)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', result.filename || 'activity_log.json');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success('Activity log exported successfully');
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error('Failed to export log');
+    }
+  };
+
+  const handleNewReport = async () => {
+    const title = window.prompt('Enter report title:', `Moderation Report - ${new Date().toLocaleDateString()}`);
+    if (!title) return;
+
+    try {
+      await subAdminService.generateReport(title, 'Manually generated moderation report from dashboard.');
+      toast.success('New report generated! View it in "My Reports"');
+    } catch (error) {
+      console.error('Report generation failed:', error);
+      toast.error('Failed to generate report');
+    }
+  };
+
+  const dashboardCards = stats ? [
+    { label: 'Pending Merchants', value: stats.pendingMerchants, note: 'Awaiting approval', icon: Store, iconTone: 'text-teal', tone: 'text-teal', link: '/subadmin/merchant-approvals' },
+    { label: 'Flagged Reviews', value: stats.flaggedReviews, note: 'Needs moderation', icon: AlertTriangle, iconTone: 'text-yellow', tone: 'text-yellow', link: '/subadmin/review-moderation' },
+    { label: 'Flagged Products', value: stats.flaggedContent, note: 'Violation reports', icon: Flag, iconTone: 'text-red', tone: 'text-red', link: '/subadmin/flagged-content' },
+    { label: 'Order Disputes', value: stats.activeDisputes, note: 'Customer issues', icon: Ticket, iconTone: 'text-purple-400', tone: 'text-purple-400', link: '/subadmin/order-disputes' },
+  ] : [];
+
+  if (loading && !stats) {
+    return (
+      <div className="flex h-[60vh] items-center justify-center">
+        <Loader2 className="text-teal animate-spin" size={40} />
+      </div>
+    );
+  }
+
   return (
     <div className="animate-[fadeUp_0.4s_ease_both]">
       <SubAdminPageHeader
@@ -27,10 +103,16 @@ const SubAdminDashboard = () => {
         subtitle="Moderation and support overview"
         actions={
           <>
-            <button className="border-border text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border px-3 py-1.5 text-[0.8rem] transition-colors">
+            <button 
+              onClick={handleExportLog}
+              className="border-border text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border px-3 py-1.5 text-[0.8rem] transition-colors"
+            >
               <Headset size={14} /> Export Log
             </button>
-            <button className="bg-teal text-navy hover:bg-teal2 rounded px-3 py-1.5 text-[0.8rem] font-semibold">
+            <button 
+              onClick={handleNewReport}
+              className="bg-teal text-navy hover:bg-teal2 rounded px-3 py-1.5 text-[0.8rem] font-semibold"
+            >
               New Report
             </button>
           </>
@@ -44,11 +126,11 @@ const SubAdminDashboard = () => {
         </p>
       </div>
 
-      <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
-        {dashboardStats.map((stat, idx) => {
-          const Icon = statIcons[idx] || Ticket;
+      <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {dashboardCards.map((stat) => {
+          const Icon = stat.icon;
           return (
-            <div key={stat.label} className="bg-card hover:border-teal/20 rounded-md border border-white/[0.07] p-5 transition-colors">
+            <div key={stat.label} className="bg-card rounded-md border border-white/[0.07] p-5 transition-colors">
               <Icon size={20} className={`${stat.iconTone} mb-3`} />
               <div className="text-gray mb-1 text-[0.875rem] font-semibold">{stat.label}</div>
               <div className="font-['Syne'] text-[1.7rem] font-extrabold text-white">{stat.value}</div>
@@ -61,30 +143,34 @@ const SubAdminDashboard = () => {
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1.65fr_1fr]">
         <div className="bg-card border-border overflow-hidden rounded-md border">
           <div className="border-border flex items-center justify-between border-b px-4 py-3">
-            <h3 className="font-['Syne'] text-[1rem] font-bold text-white">Support Tickets</h3>
-            <div className="flex gap-1 rounded-md bg-[#1E2A3A] p-1 text-[0.75rem]">
-              <button className="rounded bg-card px-2 py-1 text-white">Open</button>
-              <button className="text-gray rounded px-2 py-1">In Progress</button>
-              <button className="text-gray rounded px-2 py-1">Resolved</button>
-            </div>
+            <h3 className="font-['Syne'] text-[1rem] font-bold text-white">Recent Support Tickets</h3>
+            <Link to="/subadmin/support-tickets" className="text-teal hover:underline text-[0.75rem]">View All</Link>
           </div>
           <div className="space-y-2 p-3">
-            {supportTickets.map((ticket) => (
+            {tickets.length > 0 ? tickets.map((ticket) => (
               <div key={ticket.id} className="border-border hover:border-teal/30 rounded-md border p-3 transition-colors">
                 <div className="mb-1 flex items-center justify-between gap-2">
-                  <span className="text-gray text-[0.75rem]">{ticket.id}</span>
-                  <span className={`${ticket.priorityClass} inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold`}>
+                  <span className="text-gray text-[0.75rem]">#{ticket.id?.slice(-6) || 'N/A'}</span>
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.68rem] font-semibold ${
+                    ticket.priority === 'high' ? 'bg-red/10 text-red' : 
+                    ticket.priority === 'medium' ? 'bg-yellow/10 text-yellow' : 'bg-green-500/10 text-green-500'
+                  }`}>
                     <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                    {ticket.priority}
+                    {ticket.priority?.toUpperCase() || 'NORMAL'}
                   </span>
                 </div>
-                <p className="mb-1 text-[0.875rem] font-semibold text-white">{ticket.title}</p>
-                <p className="text-gray text-[0.8rem]">{ticket.meta}</p>
+                <p className="mb-1 text-[0.875rem] font-semibold text-white">{ticket.subject}</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-gray text-[0.8rem]">{ticket.customer?.firstName} {ticket.customer?.lastName}</p>
+                  <span className="text-gray text-[0.7rem]">{new Date(ticket.createdAt).toLocaleDateString()}</span>
+                </div>
               </div>
-            ))}
-            <button className="border-border text-gray2 hover:border-teal hover:text-teal w-full rounded border px-3 py-2 text-[0.8rem] font-medium transition-colors">
-              View All Tickets
-            </button>
+            )) : (
+              <div className="text-gray py-10 text-center">No open tickets</div>
+            )}
+            <Link to="/subadmin/support-tickets" className="border-border text-gray2 hover:border-teal hover:text-teal block w-full rounded border px-3 py-2 text-center text-[0.8rem] font-medium transition-colors">
+              Go to Support Center
+            </Link>
           </div>
         </div>
 
@@ -93,38 +179,36 @@ const SubAdminDashboard = () => {
             <h3 className="mb-2 font-['Syne'] text-[1rem] font-bold text-white">Quick Actions</h3>
             <div className="space-y-1.5">
               {[
-                { icon: Store, text: 'Review Merchant Applications (7)' },
-                { icon: AlertTriangle, text: 'Moderate Flagged Reviews (5)' },
-                { icon: Flag, text: 'Review Flagged Content (3)' },
-                { icon: Ticket, text: 'View Order Disputes (2)' },
+                { icon: Store, text: 'Review Merchant Applications', link: '/subadmin/merchant-approvals' },
+                { icon: AlertTriangle, text: 'Moderate Flagged Reviews', link: '/subadmin/review-moderation' },
+                { icon: Flag, text: 'Review Flagged Content', link: '/subadmin/flagged-content' },
+                { icon: Ticket, text: 'View Order Disputes', link: '/subadmin/order-disputes' },
               ].map((action) => {
                 const Icon = action.icon;
                 return (
-                  <button key={action.text} className="bg-navy3 border-border text-gray2 hover:border-teal hover:text-teal flex w-full items-center gap-2 rounded border px-3 py-2 text-[0.8rem] transition-colors">
+                  <Link key={action.text} to={action.link} className="bg-navy3 border-border text-gray2 hover:border-teal hover:text-teal flex w-full items-center gap-2 rounded border px-3 py-2 text-[0.8rem] transition-colors">
                     <Icon size={14} /> {action.text}
-                  </button>
+                  </Link>
                 );
               })}
             </div>
           </div>
 
           <div className="bg-card border-border rounded-md border p-3">
-            <h3 className="mb-2 font-['Syne'] text-[1rem] font-bold text-white">My Permissions</h3>
-            {[
-              ['Support Tickets', true],
-              ['Merchant Approvals', true],
-              ['Review Moderation', true],
-              ['User Management', true],
-              ['Financial Data', false],
-              ['Platform Settings', false],
-            ].map(([name, on]) => (
-              <div key={name} className="border-border flex items-center justify-between border-b py-2.5 last:border-none">
-                <span className="text-[0.875rem] text-gray2">{name}</span>
-                <span className={`relative h-5 w-9 rounded-full border ${on ? 'border-teal bg-teal' : 'border-white/10 bg-[#1E2A3A]'}`}>
-                  <span className={`absolute top-0.5 h-3.5 w-3.5 rounded-full bg-white transition-all ${on ? 'left-4.5' : 'left-0.5'}`} />
+            <h3 className="mb-2 font-['Syne'] text-[1rem] font-bold text-white">Platform Health</h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[0.875rem] text-gray2">System Status</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-green-500/10 px-2 py-0.5 text-[0.7rem] font-semibold text-green-500">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current" />
+                  Operational
                 </span>
               </div>
-            ))}
+              <div className="flex items-center justify-between">
+                <span className="text-[0.875rem] text-gray2">Pending Alerts</span>
+                <span className="text-[0.875rem] font-bold text-white">{(stats?.pendingMerchants || 0) + (stats?.flaggedReviews || 0)}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

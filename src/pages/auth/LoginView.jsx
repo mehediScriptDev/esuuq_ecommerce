@@ -30,7 +30,8 @@ const LoginView = () => {
 
   const routeByRole = (role) => {
     if (role === 'merchant') return '/merchant';
-    if (role === 'admin' || role === 'sub_admin' || role === 'super_admin') return '/admin';
+    if (role === 'admin' || role === 'super_admin') return '/admin';
+    if (role === 'sub_admin') return '/subadmin';
     return '/dashboard';
   };
 
@@ -55,12 +56,6 @@ const LoginView = () => {
       const returnTo = location.state?.from?.pathname;
       if (returnTo) {
         navigate(returnTo);
-      } else if (user?.role === 'admin') {
-        navigate('/admin');
-      } else if (user?.role === 'subadmin') {
-        navigate('/subadmin');
-      } else if (user?.role === 'merchant') {
-        navigate('/merchant');
       } else {
         navigate(routeByRole(user?.role));
       }
