@@ -12,6 +12,7 @@ import {
 import SubAdminPageHeader from '../components/SubAdminPageHeader';
 import subAdminService from '../../../services/subAdminService';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const SubAdminDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -44,6 +45,37 @@ const SubAdminDashboard = () => {
     fetchData();
   }, []);
 
+  const handleExportLog = async () => {
+    try {
+      const result = await subAdminService.exportActivityLog();
+      const blob = new Blob([JSON.stringify(result.data, null, 2)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', result.filename || 'activity_log.json');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success('Activity log exported successfully');
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error('Failed to export log');
+    }
+  };
+
+  const handleNewReport = async () => {
+    const title = window.prompt('Enter report title:', `Moderation Report - ${new Date().toLocaleDateString()}`);
+    if (!title) return;
+
+    try {
+      await subAdminService.generateReport(title, 'Manually generated moderation report from dashboard.');
+      toast.success('New report generated! View it in "My Reports"');
+    } catch (error) {
+      console.error('Report generation failed:', error);
+      toast.error('Failed to generate report');
+    }
+  };
+
   const dashboardCards = stats ? [
     { label: 'Pending Merchants', value: stats.pendingMerchants, note: 'Awaiting approval', icon: Store, iconTone: 'text-teal', tone: 'text-teal', link: '/subadmin/merchant-approvals' },
     { label: 'Flagged Reviews', value: stats.flaggedReviews, note: 'Needs moderation', icon: AlertTriangle, iconTone: 'text-yellow', tone: 'text-yellow', link: '/subadmin/review-moderation' },
@@ -71,10 +103,16 @@ const SubAdminDashboard = () => {
         subtitle="Moderation and support overview"
         actions={
           <>
-            <button className="border-border text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border px-3 py-1.5 text-[0.8rem] transition-colors">
+            <button 
+              onClick={handleExportLog}
+              className="border-border text-gray2 hover:border-teal hover:text-teal flex items-center gap-1.5 rounded border px-3 py-1.5 text-[0.8rem] transition-colors"
+            >
               <Headset size={14} /> Export Log
             </button>
-            <button className="bg-teal text-navy hover:bg-teal2 rounded px-3 py-1.5 text-[0.8rem] font-semibold">
+            <button 
+              onClick={handleNewReport}
+              className="bg-teal text-navy hover:bg-teal2 rounded px-3 py-1.5 text-[0.8rem] font-semibold"
+            >
               New Report
             </button>
           </>
@@ -92,12 +130,12 @@ const SubAdminDashboard = () => {
         {dashboardCards.map((stat) => {
           const Icon = stat.icon;
           return (
-            <Link key={stat.label} to={stat.link} className="bg-card hover:border-teal/20 group rounded-md border border-white/[0.07] p-5 transition-colors">
+            <div key={stat.label} className="bg-card rounded-md border border-white/[0.07] p-5 transition-colors">
               <Icon size={20} className={`${stat.iconTone} mb-3`} />
               <div className="text-gray mb-1 text-[0.875rem] font-semibold">{stat.label}</div>
               <div className="font-['Syne'] text-[1.7rem] font-extrabold text-white">{stat.value}</div>
               <div className={`${stat.tone} mt-1 text-[0.875rem]`}>{stat.note}</div>
-            </Link>
+            </div>
           );
         })}
       </div>
@@ -106,7 +144,7 @@ const SubAdminDashboard = () => {
         <div className="bg-card border-border overflow-hidden rounded-md border">
           <div className="border-border flex items-center justify-between border-b px-4 py-3">
             <h3 className="font-['Syne'] text-[1rem] font-bold text-white">Recent Support Tickets</h3>
-            <Link to="/subadmin/support" className="text-teal hover:underline text-[0.75rem]">View All</Link>
+            <Link to="/subadmin/support-tickets" className="text-teal hover:underline text-[0.75rem]">View All</Link>
           </div>
           <div className="space-y-2 p-3">
             {tickets.length > 0 ? tickets.map((ticket) => (
@@ -130,7 +168,7 @@ const SubAdminDashboard = () => {
             )) : (
               <div className="text-gray py-10 text-center">No open tickets</div>
             )}
-            <Link to="/subadmin/support" className="border-border text-gray2 hover:border-teal hover:text-teal block w-full rounded border px-3 py-2 text-center text-[0.8rem] font-medium transition-colors">
+            <Link to="/subadmin/support-tickets" className="border-border text-gray2 hover:border-teal hover:text-teal block w-full rounded border px-3 py-2 text-center text-[0.8rem] font-medium transition-colors">
               Go to Support Center
             </Link>
           </div>

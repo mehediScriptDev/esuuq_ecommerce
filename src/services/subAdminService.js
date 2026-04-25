@@ -128,6 +128,14 @@ const subAdminService = {
 
   updatePermissions: (userId, permissions) => 
     axiosInstance.patch(`${SUB_ADMIN_BASE}/permissions/${userId}`, permissions).then(unwrapPayload),
+
+  // --- Reports ---
+  listReports: (params) => axiosInstance.get(`${SUB_ADMIN_BASE}/reports`, { params }).then(unwrapPayload),
+
+  generateReport: (title, description) => 
+    axiosInstance.post(`${SUB_ADMIN_BASE}/reports`, { title, description }).then(unwrapPayload),
+
+  exportActivityLog: () => axiosInstance.get(`${SUB_ADMIN_BASE}/activity-log/export`).then(unwrapPayload),
 };
 
 export default subAdminService;
