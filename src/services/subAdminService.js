@@ -8,7 +8,7 @@ const unwrapPayload = (response) => {
   const data = (body && typeof body === 'object' && Object.prototype.hasOwnProperty.call(body, 'data')) 
     ? body.data 
     : body;
-  console.log(`[API Response] ${response?.config?.url}:`, data);
+
   return data;
 };
 
@@ -32,7 +32,7 @@ const subAdminService = {
       activeDisputes: unwrapPayload(disputes).meta?.total || 0,
       openTickets: unwrapPayload(tickets).open || 0,
     };
-    console.log('[subAdminService] Dashboard Stats:', stats);
+  
     return stats;
   },
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import NotificationDropdown from '../../components/ui/NotificationDropdown';
 
 const DashboardHeader = ({ panelLabel, mobileOpen, onToggleMobileMenu, actionButtons = [], user }) => {
   const navigate = useNavigate();
@@ -45,7 +46,9 @@ const DashboardHeader = ({ panelLabel, mobileOpen, onToggleMobileMenu, actionBut
           );
         })}
 
-        <div className="flex items-center gap-2.5">
+        <NotificationDropdown />
+
+        <div className="flex items-center gap-2.5 ml-2">
           <div className="from-teal text-navy flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br to-blue-500 text-[0.8rem] font-bold">
             {user.initials}
           </div>
@@ -58,5 +61,6 @@ const DashboardHeader = ({ panelLabel, mobileOpen, onToggleMobileMenu, actionBut
     </header>
   );
 };
+
 
 export default DashboardHeader;
