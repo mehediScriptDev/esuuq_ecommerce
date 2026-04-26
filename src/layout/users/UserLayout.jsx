@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import {
-  Bell,
   Home,
   Package,
   Truck,
@@ -16,7 +15,7 @@ import { fetchCurrentUser, getCurrentUser } from '../../services/authService';
 import { getMyOrders } from '../../services/checkoutService';
 import { getWishlistItems } from '../../services/shopStorageService';
 
-const actionButtons = [{ title: 'Notifications', icon: Bell, dot: true }];
+const actionButtons = [];
 
 const UserLayout = () => {
   const location = useLocation();

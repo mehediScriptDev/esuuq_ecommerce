@@ -37,9 +37,9 @@ const statusColor = (status = '') => {
 
 const statusLabel = (status = '') => {
   const normalized = String(status || '').toLowerCase();
-  if (normalized === 'in_transit' || normalized === 'out_for_delivery' || normalized === 'ready_for_pickup' || normalized === 'picked_up') {
-    return 'Out for Delivery';
-  }
+  if (normalized === 'ready_for_pickup') return 'Ready for Delivery';
+  if (normalized === 'picked_up') return 'Picked Up';
+  if (normalized === 'in_transit' || normalized === 'out_for_delivery') return 'In Transit';
   return String(status || '')
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase());
@@ -47,12 +47,8 @@ const statusLabel = (status = '') => {
 
 const getNextStatusAction = (status = '') => {
   const normalized = String(status || '').toLowerCase();
-  if (normalized === 'pending_payment') return { next: 'confirmed', label: 'Confirm Order' };
   if (normalized === 'confirmed') return { next: 'processing', label: 'Start Processing' };
-  if (normalized === 'processing') return { next: 'in_transit', label: 'Out for Delivery' };
-  if (normalized === 'ready_for_pickup' || normalized === 'picked_up' || normalized === 'in_transit' || normalized === 'out_for_delivery') {
-    return { next: 'delivered', label: 'Mark Delivered' };
-  }
+  if (normalized === 'processing') return { next: 'ready_for_pickup', label: 'Ready for Delivery' };
   return null;
 };
 

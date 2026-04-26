@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Store, Loader2, Check, X, Eye } from 'lucide-react';
+import { Store, Loader2, Check, X } from 'lucide-react';
 import SubAdminPageHeader from '../components/SubAdminPageHeader';
 import subAdminService from '../../../services/subAdminService';
 import { toast } from 'react-toastify';
@@ -30,21 +30,18 @@ const SubAdminMerchantApprovals = () => {
     fetchMerchants();
   }, []);
 
-  const handleApprove = async (id) => {
-    const rate = prompt('Enter commission rate for this merchant (0.5 - 50):', '10');
-    if (rate === null) return;
+  const handleApprove = async (merchant) => {
+    if (!merchant) return;
     
-    const commissionRate = parseFloat(rate);
-    if (isNaN(commissionRate) || commissionRate < 0.5 || commissionRate > 50) {
-      toast.error('Invalid commission rate');
+    if (!window.confirm(`Are you sure you want to approve ${merchant.storeName} with a standard 8.0% commission rate?`)) {
       return;
     }
 
     try {
-      setProcessingId(id);
-      await subAdminService.approveMerchant(id, commissionRate);
+      setProcessingId(merchant.id);
+      await subAdminService.approveMerchant(merchant.id, 8.0);
       toast.success('Merchant approved successfully');
-      setMerchants(prev => prev.filter(m => m.id !== id));
+      setMerchants(prev => prev.filter(m => m.id !== merchant.id));
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to approve merchant');
     } finally {
@@ -52,15 +49,24 @@ const SubAdminMerchantApprovals = () => {
     }
   };
 
-  const handleReject = async (id) => {
-    const reason = prompt('Enter rejection reason:');
-    if (!reason) return;
+  const handleReject = async (merchant) => {
+    if (!merchant) return;
+    
+    const reason = window.prompt(`Enter rejection reason for ${merchant.storeName} (min 10 chars):`);
+    if (reason === null) return; // Cancelled
+    
+    if (reason.trim().length < 10) {
+      toast.error('Rejection reason must be at least 10 characters long');
+      return;
+    }
+
+    if (!window.confirm(`Are you sure you want to reject ${merchant.storeName}?`)) return;
 
     try {
-      setProcessingId(id);
-      await subAdminService.rejectMerchant(id, reason);
+      setProcessingId(merchant.id);
+      await subAdminService.rejectMerchant(merchant.id, reason);
       toast.success('Merchant application rejected');
-      setMerchants(prev => prev.filter(m => m.id !== id));
+      setMerchants(prev => prev.filter(m => m.id !== merchant.id));
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to reject merchant');
     } finally {
@@ -115,7 +121,7 @@ const SubAdminMerchantApprovals = () => {
                   <td className="px-3 py-2.5">
                     <div className="flex gap-1.5">
                       <button 
-                        onClick={() => handleApprove(merchant.id)}
+                        onClick={() => handleApprove(merchant)}
                         disabled={processingId === merchant.id}
                         className="text-green-500 bg-green-500/10 hover:bg-green-500/20 disabled:opacity-50 rounded border border-green-500/30 px-2 py-1 text-[0.7rem] font-semibold flex items-center gap-1"
                       >
@@ -123,16 +129,12 @@ const SubAdminMerchantApprovals = () => {
                         Approve
                       </button>
                       <button 
-                        onClick={() => handleReject(merchant.id)}
+                        onClick={() => handleReject(merchant)}
                         disabled={processingId === merchant.id}
                         className="text-red bg-red/10 hover:bg-red/20 disabled:opacity-50 rounded border border-red/30 px-2 py-1 text-[0.7rem] font-semibold flex items-center gap-1"
                       >
                         <X size={12} />
                         Reject
-                      </button>
-                      <button className="border-border text-gray2 hover:border-teal hover:text-teal rounded border px-2 py-1 text-[0.7rem] font-semibold flex items-center gap-1">
-                        <Eye size={12} />
-                        Details
                       </button>
                     </div>
                   </td>

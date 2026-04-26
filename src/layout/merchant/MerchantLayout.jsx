@@ -12,7 +12,10 @@ import {
   Tag,
   Store,
   HelpCircle,
-  Bell,
+  AlertCircle,
+  Clock,
+  XCircle,
+  Home,
 } from 'lucide-react';
 import DashboardShell from '../common/DashboardShell';
 import {
@@ -22,7 +25,7 @@ import {
 } from '../../services/merchantService';
 import { fetchCurrentUser, getCurrentUser } from '../../services/authService';
 
-const actionButtons = [{ title: 'Notifications', icon: Bell, dot: true }];
+const actionButtons = [];
 
 const MerchantLayout = () => {
   const location = useLocation();
@@ -30,6 +33,8 @@ const MerchantLayout = () => {
   const [merchantName, setMerchantName] = useState('Merchant Account');
   const [ordersCount, setOrdersCount] = useState(0);
   const [lowStockCount, setLowStockCount] = useState(0);
+  const [status, setStatus] = useState('loading'); // loading, pending, approved, rejected, suspended, none
+  const [rejectionReason, setRejectionReason] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -44,6 +49,12 @@ const MerchantLayout = () => {
 
         setCurrentUser(user || getCurrentUser());
         setMerchantName(store?.storeName || 'Merchant Account');
+        setStatus(store?.status || 'none');
+        setRejectionReason(store?.businessInfo?.rejectionReason || '');
+
+        if (store?.status !== 'approved') {
+          return;
+        }
 
         const [ordersResult, productsResult] = await Promise.allSettled([
           getMyMerchantOrders({ page: 1, limit: 200 }),
@@ -139,6 +150,73 @@ const MerchantLayout = () => {
       subtitle: merchantName || 'Merchant Account',
     };
   }, [currentUser, merchantName]);
+
+  if (status === 'loading') {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-navy">
+        <Clock className="text-teal animate-spin" size={40} />
+      </div>
+    );
+  }
+
+  if (status !== 'approved') {
+    let title = 'Application Under Review';
+    let icon = <Clock className="text-teal" size={48} />;
+    let desc = 'Our team is currently reviewing your merchant application. This usually takes 1-2 business days. We will notify you once your account is activated.';
+    
+    if (status === 'rejected') {
+      title = 'Application Rejected';
+      icon = <XCircle className="text-red" size={48} />;
+      desc = rejectionReason 
+        ? `We regret to inform you that your merchant application was rejected for the following reason: "${rejectionReason}"`
+        : 'We regret to inform you that your merchant application was rejected. Please contact support for more details.';
+    } else if (status === 'suspended') {
+      title = 'Account Suspended';
+      icon = <AlertCircle className="text-red" size={48} />;
+      desc = 'Your merchant account has been suspended due to policy violations. Please contact support to resolve this issue.';
+    } else if (status === 'none') {
+      title = 'Merchant Account Required';
+      icon = <Store className="text-teal" size={48} />;
+      desc = 'You need to register as a merchant before you can access this dashboard.';
+    }
+
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-navy px-6 text-center">
+        <div className="mb-6 rounded-full bg-white/5 p-8">
+          {icon}
+        </div>
+        <h1 className="mb-3 font-['Syne'] text-2xl font-bold text-white">{title}</h1>
+        <p className="mx-auto mb-8 max-w-md text-gray">
+          {desc}
+        </p>
+        <div className="flex gap-4">
+          <button 
+            onClick={() => window.location.href = '/'}
+            className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-white/10"
+          >
+            <Home size={16} />
+            Back to Home
+          </button>
+          {status === 'rejected' && (
+            <button 
+              onClick={() => window.location.href = '/merchant/register'}
+              className="rounded-lg bg-teal px-6 py-2.5 text-sm font-semibold text-navy transition-all hover:bg-teal2"
+            >
+              Re-apply Now
+            </button>
+          )}
+          {status === 'none' && (
+            <button 
+              onClick={() => window.location.href = '/merchant/register'}
+              className="rounded-lg bg-teal px-6 py-2.5 text-sm font-semibold text-navy transition-all hover:bg-teal2"
+            >
+              Register as Merchant
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <DashboardShell

@@ -32,6 +32,13 @@ export const register = async (userData) => {
     return unwrapPayload(response);
 };
 
+export const registerMerchant = async (merchantData) => {
+    const response = await axiosInstance.post(`${authBase}/register-merchant`, merchantData, {
+        withCredentials: true,
+    });
+    return unwrapPayload(response);
+};
+
 export const login = async (email, password) => {
     const response = await axiosInstance.post(
         `${authBase}/login`,

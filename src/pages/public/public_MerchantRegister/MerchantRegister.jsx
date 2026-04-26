@@ -1,5 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { registerMerchant, getCurrentUser } from '../../../services/authService';
+import { registerMerchantStore, getMyMerchantStore } from '../../../services/merchantService';
 
 const CATEGORIES = [
   'Electronics', 'Fashion & Clothing', 'Home & Garden', 'Beauty & Health',
@@ -99,9 +101,48 @@ const MerchantRegister = () => {
     password: '', confirmPassword: '',
   });
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [existingMerchant, setExistingMerchant] = useState(null);
+
+  useEffect(() => {
+    const user = getCurrentUser();
+    if (user) {
+      setIsLoggedIn(true);
+      setCurrentUser(user);
+      setForm(prev => ({
+        ...prev,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phone: user.phone || '',
+      }));
+      
+      // Check if they already have a merchant application
+      getMyMerchantStore().then(m => {
+        if (m) {
+          setExistingMerchant(m);
+          setForm(prev => ({
+            ...prev,
+            storeName: m.storeName || '',
+            storeDescription: m.description || '',
+            category: m.businessInfo?.category || '',
+            returnPolicy: m.businessInfo?.returnPolicy || '30 days return',
+            country: m.businessInfo?.country || 'United States',
+            city: m.businessInfo?.city || '',
+            businessName: m.businessInfo?.businessName || '',
+            taxId: m.businessInfo?.taxId || '',
+            businessAddress: m.businessInfo?.businessAddress || '',
+          }));
+        }
+      }).catch(() => {});
+    }
+  }, []);
+
   const [agreements, setAgreements] = useState({ terms: true, products: false });
   const [submitting, setSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -112,14 +153,73 @@ const MerchantRegister = () => {
     setAgreements((prev) => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
-  const handleSubmit = useCallback((e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!agreements.terms || !agreements.products) {
+      setError('Please agree to all terms and conditions.');
+      return;
+    }
+    
+    if (!isLoggedIn && form.password !== form.confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
     setSubmitting(true);
-    setTimeout(() => {
+    setError('');
+
+    try {
+      if (isLoggedIn) {
+        // Just register/update the store
+        await registerMerchantStore({
+          storeName: form.storeName,
+          description: form.storeDescription,
+          businessInfo: {
+            category: form.category,
+            returnPolicy: form.returnPolicy,
+            country: form.country,
+            city: form.city,
+            businessName: form.businessName,
+            taxId: form.taxId,
+            businessAddress: form.businessAddress,
+          },
+        });
+        
+        setSubmitting(false);
+        setShowModal(true);
+      } else {
+        // Full registration (User + Store)
+        const response = await registerMerchant({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email,
+          phone: form.phone,
+          password: form.password,
+          storeName: form.storeName,
+          storeDescription: form.storeDescription,
+          category: form.category,
+          returnPolicy: form.returnPolicy,
+          businessInfo: {
+            country: form.country,
+            city: form.city,
+            businessName: form.businessName,
+            taxId: form.taxId,
+            businessAddress: form.businessAddress,
+          },
+        });
+
+        setSubmitting(false);
+        setShowModal(true);
+        
+        // Store pending info for OTP view
+        localStorage.setItem('pendingUserId', response.userId);
+        localStorage.setItem('pendingEmail', form.email);
+      }
+    } catch (err) {
       setSubmitting(false);
-      setShowModal(true);
-    }, 1800);
-  }, []);
+      setError(err?.response?.data?.message || err.message || 'Registration failed. Please try again.');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-navy font-['DM_Sans'] text-gray2">
@@ -221,23 +321,44 @@ const MerchantRegister = () => {
           </div>
 
           {/* Your Information */}
-          <div className="border-b border-white/[0.07] px-5 py-6 min-[640px]:px-[30px]">
-            <div className="mb-1 font-['Syne'] text-[0.95rem] font-bold text-white">👤 Your Information</div>
-            <div className="mb-4.5 text-[0.78rem] text-gray">Kept private. Used for account verification only.</div>
+          {!isLoggedIn ? (
+            <div className="border-b border-white/[0.07] px-5 py-6 min-[640px]:px-[30px]">
+              <div className="mb-1 font:['Syne'] text-[0.95rem] font-bold text-white">👤 Your Information</div>
+              <div className="mb-4.5 text-[0.78rem] text-gray">Kept private. Used for account verification only.</div>
 
-            <div className="grid gap-3.5 min-[640px]:grid-cols-2">
-              <InputField label="First Name" required name="firstName" value={form.firstName} onChange={handleChange} placeholder="Ahmed" />
-              <InputField label="Last Name" required name="lastName" value={form.lastName} onChange={handleChange} placeholder="Hassan" />
+              <div className="grid gap-3.5 min-[640px]:grid-cols-2">
+                <InputField label="First Name" required name="firstName" value={form.firstName} onChange={handleChange} placeholder="Ahmed" />
+                <InputField label="Last Name" required name="lastName" value={form.lastName} onChange={handleChange} placeholder="Hassan" />
+              </div>
+              <div className="grid gap-3.5 min-[640px]:grid-cols-2">
+                <InputField label="Email Address" required type="email" name="email" value={form.email} onChange={handleChange} placeholder="ahmed@store.com" />
+                <InputField label="Phone Number" required type="tel" name="phone" value={form.phone} onChange={handleChange} placeholder="+1 612 555 0198" />
+              </div>
+              <div className="grid gap-3.5 min-[640px]:grid-cols-2">
+                <SelectField label="Country" required name="country" value={form.country} onChange={handleChange} options={COUNTRIES} />
+                <InputField label="City" required name="city" value={form.city} onChange={handleChange} placeholder="Minneapolis" />
+              </div>
             </div>
-            <div className="grid gap-3.5 min-[640px]:grid-cols-2">
-              <InputField label="Email Address" required type="email" name="email" value={form.email} onChange={handleChange} placeholder="ahmed@store.com" />
-              <InputField label="Phone Number" required type="tel" name="phone" value={form.phone} onChange={handleChange} placeholder="+1 612 555 0198" />
+          ) : (
+            <div className="border-b border-white/[0.07] px-5 py-6 min-[640px]:px-[30px] bg-teal/5">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-teal/20 flex items-center justify-center text-teal font-bold text-lg">
+                  {currentUser?.firstName?.charAt(0) || currentUser?.email?.charAt(0) || 'U'}
+                </div>
+                <div>
+                  <div className="text-[0.85rem] font-bold text-white">Logged in as {currentUser?.firstName} {currentUser?.lastName}</div>
+                  <div className="text-[0.75rem] text-gray">{currentUser?.email}</div>
+                </div>
+              </div>
+              {existingMerchant?.status === 'rejected' && (
+                <div className="mt-4 rounded-lg bg-red/10 border border-red/20 p-3 text-[0.8rem] text-red">
+                  <strong>Previous Application Rejected:</strong> {existingMerchant.businessInfo?.rejectionReason || 'No reason provided.'}
+                  <br />
+                  Please update your details and re-submit.
+                </div>
+              )}
             </div>
-            <div className="grid gap-3.5 min-[640px]:grid-cols-2">
-              <SelectField label="Country" required name="country" value={form.country} onChange={handleChange} options={COUNTRIES} />
-              <InputField label="City" required name="city" value={form.city} onChange={handleChange} placeholder="Minneapolis" />
-            </div>
-          </div>
+          )}
 
           {/* Business Details */}
           <div className="border-b border-white/[0.07] px-5 py-6 min-[640px]:px-[30px]">
@@ -254,15 +375,17 @@ const MerchantRegister = () => {
           </div>
 
           {/* Password */}
-          <div className="border-b border-white/[0.07] px-5 py-6 min-[640px]:px-[30px]">
-            <div className="mb-1 font-['Syne'] text-[0.95rem] font-bold text-white">🔐 Create Your Password</div>
-            <div className="mb-4.5 text-[0.78rem] text-gray">Set a strong password to protect your merchant account.</div>
+          {!isLoggedIn && (
+            <div className="border-b border-white/[0.07] px-5 py-6 min-[640px]:px-[30px]">
+              <div className="mb-1 font-['Syne'] text-[0.95rem] font-bold text-white">🔐 Create Your Password</div>
+              <div className="mb-4.5 text-[0.78rem] text-gray">Set a strong password to protect your merchant account.</div>
 
-            <div className="grid gap-3.5 min-[640px]:grid-cols-2">
-              <InputField label="Password" required type="password" name="password" value={form.password} onChange={handleChange} placeholder="Min. 8 characters" />
-              <InputField label="Confirm Password" required type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} placeholder="Repeat password" />
+              <div className="grid gap-3.5 min-[640px]:grid-cols-2">
+                <InputField label="Password" required type="password" name="password" value={form.password} onChange={handleChange} placeholder="Min. 8 characters" />
+                <InputField label="Confirm Password" required type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} placeholder="Repeat password" />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Agreement */}
           <div className="px-5 py-6 min-[640px]:px-[30px]">
@@ -293,6 +416,7 @@ const MerchantRegister = () => {
             </div>
 
             <div className="mt-4.5">
+              {error && <div className="mb-4 rounded-lg bg-red/10 p-3 text-center text-[0.8rem] text-red">{error}</div>}
               <button
                 type="submit"
                 disabled={submitting}
@@ -368,14 +492,26 @@ const MerchantRegister = () => {
             <div className="mb-3.5 text-5xl">🎉</div>
             <div className="mb-2.5 font-['Syne'] text-[1.4rem] font-bold text-white">Application Submitted!</div>
             <div className="mb-6 text-[0.87rem] leading-[1.6] text-gray">
-              Our team will review your application and contact you within 1–2 business days.
+              {isLoggedIn 
+                ? 'Your application has been updated and sent for review. We will contact you within 1–2 business days.'
+                : 'Our team will review your application and contact you within 1–2 business days.'
+              }
             </div>
-            <button
-              onClick={() => navigate('/')}
-              className="w-full cursor-pointer rounded-lg border-none bg-teal px-5 py-3 font-['DM_Sans'] text-[0.85rem] font-semibold text-navy transition-all duration-150 hover:bg-teal2"
-            >
-              Back to Home
-            </button>
+            {isLoggedIn ? (
+              <button
+                onClick={() => navigate('/merchant')}
+                className="w-full cursor-pointer rounded-lg border-none bg-teal px-5 py-3 font-['DM_Sans'] text-[0.85rem] font-semibold text-navy transition-all duration-150 hover:bg-teal2"
+              >
+                Go to Merchant Panel
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate('/auth/otp', { state: { userId: localStorage.getItem('pendingUserId'), email: localStorage.getItem('pendingEmail') } })}
+                className="w-full cursor-pointer rounded-lg border-none bg-teal px-5 py-3 font-['DM_Sans'] text-[0.85rem] font-semibold text-navy transition-all duration-150 hover:bg-teal2"
+              >
+                Verify Your Account
+              </button>
+            )}
           </div>
         </div>
       )}

@@ -36,7 +36,7 @@ const SubAdminDashboard = () => {
         
         setTickets(ticketsArray);
       } catch (error) {
-        console.error('Failed to fetch dashboard data:', error);
+        
       } finally {
         setLoading(false);
       }
@@ -58,7 +58,7 @@ const SubAdminDashboard = () => {
       link.remove();
       toast.success('Activity log exported successfully');
     } catch (error) {
-      console.error('Export failed:', error);
+      
       toast.error('Failed to export log');
     }
   };
@@ -71,7 +71,7 @@ const SubAdminDashboard = () => {
       await subAdminService.generateReport(title, 'Manually generated moderation report from dashboard.');
       toast.success('New report generated! View it in "My Reports"');
     } catch (error) {
-      console.error('Report generation failed:', error);
+      
       toast.error('Failed to generate report');
     }
   };

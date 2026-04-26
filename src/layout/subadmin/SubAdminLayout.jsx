@@ -1,7 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import {
-  Bell,
   ChartNoAxesColumn,
   FileBarChart,
   Flag,
@@ -18,7 +17,7 @@ import { getCurrentUser } from '../../services/authService';
 import subAdminService from '../../services/subAdminService';
 import { useEffect, useState, useMemo } from 'react';
 
-const actionButtons = [{ title: 'Notifications', icon: Bell, dot: true }];
+const actionButtons = [];
 
 const SubAdminLayout = () => {
   const [stats, setStats] = useState({
@@ -33,7 +32,7 @@ const SubAdminLayout = () => {
     const fetchStats = async () => {
       try {
         const dashboardStats = await subAdminService.getDashboardStats();
-        console.log('[SubAdminLayout] Fetched stats:', dashboardStats);
+
         setStats(dashboardStats);
       } catch (error) {
         console.error('Failed to fetch sidebar stats:', error);
