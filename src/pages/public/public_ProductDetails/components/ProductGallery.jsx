@@ -12,7 +12,7 @@ const ProductGallery = ({ product }) => {
   return (
     <div className="flex flex-col space-y-3 lg:space-y-4 lg:sticky lg:top-24 lg:self-start">
       {/* Main Image Container */}
-      <div className="group relative aspect-square overflow-hidden rounded-xs border border-white/10 bg-linear-to-b from-navy2/50 to-navy2 shadow-2xl">
+      <div className="group relative aspect-squarequare h-autohmax-h-[700px] h-full w-full overflow-hidden rounded-xs border border-white/10 bg-linear-to-b from-navy2/50 to-navy2 shadow-2xl">
         <img
           src={images[selectedImage]}
           alt={product.name}

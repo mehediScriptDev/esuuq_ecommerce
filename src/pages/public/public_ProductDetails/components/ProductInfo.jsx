@@ -287,10 +287,67 @@ const ProductInfo = ({ product }) => {
             <item.icon size={18} className={item.color} />
             <div className="flex flex-col">
               <span className="text-[14px] font-bold text-white leading-tight mb-0.5 uppercase tracking-wide">{item.title}</span>
-              <span className="text-[12px] text-gray/50 leading-tight">{item.text}</span>
+              <span className="text-[14px] font-medium text-gray/50 leading-tight">{item.text}</span>
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Delivery & Return Policy - Two Column with Bullet Points */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-6">
+        {/* Delivery Information */}
+        <div>
+          <h3 className="text-white text-sm font-bold uppercase tracking-wider mb-4">Delivery Information</h3>
+          <ul className="space-y-2.5">
+            <li className="flex items-start gap-3">
+              <span className="text-teal text-lg leading-none mt-0.5">•</span>
+              <span className="text-white/80 text-sm">Processing Time: 1-2 Business Days</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-teal text-lg leading-none mt-0.5">•</span>
+              <span className="text-white/80 text-sm">Shipping: {product?.shipping?.dhaka || '24-48 hours'} (Dhaka)</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-teal text-lg leading-none mt-0.5">•</span>
+              <span className="text-white/80 text-sm">{product?.shipping?.outside || '2-5 days'} (Outside Dhaka)</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-teal text-lg leading-none mt-0.5">•</span>
+              <span className="text-white/80 text-sm">Free Shipping on orders over ${product?.shipping?.free_threshold || 2000}</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-teal text-lg leading-none mt-0.5">•</span>
+              <span className="text-white/80 text-sm">Real-time Tracking Available</span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Return Policy */}
+        <div>
+          <h3 className="text-white text-sm font-bold uppercase tracking-wider mb-4">Return Policy</h3>
+          <ul className="space-y-2.5">
+            <li className="flex items-start gap-3">
+              <span className="text-teal text-lg leading-none mt-0.5">•</span>
+              <span className="text-white/80 text-sm">7 Days Return Window from Delivery</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-teal text-lg leading-none mt-0.5">•</span>
+              <span className="text-white/80 text-sm">Product Must Be Unused & Original</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-teal text-lg leading-none mt-0.5">•</span>
+              <span className="text-white/80 text-sm">Packaging Must Be Intact</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-teal text-lg leading-none mt-0.5">•</span>
+              <span className="text-white/80 text-sm">Full Refund Within 5-7 Business Days</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-teal text-lg leading-none mt-0.5">•</span>
+              <span className="text-white/80 text-sm">Free Return Shipping for Defective Items</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );
