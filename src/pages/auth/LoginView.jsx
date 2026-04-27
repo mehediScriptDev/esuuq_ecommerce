@@ -21,10 +21,10 @@ const loginPerks = [
 const LoginView = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(localStorage.getItem('rememberedEmail') || '');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(false);
+  const [remember, setRemember] = useState(!!localStorage.getItem('rememberedEmail'));
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
