@@ -56,6 +56,11 @@ export const getTrendingProducts = async (limit = 12) => {
   return unwrapPayload(response);
 };
 
+export const getCategoryCounts = async () => {
+  const response = await axiosInstance.get(`${apiBase}/products/category-counts`);
+  return unwrapPayload(response); // { [slug]: number }
+};
+
 export const getProductById = async (id) => {
   const response = await axiosInstance.get(`${apiBase}/products/${id}`);
   return unwrapPayload(response);
