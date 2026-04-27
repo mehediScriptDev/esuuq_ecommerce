@@ -42,6 +42,7 @@ const LoginView = () => {
     setError('');
 
     try {
+      setKeepSignedIn(remember);
       const { user } = await login(email, password);
       localStorage.removeItem('pendingToken');
       localStorage.removeItem('pendingUser');
@@ -52,8 +53,6 @@ const LoginView = () => {
       } else {
         localStorage.removeItem('rememberedEmail');
       }
-
-      setKeepSignedIn(remember);
 
       // If user was redirected to login from a protected route, go back there
       const returnTo = location.state?.from?.pathname;
