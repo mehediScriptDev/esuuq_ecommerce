@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Download, Plus } from 'lucide-react';
 import DashboardPageHeader from '../components/DashboardPageHeader';
+import Pagination from '../components/Pagination';
 import { getAdminOrderCounts, getAdminOrders } from '../../../services/adminService';
 import { downloadCsv } from '../../../utils/csvExport';
 
@@ -55,6 +56,9 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(false);
   const [countsLoading, setCountsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalOrders, setTotalOrders] = useState(47);
+  const itemsPerPage = 10;
 
   const loadCounts = async () => {
     try {
@@ -68,17 +72,19 @@ const AdminOrders = () => {
     }
   };
 
-  const load = async (nextStatus = status, nextSearch = search) => {
+  const load = async (nextStatus = status, nextSearch = search, page = currentPage) => {
     try {
       setLoading(true);
       setError('');
       const payload = await getAdminOrders({
-        page: 1,
-        limit: 100,
+        page,
+        limit: itemsPerPage,
         ...(nextStatus ? { status: nextStatus } : {}),
         ...(nextSearch.trim() ? { search: nextSearch.trim() } : {}),
       });
       setOrders(Array.isArray(payload?.data) ? payload.data : []);
+      setTotalOrders(Number(payload?.total || 0));
+      setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load orders.');
       setOrders([]);
@@ -302,6 +308,14 @@ const AdminOrders = () => {
           </table>
         </div>
       </div>
+
+      <Pagination 
+        currentPage={currentPage}
+        totalItems={totalOrders}
+        itemsPerPage={itemsPerPage}
+        onPageChange={(page) => load(status, search, page)}
+        loading={loading}
+      />
     </div>
   );
 };

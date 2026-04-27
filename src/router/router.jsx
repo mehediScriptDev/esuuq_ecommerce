@@ -243,6 +243,7 @@ const router = createBrowserRouter(
         <Route path="promotions" element={wrap(MerchantPromotions)} />
         <Route path="profile" element={wrap(MerchantProfile)} />
         <Route path="support" element={wrap(MerchantSupport)} />
+        <Route path="register" element={wrap(MerchantRegister)} />
       </Route>
       <Route path="subadmin" element={
         <ProtectedRoute allowedRoles={['sub_admin', 'super_admin', 'admin']}>

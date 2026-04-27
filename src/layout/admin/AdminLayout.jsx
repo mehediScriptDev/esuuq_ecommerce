@@ -15,7 +15,6 @@ import {
   Tag,
   BarChart3,
   Settings,
-  Bell,
 } from 'lucide-react';
 import DashboardShell from '../common/DashboardShell';
 import { fetchCurrentUser, getCurrentUser } from '../../services/authService';
@@ -64,9 +63,7 @@ const baseNavSections = [
     },
   ];
 
-const actionButtons = [
-  { title: 'Notifications', icon: Bell, dot: true },
-];
+const actionButtons = [];
 
 const AdminLayout = () => {
   const [currentUser, setCurrentUser] = useState(() => getCurrentUser());

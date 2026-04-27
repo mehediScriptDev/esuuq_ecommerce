@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Users, UserPlus, Star, Moon, Download } from 'lucide-react';
 import DashboardPageHeader from '../components/DashboardPageHeader';
+import Pagination from '../components/Pagination';
 import DashboardStats from '../../../components/DashboardStats';
 import { getAdminCustomers } from '../../../services/adminService';
 import { downloadCsv } from '../../../utils/csvExport';
@@ -18,18 +19,23 @@ const AdminCustomers = () => {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCustomers, setTotalCustomers] = useState(156);
+  const itemsPerPage = 10;
 
-  const load = async (nextStatus = status, nextSearch = search) => {
+  const load = async (nextStatus = status, nextSearch = search, page = currentPage) => {
     try {
       setLoading(true);
       setError('');
       const payload = await getAdminCustomers({
-        page: 1,
-        limit: 100,
+        page,
+        limit: itemsPerPage,
         ...(nextStatus ? { status: nextStatus } : {}),
         ...(nextSearch.trim() ? { search: nextSearch.trim() } : {}),
       });
       setItems(Array.isArray(payload?.data) ? payload.data : []);
+      setTotalCustomers(Number(payload?.total || 0));
+      setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load customers.');
       setItems([]);
@@ -171,6 +177,14 @@ const AdminCustomers = () => {
           ))}
         </div>
       </div>
+
+      <Pagination 
+        currentPage={currentPage}
+        totalItems={totalCustomers}
+        itemsPerPage={itemsPerPage}
+        onPageChange={(page) => load(status, search, page)}
+        loading={loading}
+      />
     </div>
   );
 };

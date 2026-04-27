@@ -1,5 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { registerMerchant, getCurrentUser } from '../../../services/authService';
+import { registerMerchantStore, getMyMerchantStore } from '../../../services/merchantService';
 import { 
   Store, 
   Rocket, 
@@ -122,9 +124,48 @@ const MerchantRegister = () => {
     password: '', confirmPassword: '',
   });
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [existingMerchant, setExistingMerchant] = useState(null);
+
+  useEffect(() => {
+    const user = getCurrentUser();
+    if (user) {
+      setIsLoggedIn(true);
+      setCurrentUser(user);
+      setForm(prev => ({
+        ...prev,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phone: user.phone || '',
+      }));
+      
+      // Check if they already have a merchant application
+      getMyMerchantStore().then(m => {
+        if (m) {
+          setExistingMerchant(m);
+          setForm(prev => ({
+            ...prev,
+            storeName: m.storeName || '',
+            storeDescription: m.description || '',
+            category: m.businessInfo?.category || '',
+            returnPolicy: m.businessInfo?.returnPolicy || '30 days return',
+            country: m.businessInfo?.country || 'United States',
+            city: m.businessInfo?.city || '',
+            businessName: m.businessInfo?.businessName || '',
+            taxId: m.businessInfo?.taxId || '',
+            businessAddress: m.businessInfo?.businessAddress || '',
+          }));
+        }
+      }).catch(() => {});
+    }
+  }, []);
+
   const [agreements, setAgreements] = useState({ terms: true, products: false });
   const [submitting, setSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -135,14 +176,73 @@ const MerchantRegister = () => {
     setAgreements((prev) => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
-  const handleSubmit = useCallback((e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!agreements.terms || !agreements.products) {
+      setError('Please agree to all terms and conditions.');
+      return;
+    }
+    
+    if (!isLoggedIn && form.password !== form.confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
     setSubmitting(true);
-    setTimeout(() => {
+    setError('');
+
+    try {
+      if (isLoggedIn) {
+        // Just register/update the store
+        await registerMerchantStore({
+          storeName: form.storeName,
+          description: form.storeDescription,
+          businessInfo: {
+            category: form.category,
+            returnPolicy: form.returnPolicy,
+            country: form.country,
+            city: form.city,
+            businessName: form.businessName,
+            taxId: form.taxId,
+            businessAddress: form.businessAddress,
+          },
+        });
+        
+        setSubmitting(false);
+        setShowModal(true);
+      } else {
+        // Full registration (User + Store)
+        const response = await registerMerchant({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email,
+          phone: form.phone,
+          password: form.password,
+          storeName: form.storeName,
+          storeDescription: form.storeDescription,
+          category: form.category,
+          returnPolicy: form.returnPolicy,
+          businessInfo: {
+            country: form.country,
+            city: form.city,
+            businessName: form.businessName,
+            taxId: form.taxId,
+            businessAddress: form.businessAddress,
+          },
+        });
+
+        setSubmitting(false);
+        setShowModal(true);
+        
+        // Store pending info for OTP view
+        localStorage.setItem('pendingUserId', response.userId);
+        localStorage.setItem('pendingEmail', form.email);
+      }
+    } catch (err) {
       setSubmitting(false);
-      setShowModal(true);
-    }, 1800);
-  }, []);
+      setError(err?.response?.data?.message || err.message || 'Registration failed. Please try again.');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-navy font-['DM_Sans'] text-gray2">
@@ -245,27 +345,52 @@ const MerchantRegister = () => {
             </div>
           </div>
 
-          {/* Your Information */}
-          <div className="border-b border-white/[0.07] px-6 py-8 min-[640px]:px-10">
-            <div className="mb-1.5 flex items-center gap-2.5 font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">
-              <User className="text-teal" size={20} />
-              Your Information
-            </div>
-            <div className="mb-6 text-[0.875rem] leading-relaxed text-gray min-[640px]:text-base">Kept private. Used for account verification only.</div>
 
-            <div className="grid gap-4 min-[640px]:grid-cols-2">
-              <InputField label="First Name" required name="firstName" value={form.firstName} onChange={handleChange} placeholder="Ahmed" />
-              <InputField label="Last Name" required name="lastName" value={form.lastName} onChange={handleChange} placeholder="Hassan" />
+          {/* Your Information */}
+          {!isLoggedIn ? (
+            <div className="border-b border-white/[0.07] px-6 py-8 min-[640px]:px-10">
+              <div className="mb-1.5 flex items-center gap-2.5 font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">
+                <User className="text-teal" size={20} />
+                Your Information
+              </div>
+              <div className="mb-6 text-[0.875rem] leading-relaxed text-gray min-[640px]:text-base">Kept private. Used for account verification only.</div>
+
+              <div className="grid gap-4 min-[640px]:grid-cols-2">
+                <InputField label="First Name" required name="firstName" value={form.firstName} onChange={handleChange} placeholder="Ahmed" />
+                <InputField label="Last Name" required name="lastName" value={form.lastName} onChange={handleChange} placeholder="Hassan" />
+              </div>
+              <div className="grid gap-4 min-[640px]:grid-cols-2">
+                <InputField label="Email Address" required type="email" name="email" value={form.email} onChange={handleChange} placeholder="ahmed@store.com" />
+                <InputField label="Phone Number" required type="tel" name="phone" value={form.phone} onChange={handleChange} placeholder="+1 612 555 0198" />
+              </div>
+              <div className="grid gap-4 min-[640px]:grid-cols-2">
+                <SelectField label="Country" required name="country" value={form.country} onChange={handleChange} options={COUNTRIES} />
+                <InputField label="City" required name="city" value={form.city} onChange={handleChange} placeholder="Minneapolis" />
+              </div>
             </div>
-            <div className="grid gap-4 min-[640px]:grid-cols-2">
-              <InputField label="Email Address" required type="email" name="email" value={form.email} onChange={handleChange} placeholder="ahmed@store.com" />
-              <InputField label="Phone Number" required type="tel" name="phone" value={form.phone} onChange={handleChange} placeholder="+1 612 555 0198" />
+          ) : (
+            <div className="border-b border-white/[0.07] px-6 py-8 min-[640px]:px-10 bg-[rgba(0,201,167,0.03)]">
+              <div className="mb-6 flex items-center gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[rgba(0,201,167,0.2)] bg-[rgba(0,201,167,0.1)] font-['Syne'] text-xl font-bold text-teal shadow-[0_0_15px_rgba(0,201,167,0.1)]">
+                  {currentUser?.firstName?.charAt(0) || currentUser?.email?.charAt(0) || 'U'}
+                </div>
+                <div>
+                  <div className="text-[1rem] font-bold text-white">Logged in as {currentUser?.firstName} {currentUser?.lastName}</div>
+                  <div className="text-[0.85rem] text-gray">{currentUser?.email}</div>
+                </div>
+              </div>
+              {existingMerchant?.status === 'rejected' && (
+                <div className="rounded-xl bg-red/10 border border-red/20 p-4 text-[0.85rem] text-red leading-relaxed">
+                  <div className="font-bold mb-1 flex items-center gap-2">
+                    <ShieldCheck size={16} />
+                    Previous Application Rejected
+                  </div>
+                  <p>{existingMerchant.businessInfo?.rejectionReason || 'No specific reason provided.'}</p>
+                  <p className="mt-2 font-medium opacity-80">Please update your details below and re-submit for another review.</p>
+                </div>
+              )}
             </div>
-            <div className="grid gap-4 min-[640px]:grid-cols-2">
-              <SelectField label="Country" required name="country" value={form.country} onChange={handleChange} options={COUNTRIES} />
-              <InputField label="City" required name="city" value={form.city} onChange={handleChange} placeholder="Minneapolis" />
-            </div>
-          </div>
+          )}
 
           {/* Business Details */}
           <div className="border-b border-white/[0.07] px-6 py-8 min-[640px]:px-10">
@@ -283,18 +408,20 @@ const MerchantRegister = () => {
           </div>
 
           {/* Password */}
-          <div className="border-b border-white/[0.07] px-6 py-8 min-[640px]:px-10">
-            <div className="mb-1.5 flex items-center gap-2.5 font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">
-              <Lock className="text-teal" size={20} />
-              Create Your Password
-            </div>
-            <div className="mb-6 text-[0.875rem] leading-relaxed text-gray min-[640px]:text-base">Set a strong password to protect your merchant account.</div>
+          {!isLoggedIn && (
+            <div className="border-b border-white/[0.07] px-6 py-8 min-[640px]:px-10">
+              <div className="mb-1.5 flex items-center gap-2.5 font-['Syne'] text-[1.1rem] font-bold text-white min-[640px]:text-[1.3rem]">
+                <Lock className="text-teal" size={20} />
+                Create Your Password
+              </div>
+              <div className="mb-6 text-[0.875rem] leading-relaxed text-gray min-[640px]:text-base">Set a strong password to protect your merchant account.</div>
 
-            <div className="grid gap-4 min-[640px]:grid-cols-2">
-              <InputField label="Password" required type="password" name="password" value={form.password} onChange={handleChange} placeholder="Min. 8 characters" />
-              <InputField label="Confirm Password" required type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} placeholder="Repeat password" />
+              <div className="grid gap-4 min-[640px]:grid-cols-2">
+                <InputField label="Password" required type="password" name="password" value={form.password} onChange={handleChange} placeholder="Min. 8 characters" />
+                <InputField label="Confirm Password" required type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} placeholder="Repeat password" />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Agreement */}
           <div className="px-6 py-8 min-[640px]:px-10">
@@ -327,22 +454,28 @@ const MerchantRegister = () => {
               </div>
             </div>
 
+            {/* Submit */}
             <div className="mt-8">
+              {error && <div className="mb-6 rounded-xl bg-red/10 border border-red/20 p-4 text-center text-[0.875rem] font-medium text-red animate-shake">{error}</div>}
+              
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-none bg-teal px-3 md:px-6 py-3 md:py-4.5 font-['Syne'] text-sm md:text-[1rem] font-bold text-navy transition-all duration-150 hover:bg-teal2 hover:shadow-[0_0_20px_rgba(0,201,167,0.2)] disabled:cursor-wait disabled:opacity-70"
+                className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl border-none bg-teal px-6 py-4.5 font-['Syne'] text-[1.1rem] font-bold text-navy transition-all duration-150 hover:bg-teal2 hover:shadow-[0_0_30px_rgba(0,201,167,0.3)] disabled:cursor-wait disabled:opacity-70"
               >
                 {submitting ? (
-                  <>⏳ Submitting...</>
+                  <div className="flex items-center gap-3">
+                    <div className="h-5 w-5 animate-spin rounded-full border-3 border-navy/20 border-t-navy" />
+                    Submitting...
+                  </div>
                 ) : (
                   <>
-                    <Send size={18} />
+                    <Send size={20} />
                     Submit Application
                   </>
                 )}
               </button>
-              <div className="mt-3 text-center text-[0.8rem] text-gray">
+              <div className="mt-4 text-center text-[0.85rem] text-gray">
                 Applications are reviewed within 1–2 business days
               </div>
             </div>
@@ -419,20 +552,50 @@ const MerchantRegister = () => {
             className="w-full max-w-[440px] animate-[slideUp_0.35s_ease] rounded-3xl border border-[rgba(0,201,167,0.25)] bg-navy2 px-8 py-12 text-center shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-5 flex justify-center text-teal">
-              <PartyPopper size={64} strokeWidth={1.5} />
+            {/* Success Content */}
+            <div className="mb-6 flex justify-center text-teal">
+              <div className="relative">
+                <PartyPopper size={80} strokeWidth={1} className="relative z-10" />
+                <div className="absolute inset-0 animate-ping rounded-full bg-teal/20" />
+              </div>
             </div>
-            <div className="mb-3 font-['Syne'] text-[1.6rem] font-bold text-white">Application Submitted!</div>
+            
+            <div className="mb-3 font-['Syne'] text-[1.8rem] font-bold text-white">Application Submitted!</div>
+            
             <div className="mb-8 text-base leading-[1.7] text-gray">
-              Welcome to the ESUUQ merchant community! Our team will review your application and contact you within 1–2 business days.
+              {isLoggedIn 
+                ? 'Your store information has been updated and sent for review. We will contact you within 1–2 business days.'
+                : 'Welcome to the ESUUQ merchant community! Our team will review your application and contact you within 1–2 business days.'
+              }
             </div>
-            <button
-              onClick={() => navigate('/')}
-              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-none bg-teal px-6 py-4 font-['DM_Sans'] text-[1rem] font-semibold text-navy transition-all duration-150 hover:bg-teal2"
-            >
-              <CheckCircle2 size={18} />
-              Back to Home
-            </button>
+
+            <div className="flex flex-col gap-4">
+              {isLoggedIn ? (
+                <button
+                  onClick={() => navigate('/merchant')}
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-none bg-teal px-6 py-4 font-['DM_Sans'] text-[1rem] font-bold text-navy transition-all duration-150 hover:bg-teal2 hover:shadow-[0_0_20px_rgba(0,201,167,0.2)]"
+                >
+                  <Rocket size={20} />
+                  Go to Merchant Panel
+                </button>
+              ) : (
+                <button
+                  onClick={() => navigate('/auth/otp', { state: { userId: localStorage.getItem('pendingUserId'), email: localStorage.getItem('pendingEmail') } })}
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-none bg-teal px-6 py-4 font-['DM_Sans'] text-[1rem] font-bold text-navy transition-all duration-150 hover:bg-teal2 hover:shadow-[0_0_20px_rgba(0,201,167,0.2)]"
+                >
+                  <ShieldCheck size={20} />
+                  Verify Your Account
+                </button>
+              )}
+              
+              <button
+                onClick={() => navigate('/')}
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/[0.1] bg-white/[0.05] px-6 py-4 font-['DM_Sans'] text-[1rem] font-semibold text-white transition-all duration-150 hover:bg-white/[0.1]"
+              >
+                <ArrowLeft size={18} />
+                Back to Home
+              </button>
+            </div>
           </div>
         </div>
       )}

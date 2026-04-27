@@ -22,20 +22,16 @@ const statusColor = (status) => {
 
 const statusLabel = (status) => {
   const normalized = String(status || '').toLowerCase();
-  if (normalized === 'in_transit' || normalized === 'out_for_delivery' || normalized === 'ready_for_pickup' || normalized === 'picked_up') {
-    return 'out for delivery';
-  }
+  if (normalized === 'ready_for_pickup') return 'ready for delivery';
+  if (normalized === 'picked_up') return 'picked up';
+  if (normalized === 'in_transit' || normalized === 'out_for_delivery') return 'in transit';
   return String(status || '').replace(/_/g, ' ');
 };
 
 const getNextStatusAction = (status = '') => {
   const normalized = String(status || '').toLowerCase();
-  if (normalized === 'pending_payment') return { next: 'confirmed', label: 'Confirm' };
   if (normalized === 'confirmed') return { next: 'processing', label: 'Accept' };
-  if (normalized === 'processing') return { next: 'in_transit', label: 'Out for Delivery' };
-  if (normalized === 'ready_for_pickup' || normalized === 'picked_up' || normalized === 'in_transit' || normalized === 'out_for_delivery') {
-    return { next: 'delivered', label: 'Delivered' };
-  }
+  if (normalized === 'processing') return { next: 'ready_for_pickup', label: 'Ready for Delivery' };
   return null;
 };
 
@@ -301,8 +297,8 @@ const MerchantOrders = () => {
                     </div>
                   ) : o.order?.status === 'processing' ? (
                     <div className="flex gap-1.5">
-                      <button onClick={() => applyStatus(o.order.id, 'in_transit')} className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
-                        Out for Delivery
+                      <button onClick={() => applyStatus(o.order.id, 'ready_for_pickup')} className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
+                        Ready for Delivery
                       </button>
                       <button onClick={() => applyStatus(o.order.id, 'cancelled')} className="border-red/20 bg-red/10 text-red hover:bg-red/20 rounded border px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
                         Cancel
@@ -375,8 +371,8 @@ const MerchantOrders = () => {
                   </div>
                 ) : o.order?.status === 'processing' ? (
                   <div className="flex gap-1.5">
-                    <button onClick={() => applyStatus(o.order.id, 'in_transit')} className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
-                      Out for Delivery
+                    <button onClick={() => applyStatus(o.order.id, 'ready_for_pickup')} className="bg-teal text-navy hover:bg-teal2 rounded border border-transparent px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
+                      Ready for Delivery
                     </button>
                     <button onClick={() => applyStatus(o.order.id, 'cancelled')} className="border-red/20 bg-red/10 text-red hover:bg-red/20 rounded border px-2.5 py-1 text-[0.72rem] font-bold transition-colors">
                       Cancel

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import DashboardPageHeader from '../components/DashboardPageHeader';
+import Pagination from '../components/Pagination';
 import { createAdminCoupon, deactivateAdminCoupon, getAdminCoupons, updateAdminCoupon } from '../../../services/adminService';
 
 const Pill = ({ children, c }) => (
@@ -32,13 +33,18 @@ const AdminCoupons = () => {
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCoupons, setTotalCoupons] = useState(23);
+  const itemsPerPage = 10;
 
-  const load = async () => {
+  const load = async (page = currentPage) => {
     try {
       setLoading(true);
       setError('');
-      const payload = await getAdminCoupons({ page: 1, limit: 100 });
+      const payload = await getAdminCoupons({ page, limit: itemsPerPage });
       setCoupons(Array.isArray(payload?.data) ? payload.data : []);
+      setTotalCoupons(Number(payload?.total || 0));
+      setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load coupons.');
       setCoupons([]);
@@ -223,6 +229,14 @@ const AdminCoupons = () => {
           </table>
         </div>
       </div>
+
+      <Pagination 
+        currentPage={currentPage}
+        totalItems={totalCoupons}
+        itemsPerPage={itemsPerPage}
+        onPageChange={(page) => load(page)}
+        loading={loading}
+      />
     </div>
   );
 };

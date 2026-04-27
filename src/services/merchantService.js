@@ -18,6 +18,11 @@ export const getMyMerchantStore = async () => {
   return unwrapPayload(response);
 };
 
+export const registerMerchantStore = async (payload) => {
+  const response = await axiosInstance.post(`${apiBase}/merchants/register`, payload);
+  return unwrapPayload(response);
+};
+
 export const updateMyMerchantStore = async (payload) => {
   const response = await axiosInstance.put(`${apiBase}/merchants/me`, payload);
   return unwrapPayload(response);
