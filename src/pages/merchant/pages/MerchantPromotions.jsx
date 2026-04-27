@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Tag, Plus, Calendar, Settings, Trash2 } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
 import MerchantPill from '../components/MerchantPill';
+import Pagination from '../../admin/components/Pagination';
 import DashboardStats from '../../../components/DashboardStats';
 import {
   getMyMerchantProducts,
@@ -17,14 +18,25 @@ const MerchantPromotions = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPromotions, setTotalPromotions] = useState(0);
+  const itemsPerPage = 10;
 
-  const load = async () => {
+  const load = async (page = currentPage) => {
     try {
       setLoading(true);
       setError('');
 
-      const payload = await getMyMerchantProducts({ page: 1, limit: 100, sort: 'newest' });
-      setProducts(Array.isArray(payload?.data) ? payload.data : []);
+      const payload = await getMyMerchantProducts({
+        page,
+        limit: itemsPerPage,
+        sort: 'newest',
+        featured: true,
+      });
+      const list = Array.isArray(payload?.data) ? payload.data : [];
+      setProducts(list);
+      setTotalPromotions(Number(payload?.meta?.total || list.length));
+      setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load promotions data.');
     } finally {
@@ -33,12 +45,12 @@ const MerchantPromotions = () => {
   };
 
   useEffect(() => {
-    load();
+    load(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const promos = useMemo(() => {
     return products
-      .filter((p) => Number(p.comparePrice || 0) > Number(p.price || 0) || p.isFeatured)
       .map((p) => {
         const price = Number(p.price || 0);
         const compare = Number(p.comparePrice || 0);
@@ -82,11 +94,11 @@ const MerchantPromotions = () => {
 
     return [
       { icon: Tag, val: String(active), label: 'Active Promotions', bg: 'bg-teal/10' },
-      { icon: Calendar, val: String(promos.length), label: 'Promotion Products', bg: 'bg-blue-500/10' },
+      { icon: Calendar, val: String(totalPromotions), label: 'Promotion Products', bg: 'bg-blue-500/10' },
       { icon: Tag, val: avgDiscount, label: 'Avg Discount', bg: 'bg-yellow/10' },
       { icon: Calendar, val: nextExpiring, label: 'Promotion Status', bg: 'bg-red/10' },
     ];
-  }, [promos]);
+  }, [promos, totalPromotions]);
 
   const createPromotion = async (selectedProduct) => {
     try {
@@ -110,7 +122,7 @@ const MerchantPromotions = () => {
       });
 
       setMessage(`Promotion created for ${product.name} (${percent}% off).`);
-      await load();
+      await load(1);
     } catch (err) {
       setError(err?.response?.data?.message || 'Could not create promotion.');
     }
@@ -122,7 +134,7 @@ const MerchantPromotions = () => {
       setMessage('');
       await updateMyMerchantProduct(item.id, { comparePrice: null, isFeatured: false });
       setMessage('Promotion removed.');
-      await load();
+      await load(currentPage);
     } catch (err) {
       setError(err?.response?.data?.message || 'Could not remove promotion.');
     }
@@ -142,7 +154,7 @@ const MerchantPromotions = () => {
         isFeatured: true,
       });
       setMessage('Promotion updated.');
-      await load();
+      await load(currentPage);
     } catch (err) {
       setError(err?.response?.data?.message || 'Could not update promotion.');
     }
@@ -174,7 +186,7 @@ const MerchantPromotions = () => {
       <div className="bg-card overflow-hidden rounded-lg border border-white/[0.07]">
         <div className="border-b border-white/[0.07] px-6 py-4 flex items-center justify-between">
           <h3 className="font-syne text-[1rem] font-bold text-white">All Promotions</h3>
-          <span className="text-xs text-gray2">{loading ? 'Loading...' : `${promos.length} active promotion rows`}</span>
+          <span className="text-xs text-gray2">{loading ? 'Loading...' : `${totalPromotions} active promotion rows`}</span>
         </div>
 
         <div className="hidden min-[800px]:block overflow-x-auto">
@@ -218,6 +230,14 @@ const MerchantPromotions = () => {
           </table>
         </div>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalItems={totalPromotions}
+        itemsPerPage={itemsPerPage}
+        onPageChange={(page) => load(page)}
+        loading={loading}
+      />
 
       <div className="bg-card mt-8 overflow-hidden rounded-lg border border-white/[0.07]">
         <div className="border-b border-white/[0.07] px-6 py-4 flex items-center justify-between">
