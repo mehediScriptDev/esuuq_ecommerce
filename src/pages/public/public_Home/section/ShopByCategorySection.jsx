@@ -1,20 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import CategoryCard from '../../../../components/marketplace/CategoryCard';
+import { getCategoryCounts } from '../../../../services/productService';
 
 const ShopByCategorySection = () => {
+  const [counts, setCounts] = useState({});
+
+  useEffect(() => {
+    getCategoryCounts()
+      .then((data) => setCounts(data || {}))
+      .catch(() => setCounts({}));
+  }, []);
+
+  const formatCount = (slug) => {
+    const n = counts[slug];
+    if (n === undefined) return '—';
+    return n.toLocaleString();
+  };
+
   const categories = [
-    { icon: '\u{1F4F1}', name: 'Electronics', items: '2,400', path: '/electronics' },
-    { icon: '\u{1F457}', name: 'Fashion', items: '3,800', path: '/fashion' },
-    { icon: '\u{1F3E1}', name: 'Home & Garden', items: '1,900', path: '/home-garden' },
-    { icon: '\u{1F484}', name: 'Beauty', items: '1,200', path: '/beauty' },
-    { icon: '\u{1F34E}', name: 'Grocery', items: '850', path: '/food-grocery' },
-    { icon: '\u26BD', name: 'Sports', items: '1,100', path: '/sports' },
-    { icon: '\u{1F4DA}', name: 'Books', items: '5,000', path: '/books' },
-    { icon: '\u{1F9F8}', name: 'Toys & Kids', items: '700', path: '/toys-kids' },
-    { icon: '\u{1F527}', name: 'Tools & DIY', items: '600', path: '/tools-diy' },
-    { icon: '\u{1F43E}', name: 'Pet Supplies', items: '450', path: '/pet-supplies' },
-    { icon: '\u{1F48A}', name: 'Health', items: '900', path: '/health' },
-    { icon: '\u{1F697}', name: 'Automotive', items: '380' },
+    { icon: '📱', name: 'Electronics',  slug: 'electronics',  path: '/electronics' },
+    { icon: '👗', name: 'Fashion',       slug: 'fashion',       path: '/fashion' },
+    { icon: '🏡', name: 'Home & Garden', slug: 'home-garden',   path: '/home-garden' },
+    { icon: '💄', name: 'Beauty',        slug: 'beauty',        path: '/beauty' },
+    { icon: '🍎', name: 'Grocery',       slug: 'food-grocery',  path: '/food-grocery' },
+    { icon: '⚽', name: 'Sports',        slug: 'sports',        path: '/sports' },
+    { icon: '📚', name: 'Books',         slug: 'books',         path: '/books' },
+    { icon: '🧸', name: 'Toys & Kids',   slug: 'toys-kids',     path: '/toys-kids' },
+    { icon: '🔧', name: 'Tools & DIY',   slug: 'tools-diy',     path: '/tools-diy' },
+    { icon: '🐾', name: 'Pet Supplies',  slug: 'pet-supplies',  path: '/pet-supplies' },
+    { icon: '💊', name: 'Health',        slug: 'health',        path: '/health' },
+    { icon: '🚗', name: 'Automotive',    slug: 'automotive' },
   ];
 
   return (
@@ -37,7 +52,7 @@ const ShopByCategorySection = () => {
               key={index}
               icon={cat.icon}
               name={cat.name}
-              itemCount={cat.items}
+              itemCount={formatCount(cat.slug)}
               path={cat.path}
             />
           ))}
