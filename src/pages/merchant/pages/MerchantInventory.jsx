@@ -11,8 +11,25 @@ import {
 
 const Pill = ({ children, c }) => <MerchantPill className={c}>{children}</MerchantPill>;
 
+const loadAllMerchantProducts = async () => {
+  const first = await getMyMerchantProducts({ page: 1, limit: 100, sort: 'newest' });
+  const initialRows = Array.isArray(first?.data) ? first.data : [];
+  const pages = Number(first?.meta?.pages || 1);
+  if (pages <= 1) {
+    return initialRows;
+  }
+
+  const rest = await Promise.all(
+    Array.from({ length: pages - 1 }, (_, idx) => getMyMerchantProducts({ page: idx + 2, limit: 100, sort: 'newest' }))
+  );
+
+  const restRows = rest.flatMap((payload) => (Array.isArray(payload?.data) ? payload.data : []));
+  return [...initialRows, ...restRows];
+};
+
 const MerchantInventory = () => {
   const [items, setItems] = useState([]);
+  const [allItems, setAllItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -24,10 +41,14 @@ const MerchantInventory = () => {
     try {
       setLoading(true);
       setError('');
-      const payload = await getMyMerchantProducts({ page, limit: itemsPerPage, sort: 'newest' });
-      const list = Array.isArray(payload?.data) ? payload.data : [];
+      const [pagePayload, fullList] = await Promise.all([
+        getMyMerchantProducts({ page, limit: itemsPerPage, sort: 'newest' }),
+        loadAllMerchantProducts(),
+      ]);
+      const list = Array.isArray(pagePayload?.data) ? pagePayload.data : [];
       setItems(list);
-      setTotalItems(Number(payload?.meta?.total || list.length));
+      setAllItems(Array.isArray(fullList) ? fullList : []);
+      setTotalItems(Number(pagePayload?.meta?.total || fullList?.length || list.length));
       setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load inventory.');
@@ -50,22 +71,23 @@ const MerchantInventory = () => {
       const result = await restockMyMerchantProduct(item.id, Number(quantity));
       setMessage(`Restocked ${item.name}. New stock: ${result.newStock}`);
       setItems((prev) => prev.map((p) => (p.id === item.id ? { ...p, stock: result.newStock } : p)));
+      setAllItems((prev) => prev.map((p) => (p.id === item.id ? { ...p, stock: result.newStock } : p)));
     } catch (err) {
       setError(err?.response?.data?.message || 'Restock failed.');
     }
   };
 
   const stats = useMemo(() => {
-    const total = items.length;
-    const low = items.filter((i) => Number(i.stock || 0) > 0 && Number(i.stock || 0) <= Number(i.lowStockAt || 10)).length;
-    const out = items.filter((i) => Number(i.stock || 0) <= 0).length;
+    const total = allItems.length;
+    const low = allItems.filter((i) => Number(i.stock || 0) > 0 && Number(i.stock || 0) <= Number(i.lowStockAt || 10)).length;
+    const out = allItems.filter((i) => Number(i.stock || 0) <= 0).length;
 
     return [
       { icon: Package, bg: 'bg-teal/10', val: String(total), label: 'Total Products' },
       { icon: AlertTriangle, bg: 'bg-yellow/10', val: String(low), label: 'Low Stock Alerts' },
       { icon: XCircle, bg: 'bg-red/10', val: String(out), label: 'Out of Stock' },
     ];
-  }, [items]);
+  }, [allItems]);
 
   return (
     <div className="animate-[fadeUp_0.4s_ease_both]">
