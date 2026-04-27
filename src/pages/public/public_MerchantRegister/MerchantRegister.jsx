@@ -494,7 +494,7 @@ const MerchantRegister = () => {
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[rgba(0,201,167,0.25)] bg-[rgba(0,201,167,0.08)] text-teal">
                     {b.icon}
                   </div>
-                  <div className="text-[0.875rem] leading-[1.5] text-gray2">
+                  <div className="text-[0.875rem] leading-normal text-gray2">
                     <strong className="mb-0.5 block text-[0.9rem] text-white">{b.title}</strong>
                     {b.desc}
                   </div>

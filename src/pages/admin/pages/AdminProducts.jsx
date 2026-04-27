@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Search, Check, X, Trash2 } from 'lucide-react';
 import AdminPageHeader from '../components/AdminPageHeader';
 import AdminPill from '../components/AdminPill';
+import Pagination from '../components/Pagination';
 import {
   approveAdminProduct,
   deleteAdminProduct,
@@ -19,17 +20,22 @@ const AdminProducts = () => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [statusFilter, setStatusFilter] = useState(''); // Empty means all
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(89);
+  const itemsPerPage = 10;
 
-  const load = async () => {
+  const load = async (page = currentPage) => {
     try {
       setLoading(true);
       setError('');
-      const params = { page: 1, limit: 100 };
+      const params = { page, limit: itemsPerPage };
       if (statusFilter) params.status = statusFilter;
       if (query) params.search = query;
       
       const payload = await getAdminProducts(params);
       setAllProducts(Array.isArray(payload?.data) ? payload.data : []);
+      setTotalProducts(Number(payload?.total || 0));
+      setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load products.');
     } finally {
@@ -167,6 +173,14 @@ const AdminProducts = () => {
           </table>
         </div>
       </div>
+
+      <Pagination 
+        currentPage={currentPage}
+        totalItems={totalProducts}
+        itemsPerPage={itemsPerPage}
+        onPageChange={(page) => load(page)}
+        loading={loading}
+      />
     </div>
   );
 };
