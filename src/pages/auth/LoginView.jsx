@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Heart, Package, Rocket, ShieldCheck } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { login, startGoogleOAuth } from '../../services/authService';
+import { setKeepSignedIn } from '../../utils/storage';
 import AuthLayout from './components/AuthLayout';
 import {
   AuthButton,
@@ -24,7 +25,7 @@ const LoginView = () => {
   const [email, setEmail] = useState(localStorage.getItem('rememberedEmail') || '');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(!!localStorage.getItem('rememberedEmail'));
+  const [remember, setRemember] = useState(true);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -51,6 +52,8 @@ const LoginView = () => {
       } else {
         localStorage.removeItem('rememberedEmail');
       }
+
+      setKeepSignedIn(remember);
 
       // If user was redirected to login from a protected route, go back there
       const returnTo = location.state?.from?.pathname;
