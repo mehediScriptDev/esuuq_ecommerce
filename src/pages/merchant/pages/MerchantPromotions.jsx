@@ -13,13 +13,28 @@ const Pill = ({ children, c }) => (
   <MerchantPill className={c}>{children}</MerchantPill>
 );
 
+const loadAllMerchantProducts = async () => {
+  const first = await getMyMerchantProducts({ page: 1, limit: 100, sort: 'newest' });
+  const initialRows = Array.isArray(first?.data) ? first.data : [];
+  const pages = Number(first?.meta?.pages || 1);
+  if (pages <= 1) {
+    return initialRows;
+  }
+
+  const rest = await Promise.all(
+    Array.from({ length: pages - 1 }, (_, idx) => getMyMerchantProducts({ page: idx + 2, limit: 100, sort: 'newest' }))
+  );
+
+  const restRows = rest.flatMap((payload) => (Array.isArray(payload?.data) ? payload.data : []));
+  return [...initialRows, ...restRows];
+};
+
 const MerchantPromotions = () => {
-  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPromotions, setTotalPromotions] = useState(0);
   const itemsPerPage = 10;
 
   const load = async (page = currentPage) => {
@@ -27,15 +42,17 @@ const MerchantPromotions = () => {
       setLoading(true);
       setError('');
 
-      const payload = await getMyMerchantProducts({
-        page,
-        limit: itemsPerPage,
-        sort: 'newest',
-        featured: true,
-      });
-      const list = Array.isArray(payload?.data) ? payload.data : [];
-      setProducts(list);
-      setTotalPromotions(Number(payload?.meta?.total || list.length));
+      const [pagePayload, fullList] = await Promise.all([
+        getMyMerchantProducts({
+          page,
+          limit: itemsPerPage,
+          sort: 'newest',
+          featured: true,
+        }),
+        loadAllMerchantProducts(),
+      ]);
+
+      setAllProducts(Array.isArray(fullList) ? fullList : []);
       setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load promotions data.');
@@ -49,8 +66,9 @@ const MerchantPromotions = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const promos = useMemo(() => {
-    return products
+  const allPromos = useMemo(() => {
+    return allProducts
+      .filter((p) => Number(p.comparePrice || 0) > Number(p.price || 0) || p.isFeatured)
       .map((p) => {
         const price = Number(p.price || 0);
         const compare = Number(p.comparePrice || 0);
@@ -68,10 +86,17 @@ const MerchantPromotions = () => {
           product: p,
         };
       });
-  }, [products]);
+  }, [allProducts]);
+
+  const pagedPromos = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return allPromos.slice(start, start + itemsPerPage);
+  }, [allPromos, currentPage]);
+
+  const totalPromotions = allPromos.length;
 
   const promotionCandidates = useMemo(() => {
-    return products
+    return allProducts
       .filter((p) => !(Number(p.comparePrice || 0) > Number(p.price || 0) || p.isFeatured))
       .slice(0, 50)
       .map((p) => ({
@@ -81,16 +106,16 @@ const MerchantPromotions = () => {
         category: p.category?.name || 'General',
         price: Number(p.price || 0),
       }));
-  }, [products]);
+  }, [allProducts]);
 
   const stats = useMemo(() => {
-    const active = promos.filter((x) => x.status === 'Active').length;
-    const totalDiscount = promos.reduce((sum, x) => {
+    const active = allPromos.filter((x) => x.status === 'Active').length;
+    const totalDiscount = allPromos.reduce((sum, x) => {
       const match = /([0-9]+)%/.exec(x.discount);
       return sum + (match ? Number(match[1]) : 0);
     }, 0);
-    const avgDiscount = promos.length ? `${Math.round(totalDiscount / promos.length)}%` : '0%';
-    const nextExpiring = promos.find((x) => x.end === 'Ongoing') ? 'Live' : 'No active deal';
+    const avgDiscount = allPromos.length ? `${Math.round(totalDiscount / allPromos.length)}%` : '0%';
+    const nextExpiring = allPromos.find((x) => x.end === 'Ongoing') ? 'Live' : 'No active deal';
 
     return [
       { icon: Tag, val: String(active), label: 'Active Promotions', bg: 'bg-teal/10' },
@@ -98,14 +123,14 @@ const MerchantPromotions = () => {
       { icon: Tag, val: avgDiscount, label: 'Avg Discount', bg: 'bg-yellow/10' },
       { icon: Calendar, val: nextExpiring, label: 'Promotion Status', bg: 'bg-red/10' },
     ];
-  }, [promos, totalPromotions]);
+  }, [allPromos, totalPromotions]);
 
   const createPromotion = async (selectedProduct) => {
     try {
       setError('');
       setMessage('');
       const isClickEvent = selectedProduct && typeof selectedProduct === 'object' && 'preventDefault' in selectedProduct;
-      const product = isClickEvent ? products[0] : (selectedProduct || products[0]);
+      const product = isClickEvent ? promotionCandidates[0] : (selectedProduct || promotionCandidates[0] || allProducts[0]);
       if (!product) {
         setError('No products found. Add products first.');
         return;
@@ -199,7 +224,7 @@ const MerchantPromotions = () => {
               </tr>
             </thead>
             <tbody className="text-[0.88rem] text-white">
-              {promos.map((p) => (
+              {pagedPromos.map((p) => (
                 <tr key={p.id} className="border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-white/2">
                   <td className="px-6 py-4 font-bold max-w-[200px] truncate">{p.name}</td>
                   <td className="text-teal px-6 py-4 font-black">{p.code}</td>
@@ -221,7 +246,7 @@ const MerchantPromotions = () => {
                   </td>
                 </tr>
               ))}
-              {!promos.length ? (
+              {!pagedPromos.length ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-6 text-center text-sm text-gray2">No promotions yet. Create one from your product catalog.</td>
                 </tr>
@@ -235,7 +260,7 @@ const MerchantPromotions = () => {
         currentPage={currentPage}
         totalItems={totalPromotions}
         itemsPerPage={itemsPerPage}
-        onPageChange={(page) => load(page)}
+        onPageChange={(page) => setCurrentPage(page)}
         loading={loading}
       />
 
