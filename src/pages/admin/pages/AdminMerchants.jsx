@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Download, Plus } from 'lucide-react';
 import DashboardPageHeader from '../components/DashboardPageHeader';
+import Pagination from '../components/Pagination';
 import { getAdminMerchants } from '../../../services/adminService';
 import { downloadCsv } from '../../../utils/csvExport';
 
@@ -34,18 +35,23 @@ const AdminMerchants = () => {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalMerchants, setTotalMerchants] = useState(34);
+  const itemsPerPage = 10;
 
-  const load = async (nextStatus = status, nextSearch = search) => {
+  const load = async (nextStatus = status, nextSearch = search, page = currentPage) => {
     try {
       setLoading(true);
       setError('');
       const payload = await getAdminMerchants({
-        page: 1,
-        limit: 100,
+        page,
+        limit: itemsPerPage,
         ...(nextStatus ? { status: nextStatus } : {}),
         ...(nextSearch.trim() ? { search: nextSearch.trim() } : {}),
       });
       setItems(Array.isArray(payload?.data) ? payload.data : []);
+      setTotalMerchants(Number(payload?.total || 0));
+      setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load merchants.');
       setItems([]);
@@ -226,6 +232,14 @@ const AdminMerchants = () => {
           </table>
         </div>
       </div>
+
+      <Pagination 
+        currentPage={currentPage}
+        totalItems={totalMerchants}
+        itemsPerPage={itemsPerPage}
+        onPageChange={(page) => load(status, search, page)}
+        loading={loading}
+      />
     </div>
   );
 };

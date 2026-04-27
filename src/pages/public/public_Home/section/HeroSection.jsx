@@ -37,7 +37,7 @@ const HeroSection = () => {
             <div className="text-3xl animate animate-pulse">{'\u26A1'}</div>
             <div className=''>
               <div className="text-[0.82rem] lg:text-[1rem] font-medium text-white">Flash Deals Today</div>
-              <div className="text-[0.72rem] lg:text-[0.87rem] text-teal">Up to 60% off {'\u00B7'} Ends in 4h</div>
+              <div className="text-[0.72rem] lg:text-[0.87rem] text-teal">Up to 60% off </div>
             </div>
           </div>
           {[

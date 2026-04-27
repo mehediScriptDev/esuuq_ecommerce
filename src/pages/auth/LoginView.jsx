@@ -115,9 +115,9 @@ const LoginView = () => {
         </button>
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-3">
+      <div className="mb-4 grid grid-cols-1 gap-3">
         <SocialButton provider="google" onClick={startGoogleOAuth}>Google</SocialButton>
-        <SocialButton provider="facebook">Facebook</SocialButton>
+        {/* <SocialButton provider="facebook">Facebook</SocialButton> */}
       </div>
 
       <AuthDivider text="or continue with email" />

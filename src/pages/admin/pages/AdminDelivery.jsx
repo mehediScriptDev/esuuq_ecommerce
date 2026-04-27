@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Truck, MapPin, CheckCircle, Clock, Plus } from 'lucide-react';
 import DashboardPageHeader from '../components/DashboardPageHeader';
+import Pagination from '../components/Pagination';
 import DashboardStats from '../../../components/DashboardStats';
 import { getAdminDeliveryPartners } from '../../../services/adminService';
 
@@ -24,19 +25,24 @@ const AdminDelivery = () => {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalDelivery, setTotalDelivery] = useState(67);
+  const itemsPerPage = 10;
 
-  const load = async (nextStatus = status, nextSearch = search) => {
+  const load = async (nextStatus = status, nextSearch = search, page = currentPage) => {
     try {
       setLoading(true);
       setError('');
       const payload = await getAdminDeliveryPartners({
-        page: 1,
-        limit: 100,
+        page,
+        limit: itemsPerPage,
         ...(nextSearch.trim() ? { search: nextSearch.trim() } : {}),
       });
       const all = Array.isArray(payload?.data) ? payload.data : [];
       const filtered = nextStatus ? all.filter((d) => String(d.status) === nextStatus) : all;
       setItems(filtered);
+      setTotalDelivery(Number(payload?.total || 0));
+      setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load delivery partners.');
       setItems([]);
@@ -164,6 +170,14 @@ const AdminDelivery = () => {
           })}
         </div>
       </div>
+
+      <Pagination 
+        currentPage={currentPage}
+        totalItems={totalDelivery}
+        itemsPerPage={itemsPerPage}
+        onPageChange={(page) => load(status, search, page)}
+        loading={loading}
+      />
     </div>
   );
 };
