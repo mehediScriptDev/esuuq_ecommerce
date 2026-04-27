@@ -20,18 +20,10 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
 
   useEffect(() => {
     if (!isOpen) return;
-    // Compensate for scrollbar disappearing so the page doesn't shift
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    document.body.style.overflow = 'hidden';
-    document.body.style.paddingRight = `${scrollbarWidth}px`;
     modalRef.current?.focus();
     const onKey = (e) => e.key === 'Escape' && onClose();
     document.addEventListener('keydown', onKey);
-    return () => {
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
-      document.removeEventListener('keydown', onKey);
-    };
+    return () => document.removeEventListener('keydown', onKey);
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
@@ -58,7 +50,7 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm p-3 sm:p-6"
+      className="fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm p-3 sm:p-6 h-[100vh]"
       onClick={handleOverlay}
       role="dialog"
       aria-modal="true"
