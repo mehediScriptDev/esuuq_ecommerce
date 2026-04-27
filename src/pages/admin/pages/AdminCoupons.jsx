@@ -43,7 +43,7 @@ const AdminCoupons = () => {
       setError('');
       const payload = await getAdminCoupons({ page, limit: itemsPerPage });
       setCoupons(Array.isArray(payload?.data) ? payload.data : []);
-      setTotalCoupons(Number(payload?.total || 0));
+      setTotalCoupons(Number(payload?.meta?.total || 0));
       setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load coupons.');

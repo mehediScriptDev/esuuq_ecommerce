@@ -34,7 +34,7 @@ const AdminCustomers = () => {
         ...(nextSearch.trim() ? { search: nextSearch.trim() } : {}),
       });
       setItems(Array.isArray(payload?.data) ? payload.data : []);
-      setTotalCustomers(Number(payload?.total || 0));
+      setTotalCustomers(Number(payload?.meta?.total || 0));
       setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load customers.');

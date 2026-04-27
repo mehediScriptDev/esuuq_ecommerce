@@ -83,7 +83,7 @@ const AdminOrders = () => {
         ...(nextSearch.trim() ? { search: nextSearch.trim() } : {}),
       });
       setOrders(Array.isArray(payload?.data) ? payload.data : []);
-      setTotalOrders(Number(payload?.total || 0));
+      setTotalOrders(Number(payload?.meta?.total || 0));
       setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load orders.');
