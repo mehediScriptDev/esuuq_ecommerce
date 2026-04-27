@@ -48,6 +48,8 @@ const buildOrderGroups = (rows = []) => {
       existing.qty += Number(row?.quantity || 0);
       existing.total += Number(row?.totalPrice || 0);
       if (row?.productName) existing.productNames.add(row.productName);
+      // collect the raw item row so the modal can display it
+      existing.itemRows.push(row);
       return;
     }
 
@@ -58,6 +60,7 @@ const buildOrderGroups = (rows = []) => {
       total: Number(row?.totalPrice || 0),
       productNames: new Set(row?.productName ? [row.productName] : []),
       sortKey: `${order?.createdAt || ''}-${index}`,
+      itemRows: [row], // raw item rows for modal
     });
   });
 
@@ -141,7 +144,23 @@ const MerchantOrders = () => {
   };
 
   const openOrderDetails = (orderGroup) => {
-    setSelectedOrder(orderGroup);
+    // Reconstruct order with items[] so the modal can display them
+    const orderWithItems = {
+      ...orderGroup.order,
+      total: orderGroup.order?.total ?? orderGroup.total,
+      items: (orderGroup.itemRows || []).map((row) => ({
+        id: row?.id,
+        productName: row?.productName || row?.product?.name || 'Product',
+        sku: row?.sku || row?.product?.sku,
+        quantity: row?.quantity,
+        unitPrice: Number(row?.unitPrice || row?.price || 0),
+        price: Number(row?.unitPrice || row?.price || 0),
+        totalPrice: Number(row?.totalPrice || 0),
+        image: row?.image || row?.product?.images?.[0] || null,
+        product: row?.product,
+      })),
+    };
+    setSelectedOrder({ ...orderGroup, order: orderWithItems });
     setIsDetailOpen(true);
   };
 

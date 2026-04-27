@@ -1,487 +1,200 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
-import {
-  X,
-  Calendar,
-  User,
-  Phone,
-  MapPin,
-  Package,
-  DollarSign,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-} from 'lucide-react';
-import MerchantPill from '../../pages/merchant/components/MerchantPill';
+import React, { memo, useEffect, useRef } from 'react';
+import { X, MapPin, Package } from 'lucide-react';
 
-/**
- * OrderDetailsModal - Comprehensive order details view for merchant dashboard
- * Matches the dark theme and design system of the merchant dashboard
- *
- * @example
- * <OrderDetailsModal
- *   isOpen={isOpen}
- *   onClose={() => setIsOpen(false)}
- *   orderId="ORD-12345"
- *   order={orderData}
- * />
- */
+const statusColor = (s = '') => {
+  const n = String(s).toLowerCase();
+  if (n === 'confirmed') return 'text-teal bg-teal/10 border-teal/30';
+  if (n === 'processing') return 'text-blue-400 bg-blue-500/10 border-blue-500/30';
+  if (['ready_for_pickup', 'picked_up', 'in_transit', 'out_for_delivery'].includes(n))
+    return 'text-purple-300 bg-purple-500/10 border-purple-500/30';
+  if (n === 'delivered') return 'text-green-400 bg-green-500/10 border-green-500/30';
+  if (['cancelled', 'returned', 'refunded'].includes(n)) return 'text-red bg-red/10 border-red/30';
+  return 'text-gray2 bg-white/10 border-white/10';
+};
 
-const OrderDetailsModal = memo(
-  ({
-    isOpen = false,
-    onClose,
-    orderId,
-    order = {},
-  }) => {
-    const modalRef = useRef(null);
-    const previousActiveElement = useRef(null);
-    const printRef = useRef(null);
+const statusLabel = (s = '') =>
+  String(s).replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
-    // Focus management
-    useEffect(() => {
-      if (isOpen) {
-        previousActiveElement.current = document.activeElement;
-        modalRef.current?.focus();
-      } else {
-        previousActiveElement.current?.focus();
-      }
-    }, [isOpen]);
+const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }) => {
+  const modalRef = useRef(null);
 
-    // Prevent body scroll when open
-    useEffect(() => {
-      if (isOpen) {
-        document.body.style.overflow = 'hidden';
-      } else {
-        document.body.style.overflow = '';
-      }
-
-      return () => {
-        document.body.style.overflow = '';
-      };
-    }, [isOpen]);
-
-    // Handle Escape key
-    useEffect(() => {
-      if (!isOpen) return;
-
-      const handleEscape = (e) => {
-        if (e.key === 'Escape') {
-          onClose();
-        }
-      };
-
-      document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
-    }, [isOpen, onClose]);
-
-    // Handle print functionality
-    const handlePrint = () => {
-      if (printRef.current) {
-        const printWindow = window.open('', '', 'width=900,height=600');
-        printWindow.document.write(printRef.current.innerHTML);
-        printWindow.document.close();
-        printWindow.focus();
-        setTimeout(() => {
-          printWindow.print();
-          printWindow.close();
-        }, 250);
-      }
+  useEffect(() => {
+    if (!isOpen) return;
+    document.body.style.overflow = 'hidden';
+    modalRef.current?.focus();
+    const onKey = (e) => e.key === 'Escape' && onClose();
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKey);
     };
+  }, [isOpen, onClose]);
 
-    if (!isOpen) return null;
+  if (!isOpen) return null;
 
-    const customer = order?.customer || {};
-    const items = order?.items || [];
-    const status = String(order?.status || '').toLowerCase().replace(/_/g, ' ');
-    const createdAt = order?.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A';
-    const totalAmount = Number(order?.totalAmount || 0);
-    const subTotal = items.reduce((sum, item) => sum + (Number(item?.price || 0) * Number(item?.quantity || 0)), 0);
-    const shippingCost = Number(order?.shippingCost || 0);
-    const tax = Number(order?.tax || 0);
+  const customer = order?.customer || {};
+  const items = Array.isArray(order?.items) ? order.items : [];
 
-    const statusColor = (orderStatus = '') => {
-      const normalized = String(orderStatus || '').toLowerCase();
-      if (normalized === 'pending_payment') return 'text-yellow bg-yellow/10 border border-yellow/30';
-      if (normalized === 'confirmed') return 'text-teal bg-teal/10 border border-teal/30';
-      if (normalized === 'processing') return 'text-blue-500 bg-blue-500/10 border border-blue-500/30';
-      if (normalized === 'ready_for_pickup') return 'text-yellow bg-yellow/10 border border-yellow/30';
-      if (normalized === 'picked_up' || normalized === 'in_transit') return 'text-purple-300 bg-purple-500/10 border border-purple-500/30';
-      if (normalized === 'delivered') return 'text-green-500 bg-green-500/10 border border-green-500/30';
-      if (normalized === 'cancelled' || normalized === 'returned' || normalized === 'refunded') return 'text-red bg-red/10 border border-red/30';
-      if (normalized === 'return_requested') return 'text-orange-300 bg-orange-500/10 border border-orange-500/30';
-      return 'text-gray2 bg-white/10 border border-white/10';
-    };
+  // Field name normalization — backend may send different names
+  const shippingFee = Number(order?.shippingFee || order?.shippingCost || 0);
+  const orderTotal = Number(order?.total || order?.totalAmount || 0);
 
-    const handleOverlayClick = (e) => {
-      if (e.target === e.currentTarget) {
-        onClose();
-      }
-    };
+  const getItemPrice = (item) => Number(item?.unitPrice || item?.price || 0);
+  const subTotal = items.reduce((s, i) => s + getItemPrice(i) * Number(i?.quantity || 0), 0);
+  const displayTotal = orderTotal || subTotal + shippingFee;
 
-    return (
+  // Shipping address from nested object or string
+  const addr = order?.address || order?.shippingAddress || null;
+  const addrText = typeof addr === 'string' ? addr
+    : addr
+      ? [addr.fullName, addr.addressLine1, addr.addressLine2, addr.city, addr.state, addr.zipCode].filter(Boolean).join(', ')
+      : null;
+
+  const handleOverlay = (e) => { if (e.target === e.currentTarget) onClose(); };
+
+  return (
+    <div
+      className="fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm p-3 sm:p-6"
+      onClick={handleOverlay}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="order-modal-title"
+    >
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
-        onClick={handleOverlayClick}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="order-modal-title"
+        ref={modalRef}
+        tabIndex={-1}
+        className="bg-card border-border relative w-full max-w-lg my-4 sm:my-10 rounded-xl border shadow-2xl outline-none animate-[fadeUp_0.25s_ease_both]"
       >
-        <div
-          ref={modalRef}
-          className="bg-card border-border relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl border p-6 shadow-2xl animate-[fadeUp_0.3s_ease_both]"
-          tabIndex={-1}
-        >
-          {/* Close Button */}
-          <button
-            onClick={onClose}
-            className="absolute top-5 right-5 text-gray2 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-lg"
-            aria-label="Close modal"
-          >
-            <X size={20} />
-          </button>
-
-          {/* Header */}
-          <div className="mb-6 pr-8">
-            <div className="flex items-baseline justify-between gap-3 mb-2">
-              <h2 id="order-modal-title" className="font-syne text-[1rem] font-bold text-white">
-                Order <span className="text-teal">Details</span>
-              </h2>
-              <div className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColor(order?.status)}`}>
-                {status}
-              </div>
-            </div>
-            <p className="text-gray text-sm">Order #{orderId}</p>
+        {/* ── Header ── */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.07]">
+          <div>
+            <h2 id="order-modal-title" className="font-syne text-[0.95rem] font-bold text-white">
+              Order <span className="text-teal">Details</span>
+            </h2>
+            <p className="text-gray text-xs mt-0.5">#{orderId}</p>
           </div>
-
-          {/* Content Sections */}
-          <div className="space-y-6">
-            {/* Order Info */}
-            <div className="bg-navy3/30 rounded-lg p-4 border border-white/5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3">
-                  <Calendar size={16} className="text-teal flex-shrink-0" />
-                  <div>
-                    <p className="text-gray text-xs font-bold uppercase tracking-widest">Order Date</p>
-                    <p className="text-white font-medium">{createdAt}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Clock size={16} className="text-teal flex-shrink-0" />
-                  <div>
-                    <p className="text-gray text-xs font-bold uppercase tracking-widest">Expected Delivery</p>
-                    <p className="text-white font-medium">
-                      {order?.expectedDelivery ? new Date(order.expectedDelivery).toLocaleDateString() : 'Pending'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Customer Info */}
-            <div>
-              <h3 className="font-syne text-sm font-bold text-white mb-3 uppercase tracking-widest">Customer Information</h3>
-              <div className="bg-navy3/30 rounded-lg p-4 border border-white/5 space-y-3">
-                <div className="flex items-start gap-3">
-                  <User size={16} className="text-teal mt-1 flex-shrink-0" />
-                  <div className="flex-1">
-                    <p className="text-gray text-xs font-bold uppercase tracking-widest mb-1">Name</p>
-                    <p className="text-white font-medium">
-                      {[customer?.firstName, customer?.lastName].filter(Boolean).join(' ') || 'N/A'}
-                    </p>
-                  </div>
-                </div>
-
-                {customer?.email && (
-                  <div className="flex items-start gap-3">
-                    <span className="text-teal mt-1 flex-shrink-0">@</span>
-                    <div className="flex-1">
-                      <p className="text-gray text-xs font-bold uppercase tracking-widest mb-1">Email</p>
-                      <a href={`mailto:${customer.email}`} className="text-white font-medium hover:text-teal transition-colors break-all">
-                        {customer.email}
-                      </a>
-                    </div>
-                  </div>
-                )}
-
-                {customer?.phone && (
-                  <div className="flex items-start gap-3">
-                    <Phone size={16} className="text-teal mt-1 flex-shrink-0" />
-                    <div className="flex-1">
-                      <p className="text-gray text-xs font-bold uppercase tracking-widest mb-1">Phone</p>
-                      <a href={`tel:${customer.phone}`} className="text-white font-medium hover:text-teal transition-colors">
-                        {customer.phone}
-                      </a>
-                    </div>
-                  </div>
-                )}
-
-                {order?.shippingAddress && (
-                  <div className="flex items-start gap-3">
-                    <MapPin size={16} className="text-teal mt-1 flex-shrink-0" />
-                    <div className="flex-1">
-                      <p className="text-gray text-xs font-bold uppercase tracking-widest mb-1">Shipping Address</p>
-                      <p className="text-white font-medium text-sm leading-relaxed">
-                        {order.shippingAddress}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Items */}
-            <div>
-              <h3 className="font-syne text-sm font-bold text-white mb-3 uppercase tracking-widest">Order Items</h3>
-              <div className="bg-navy3/30 rounded-lg border border-white/5 overflow-hidden">
-                <div className="divide-y divide-white/5">
-                  {items.length > 0 ? (
-                    items.map((item, index) => (
-                      <div key={index} className="p-4 hover:bg-white/5 transition-colors">
-                        <div className="flex gap-4">
-                          {item?.image && (
-                            <img
-                              src={item.image}
-                              alt={item.productName}
-                              className="w-16 h-16 rounded object-cover bg-navy3 flex-shrink-0"
-                            />
-                          )}
-                          <div className="flex-1">
-                            <h4 className="text-white font-bold text-sm mb-1">{item?.productName || 'Product'}</h4>
-                            {item?.sku && (
-                              <p className="text-gray text-xs mb-2">SKU: {item.sku}</p>
-                            )}
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-gray">Qty: <span className="text-white font-bold">{item?.quantity || 0}</span></span>
-                              <span className="text-teal font-bold">${(Number(item?.price || 0) * Number(item?.quantity || 0)).toFixed(2)}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-4 text-gray text-sm text-center">No items found</div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Pricing Breakdown */}
-            <div>
-              <h3 className="font-syne text-sm font-bold text-white mb-3 uppercase tracking-widest">Pricing Breakdown</h3>
-              <div className="bg-navy3/30 rounded-lg p-4 border border-white/5 space-y-3">
-                <div className="flex justify-between items-center pb-3 border-b border-white/5">
-                  <span className="text-gray text-sm">Subtotal</span>
-                  <span className="text-white font-bold text-sm">${subTotal.toFixed(2)}</span>
-                </div>
-
-                {shippingCost > 0 && (
-                  <div className="flex justify-between items-center pb-3 border-b border-white/5">
-                    <span className="text-gray text-sm">Shipping</span>
-                    <span className="text-white font-bold text-sm">${shippingCost.toFixed(2)}</span>
-                  </div>
-                )}
-
-                {tax > 0 && (
-                  <div className="flex justify-between items-center pb-3 border-b border-white/5">
-                    <span className="text-gray text-sm">Tax</span>
-                    <span className="text-white font-bold text-sm">${tax.toFixed(2)}</span>
-                  </div>
-                )}
-
-                <div className="flex justify-between items-center pt-2">
-                  <span className="text-white font-bold text-sm">Total</span>
-                  <span className="text-teal font-black text-[1rem]">${totalAmount.toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Status Timeline (Optional) */}
-            {order?.timeline && order.timeline.length > 0 && (
-              <div>
-                <h3 className="font-syne text-sm font-bold text-white mb-3 uppercase tracking-widest">Status Timeline</h3>
-                <div className="space-y-2">
-                  {order.timeline.map((event, index) => (
-                    <div key={index} className="flex gap-3 p-3 bg-navy3/30 rounded border border-white/5">
-                      <div className="flex-shrink-0 mt-1">
-                        {event?.completed ? (
-                          <CheckCircle size={16} className="text-teal" />
-                        ) : (
-                          <Clock size={16} className="text-gray" />
-                        )}
-                      </div>
-                      <div className="flex-1 text-sm">
-                        <p className="text-white font-medium text-sm">{event?.status || 'Update'}</p>
-                        {event?.date && (
-                          <p className="text-gray text-xs">{new Date(event.date).toLocaleString()}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Notes Section */}
-            {order?.notes && (
-              <div>
-                <h3 className="font-syne text-sm font-bold text-white mb-3 uppercase tracking-widest">Order Notes</h3>
-                <div className="bg-navy3/30 rounded-lg p-4 border border-white/5">
-                  <p className="text-gray text-sm">{order.notes}</p>
-                </div>
-              </div>
-            )}
-
-            {/* Action Section */}
-            {order?.actionRequired && (
-              <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4 flex gap-3">
-                <AlertCircle size={18} className="text-orange-300 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-orange-300 font-bold text-sm mb-1">Action Required</p>
-                  <p className="text-gray text-sm">{order.actionRequired}</p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Footer Actions */}
-          <div className="mt-8 pt-6 border-t border-white/5 flex gap-3 justify-end">
+          <div className="flex items-center gap-2">
+            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border capitalize ${statusColor(order?.status)}`}>
+              {statusLabel(order?.status)}
+            </span>
             <button
               onClick={onClose}
-              className="px-4 py-2 text-gray text-sm font-medium hover:bg-white/5 rounded-lg transition-colors"
+              className="text-gray2 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-lg ml-1"
+              aria-label="Close"
             >
-              Close
-            </button>
-            <button
-              onClick={handlePrint}
-              className="px-4 py-2 bg-teal/20 hover:bg-teal/30 text-teal text-sm font-bold rounded-lg transition-colors border border-teal/30"
-            >
-              Print Order
+              <X size={18} />
             </button>
           </div>
+        </div>
 
-          {/* Hidden Print View */}
-          <div ref={printRef} style={{ display: 'none' }}>
-            <div style={{ padding: '40px', fontFamily: 'Arial, sans-serif', color: '#000', backgroundColor: '#fff' }}>
-              {/* Print Header */}
-              <div style={{ marginBottom: '30px', borderBottom: '2px solid #333', paddingBottom: '20px' }}>
-                <h1 style={{ margin: '0 0 10px 0', fontSize: '28px', fontWeight: 'bold' }}>Order Details</h1>
-                <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>Order #{orderId}</p>
+        {/* ── Body ── */}
+        <div className="px-5 py-4 space-y-4">
+
+          {/* Order meta */}
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="bg-navy3/40 rounded-lg px-3 py-2">
+              <p className="text-gray uppercase tracking-wider font-bold mb-0.5">Date</p>
+              <p className="text-white font-medium">
+                {order?.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
+              </p>
+            </div>
+            <div className="bg-navy3/40 rounded-lg px-3 py-2">
+              <p className="text-gray uppercase tracking-wider font-bold mb-0.5">Shipping</p>
+              <p className="text-white font-medium capitalize">
+                {order?.shippingMethod?.replace(/_/g, ' ') || 'Standard'}
+              </p>
+            </div>
+          </div>
+
+          {/* Customer */}
+          <div className="bg-navy3/40 rounded-lg px-3 py-3 space-y-1.5">
+            <p className="text-gray text-[0.65rem] uppercase tracking-wider font-bold mb-1">Customer</p>
+            <p className="text-white text-sm font-semibold">
+              {[customer?.firstName, customer?.lastName].filter(Boolean).join(' ') || customer?.email || 'N/A'}
+            </p>
+            {customer?.email && (
+              <p className="text-gray2 text-xs break-all">{customer.email}</p>
+            )}
+            {customer?.phone && (
+              <p className="text-gray2 text-xs">{customer.phone}</p>
+            )}
+            {addrText && (
+              <div className="flex items-start gap-1.5 pt-1">
+                <MapPin size={12} className="text-teal mt-0.5 flex-shrink-0" />
+                <p className="text-gray2 text-xs leading-relaxed">{addrText}</p>
               </div>
+            )}
+          </div>
 
-              {/* Date Info */}
-              <div style={{ marginBottom: '30px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
-                <div>
-                  <p style={{ margin: '0 0 5px 0', fontSize: '12px', fontWeight: 'bold', color: '#666', textTransform: 'uppercase' }}>Order Date</p>
-                  <p style={{ margin: '0', fontSize: '16px', fontWeight: 'bold' }}>
-                    {order?.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
-                  </p>
-                </div>
-                <div>
-                  <p style={{ margin: '0 0 5px 0', fontSize: '12px', fontWeight: 'bold', color: '#666', textTransform: 'uppercase' }}>Status</p>
-                  <p style={{ margin: '0', fontSize: '16px', fontWeight: 'bold', textTransform: 'capitalize' }}>
-                    {String(order?.status || '').replace(/_/g, ' ')}
-                  </p>
-                </div>
-              </div>
-
-              {/* Customer Info */}
-              <div style={{ marginBottom: '30px' }}>
-                <h2 style={{ margin: '0 0 15px 0', fontSize: '16px', fontWeight: 'bold', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>Customer Information</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                  <div>
-                    <p style={{ margin: '0 0 5px 0', fontSize: '12px', color: '#666', fontWeight: 'bold' }}>Name</p>
-                    <p style={{ margin: '0', fontSize: '14px' }}>
-                      {[order?.customer?.firstName, order?.customer?.lastName].filter(Boolean).join(' ') || 'N/A'}
-                    </p>
-                  </div>
-                  <div>
-                    <p style={{ margin: '0 0 5px 0', fontSize: '12px', color: '#666', fontWeight: 'bold' }}>Email</p>
-                    <p style={{ margin: '0', fontSize: '14px' }}>{order?.customer?.email || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <p style={{ margin: '0 0 5px 0', fontSize: '12px', color: '#666', fontWeight: 'bold' }}>Phone</p>
-                    <p style={{ margin: '0', fontSize: '14px' }}>{order?.customer?.phone || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <p style={{ margin: '0 0 5px 0', fontSize: '12px', color: '#666', fontWeight: 'bold' }}>Shipping Address</p>
-                    <p style={{ margin: '0', fontSize: '14px' }}>{order?.shippingAddress || 'N/A'}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Order Items */}
-              <div style={{ marginBottom: '30px' }}>
-                <h2 style={{ margin: '0 0 15px 0', fontSize: '16px', fontWeight: 'bold', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>Order Items</h2>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '2px solid #333' }}>
-                      <th style={{ padding: '10px', textAlign: 'left', fontWeight: 'bold', fontSize: '12px' }}>Product</th>
-                      <th style={{ padding: '10px', textAlign: 'center', fontWeight: 'bold', fontSize: '12px' }}>SKU</th>
-                      <th style={{ padding: '10px', textAlign: 'center', fontWeight: 'bold', fontSize: '12px' }}>Qty</th>
-                      <th style={{ padding: '10px', textAlign: 'center', fontWeight: 'bold', fontSize: '12px' }}>Price</th>
-                      <th style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '12px' }}>Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {items.length > 0 ? items.map((item, index) => (
-                      <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-                        <td style={{ padding: '10px', fontSize: '14px' }}>{item?.productName || 'Product'}</td>
-                        <td style={{ padding: '10px', fontSize: '14px', textAlign: 'center' }}>{item?.sku || '-'}</td>
-                        <td style={{ padding: '10px', fontSize: '14px', textAlign: 'center' }}>{item?.quantity || 0}</td>
-                        <td style={{ padding: '10px', fontSize: '14px', textAlign: 'center' }}>${Number(item?.price || 0).toFixed(2)}</td>
-                        <td style={{ padding: '10px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>
-                          ${(Number(item?.price || 0) * Number(item?.quantity || 0)).toFixed(2)}
-                        </td>
-                      </tr>
-                    )) : (
-                      <tr>
-                        <td colSpan={5} style={{ padding: '10px', textAlign: 'center', color: '#666' }}>No items</td>
-                      </tr>
+          {/* Items */}
+          <div>
+            <p className="text-gray text-[0.65rem] uppercase tracking-wider font-bold mb-2 flex items-center gap-1.5">
+              <Package size={12} /> Order Items ({items.length})
+            </p>
+            <div className="bg-navy3/40 rounded-lg border border-white/5 divide-y divide-white/5">
+              {items.length > 0 ? items.map((item, idx) => {
+                const price = getItemPrice(item);
+                const qty = Number(item?.quantity || 0);
+                const lineTotal = item?.totalPrice ? Number(item.totalPrice) : price * qty;
+                const name = item?.productName || item?.product?.name || 'Product';
+                const img = item?.image || item?.product?.images?.[0] || null;
+                return (
+                  <div key={idx} className="flex items-center gap-3 px-3 py-2.5">
+                    {img ? (
+                      <img src={img} alt={name} className="w-10 h-10 rounded object-cover bg-navy3 flex-shrink-0" />
+                    ) : (
+                      <div className="w-10 h-10 rounded bg-navy3/60 flex-shrink-0 flex items-center justify-center">
+                        <Package size={14} className="text-gray2" />
+                      </div>
                     )}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Pricing Summary */}
-              <div style={{ marginBottom: '30px', maxWidth: '400px', marginLeft: 'auto' }}>
-                <h2 style={{ margin: '0 0 15px 0', fontSize: '16px', fontWeight: 'bold', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>Pricing Summary</h2>
-                <div style={{ display: 'grid', gap: '10px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '20px' }}>
-                    <span style={{ fontSize: '14px', color: '#666' }}>Subtotal:</span>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold' }}>${items.reduce((sum, item) => sum + (Number(item?.price || 0) * Number(item?.quantity || 0)), 0).toFixed(2)}</span>
-                  </div>
-                  {Number(order?.shippingCost || 0) > 0 && (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '20px' }}>
-                      <span style={{ fontSize: '14px', color: '#666' }}>Shipping:</span>
-                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>${Number(order?.shippingCost || 0).toFixed(2)}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white text-sm font-semibold truncate">{name}</p>
+                      <p className="text-gray2 text-xs">
+                        {qty} × ${price.toFixed(2)}
+                        {item?.sku && <span className="ml-2 opacity-60">SKU: {item.sku}</span>}
+                      </p>
                     </div>
-                  )}
-                  {Number(order?.tax || 0) > 0 && (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '20px' }}>
-                      <span style={{ fontSize: '14px', color: '#666' }}>Tax:</span>
-                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>${Number(order?.tax || 0).toFixed(2)}</span>
-                    </div>
-                  )}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '20px', borderTop: '2px solid #333', paddingTop: '10px', marginTop: '10px' }}>
-                    <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Total:</span>
-                    <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#0c9a68' }}>${Number(order?.totalAmount || 0).toFixed(2)}</span>
+                    <p className="text-teal text-sm font-bold flex-shrink-0">${lineTotal.toFixed(2)}</p>
                   </div>
-                </div>
-              </div>
+                );
+              }) : (
+                <p className="text-gray2 text-xs text-center py-4">No items found</p>
+              )}
+            </div>
+          </div>
 
-              {/* Footer */}
-              <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid #eee', textAlign: 'center', color: '#666', fontSize: '12px' }}>
-                <p style={{ margin: '0' }}>This is a computer-generated receipt. No signature required.</p>
-                <p style={{ margin: '5px 0 0 0' }}>Printed on {new Date().toLocaleString()}</p>
+          {/* Pricing */}
+          <div className="bg-navy3/40 rounded-lg px-3 py-3 space-y-2 text-sm">
+            <div className="flex justify-between text-gray2">
+              <span>Subtotal</span>
+              <span className="text-white">${subTotal.toFixed(2)}</span>
+            </div>
+            {shippingFee > 0 && (
+              <div className="flex justify-between text-gray2">
+                <span>Shipping</span>
+                <span className="text-white">${shippingFee.toFixed(2)}</span>
               </div>
+            )}
+            <div className="flex justify-between font-bold border-t border-white/10 pt-2">
+              <span className="text-white">Total</span>
+              <span className="text-teal text-base">${displayTotal.toFixed(2)}</span>
             </div>
           </div>
         </div>
+
+        {/* ── Footer ── */}
+        <div className="flex justify-end gap-2 px-5 py-3 border-t border-white/[0.07]">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-gray2 text-sm hover:bg-white/5 rounded-lg transition-colors"
+          >
+            Close
+          </button>
+        </div>
       </div>
-    );
-  }
-);
+    </div>
+  );
+});
 
 OrderDetailsModal.displayName = 'OrderDetailsModal';
-
 export default OrderDetailsModal;
