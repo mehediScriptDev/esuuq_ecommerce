@@ -1,6 +1,66 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { searchProducts } from '../../../../services/productService';
+
+const categoryIcons = {
+  'Electronics': '📱',
+  'Fashion': '👗',
+  'Home & Garden': '🏠',
+  'Beauty': '💄',
+  'Sports': '⚽',
+  'Food & Grocery': '🛒',
+  'Books': '📚',
+  'Toys & Kids': '🧸',
+};
+
+const getIconForCategory = (name) => categoryIcons[name] || '🏷️';
 
 const HeroSection = () => {
+  const [categories, setCategories] = useState([]);
+  const [stats, setStats] = useState({
+    merchants: '500+',
+    products: '10K+',
+    rating: '4.8★',
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const result = await searchProducts({ limit: 1 }); // limit must be >= 1
+        
+        if (result?.facets?.categories) {
+          // Take top 4 categories
+          const topCategories = result.facets.categories.slice(0, 4).map(c => ({
+            icon: getIconForCategory(c.label),
+            title: c.label,
+            desc: `${c.count.toLocaleString()}+ items`
+          }));
+          
+          if (topCategories.length > 0) {
+            setCategories(topCategories);
+          }
+        }
+        
+        if (result?.meta?.total) {
+          setStats(prev => ({
+            ...prev,
+            products: `${result.meta.total.toLocaleString()}+`
+          }));
+        }
+      } catch (error) {
+        console.error('Failed to fetch hero stats:', error);
+      }
+    };
+    
+    fetchStats();
+  }, []);
+
+  const displayCategories = categories.length > 0 ? categories : [
+    { icon: '📱', title: 'Electronics', desc: 'Loading...' },
+    { icon: '👗', title: 'Fashion', desc: 'Loading...' },
+    { icon: '🏠', title: 'Home & Garden', desc: 'Loading...' },
+    { icon: '💄', title: 'Beauty', desc: 'Loading...' },
+  ];
+
   return (
     <section className="relative min-h-105 overflow-hidden bg-[linear-gradient(120deg,#0A1628_0%,#0D2137_40%,#091520_100%)] px-3 py-8 min-[640px]:px-4 min-[900px]:px-8 min-[900px]:py-16">
       <div className="pointer-events-none absolute inset-0 opacity-8 bg-[radial-gradient(circle_at_20%_50%,var(--color-teal)_0%,transparent_40%),radial-gradient(circle_at_80%_20%,#3B82F6_0%,transparent_40%)]" />
@@ -26,9 +86,9 @@ const HeroSection = () => {
             <a href="#merchants" className="inline-block border border-white/20 px-8 py-3 text-[0.85rem] text-white transition hover:border-teal hover:text-teal">Sell on ESUUQ</a>
           </div>
           <div className="mt-8 flex gap-8">
-            <div><div className="font-['Syne'] text-[1.4rem] font-bold text-white">500+</div><div className="text-[0.72rem] text-gray">Merchants</div></div>
-            <div><div className="font-['Syne'] text-[1.4rem] font-bold text-white">10K+</div><div className="text-[0.72rem] text-gray">Products</div></div>
-            <div><div className="font-['Syne'] text-[1.4rem] font-bold text-white">4.8{'\u2605'}</div><div className="text-[0.72rem] text-gray">Avg Rating</div></div>
+            <div><div className="font-['Syne'] text-[1.4rem] font-bold text-white">{stats.merchants}</div><div className="text-[0.72rem] text-gray">Merchants</div></div>
+            <div><div className="font-['Syne'] text-[1.4rem] font-bold text-white">{stats.products}</div><div className="text-[0.72rem] text-gray">Products</div></div>
+            <div><div className="font-['Syne'] text-[1.4rem] font-bold text-white">{stats.rating}</div><div className="text-[0.72rem] text-gray">Avg Rating</div></div>
           </div>
         </div>
 
@@ -40,16 +100,11 @@ const HeroSection = () => {
               <div className="text-[0.72rem] lg:text-[0.87rem] text-teal">Up to 60% off </div>
             </div>
           </div>
-          {[
-            ['\u{1F4F1}', 'Electronics', '2,400+ items'],
-            ['\u{1F457}', 'Fashion', '3,800+ items'],
-            ['\u{1F3E1}', 'Home & Garden', '1,900+ items'],
-            ['\u{1F484}', 'Beauty', '1,200+ items'],
-          ].map(([icon, title, desc]) => (
-            <div key={title} className="rounded-sm border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-teal">
-              <div className="text-3xl">{icon}</div>
-              <div className="mt-2 text-[0.82rem] lg:text-[1rem] font-medium text-white">{title}</div>
-              <div className="text-[0.72rem] lg:text-[0.87rem] text-teal">{desc}</div>
+          {displayCategories.map((cat, idx) => (
+            <div key={idx} className="rounded-sm border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-teal">
+              <div className="text-3xl">{cat.icon}</div>
+              <div className="mt-2 text-[0.82rem] lg:text-[1rem] font-medium text-white">{cat.title}</div>
+              <div className="text-[0.72rem] lg:text-[0.87rem] text-teal">{cat.desc}</div>
             </div>
           ))}
         </div>
