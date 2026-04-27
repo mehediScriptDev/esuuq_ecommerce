@@ -78,12 +78,14 @@ const summarizeOrders = (rows = []) => {
       existing.total += Number(item?.totalPrice || 0);
       existing.qty += Number(item?.quantity || 0);
       if (item?.productName) existing.productNames.add(item.productName);
+      existing.itemRows.push(item);
       return;
     }
 
     grouped.set(orderId, {
       key: orderId,
       id: orderId,
+      order,
       createdAt: order?.createdAt,
       status: String(order?.status || '').toLowerCase(),
       customer: [order?.customer?.firstName, order?.customer?.lastName].filter(Boolean).join(' ') || order?.customer?.email || 'Customer',
@@ -91,6 +93,7 @@ const summarizeOrders = (rows = []) => {
       qty: Number(item?.quantity || 0),
       productNames: new Set(item?.productName ? [item.productName] : []),
       sortKey: `${order?.createdAt || ''}-${index}`,
+      itemRows: [item],
     });
   });
 
@@ -281,7 +284,7 @@ const MerchantDashboard = ({ onNav }) => {
       return {
         key: item.key,
         id: item.id,
-        order: item.order,
+        summary: item,
         customer: item.customer,
         product: productLabel,
         total: `$${Number(item.total || 0).toFixed(2)}`,
@@ -316,6 +319,27 @@ const MerchantDashboard = ({ onNav }) => {
     } finally {
       setUpdatingOrderId('');
     }
+  };
+
+  const openOrderDetails = (orderSummary) => {
+    const orderWithItems = {
+      ...orderSummary.order,
+      total: orderSummary.order?.total ?? orderSummary.total,
+      items: (orderSummary.itemRows || []).map((row) => ({
+        id: row?.id,
+        productName: row?.productName || row?.product?.name || 'Product',
+        sku: row?.sku || row?.product?.sku,
+        quantity: row?.quantity,
+        unitPrice: Number(row?.unitPrice || row?.price || 0),
+        price: Number(row?.unitPrice || row?.price || 0),
+        totalPrice: Number(row?.totalPrice || 0),
+        image: row?.image || row?.product?.images?.[0] || null,
+        product: row?.product,
+      })),
+    };
+
+    setSelectedOrder({ ...orderSummary, order: orderWithItems });
+    setIsDetailOpen(true);
   };
 
   const quickLinks = [
@@ -452,8 +476,7 @@ const MerchantDashboard = ({ onNav }) => {
                             </button>
                           ) : null}
                           <OrderDetailsButton onClick={() => {
-                            setSelectedOrder(order.order);
-                            setIsDetailOpen(true);
+                            openOrderDetails(order.summary);
                           }} label="View" />
                         </div>
                       </td>
@@ -506,8 +529,7 @@ const MerchantDashboard = ({ onNav }) => {
                         </button>
                       ) : null}
                       <OrderDetailsButton onClick={() => {
-                        setSelectedOrder(order.order);
-                        setIsDetailOpen(true);
+                        openOrderDetails(order.summary);
                       }} />
                     </div>
                   </div>
@@ -543,8 +565,8 @@ const MerchantDashboard = ({ onNav }) => {
           setIsDetailOpen(false);
           setSelectedOrder(null);
         }}
-        orderId={selectedOrder?.id}
-        order={selectedOrder}
+        orderId={selectedOrder?.order?.id}
+        order={selectedOrder?.order}
       />
     </div>
   );

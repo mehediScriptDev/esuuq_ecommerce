@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Upload, Plus, Edit, Trash2 } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
 import MerchantPill from '../components/MerchantPill';
+import Pagination from '../../admin/components/Pagination';
 import {
   createMyMerchantProduct,
   deleteMyMerchantProduct,
@@ -86,14 +87,20 @@ const MerchantProducts = ({ onNav }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const itemsPerPage = 10;
   const fileInputRef = useRef(null);
 
-  const load = async () => {
+  const load = async (page = currentPage) => {
     try {
       setLoading(true);
       setError('');
-      const payload = await getMyMerchantProducts({ limit: 100, sort: 'newest' });
-      setProducts(Array.isArray(payload?.data) ? payload.data : []);
+      const payload = await getMyMerchantProducts({ page, limit: itemsPerPage, sort: 'newest' });
+      const list = Array.isArray(payload?.data) ? payload.data : [];
+      setProducts(list);
+      setTotalProducts(Number(payload?.meta?.total || list.length));
+      setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load products.');
     } finally {
@@ -102,7 +109,8 @@ const MerchantProducts = ({ onNav }) => {
   };
 
   useEffect(() => {
-    load();
+    load(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const remove = async (id) => {
@@ -213,7 +221,7 @@ const MerchantProducts = ({ onNav }) => {
 
       const failureNote = failures.length ? ` ${failures.length} row(s) failed.` : '';
       setMessage(`Bulk upload complete: ${created} product(s) created.${failureNote}`);
-      await load();
+      await load(1);
     } catch (err) {
       setError(err?.message || 'Bulk CSV upload failed.');
     } finally {
@@ -221,7 +229,7 @@ const MerchantProducts = ({ onNav }) => {
     }
   };
 
-  const rows = useMemo(() => products.slice(0, 100), [products]);
+  const rows = products;
 
   return (
     <div className="animate-[fadeUp_0.4s_ease_both]">
@@ -260,8 +268,8 @@ const MerchantProducts = ({ onNav }) => {
 
       <div className="bg-card overflow-hidden rounded-lg border border-white/[0.07]">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.07] px-6 py-4">
-          <h3 className="font-syne text-[1rem] font-bold text-white">All Products ({rows.length})</h3>
-          <button onClick={load} className="text-gray2 hover:text-teal text-xs">Refresh</button>
+          <h3 className="font-syne text-[1rem] font-bold text-white">All Products ({totalProducts})</h3>
+          <button onClick={() => load(currentPage)} className="text-gray2 hover:text-teal text-xs">Refresh</button>
         </div>
 
         {loading ? <div className="p-6 text-gray2 text-sm">Loading products...</div> : null}
@@ -302,6 +310,14 @@ const MerchantProducts = ({ onNav }) => {
           </table>
         </div>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalItems={totalProducts}
+        itemsPerPage={itemsPerPage}
+        onPageChange={(page) => load(page)}
+        loading={loading}
+      />
     </div>
   );
 };

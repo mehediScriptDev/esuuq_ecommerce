@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Package, AlertTriangle, XCircle, RefreshCw } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
 import MerchantPill from '../components/MerchantPill';
+import Pagination from '../../admin/components/Pagination';
 import DashboardStats from '../../../components/DashboardStats';
 import {
   getMyMerchantProducts,
@@ -15,13 +16,19 @@ const MerchantInventory = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 10;
 
-  const load = async () => {
+  const load = async (page = currentPage) => {
     try {
       setLoading(true);
       setError('');
-      const payload = await getMyMerchantProducts({ limit: 100, sort: 'newest' });
-      setItems(Array.isArray(payload?.data) ? payload.data : []);
+      const payload = await getMyMerchantProducts({ page, limit: itemsPerPage, sort: 'newest' });
+      const list = Array.isArray(payload?.data) ? payload.data : [];
+      setItems(list);
+      setTotalItems(Number(payload?.meta?.total || list.length));
+      setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load inventory.');
     } finally {
@@ -30,7 +37,8 @@ const MerchantInventory = () => {
   };
 
   useEffect(() => {
-    load();
+    load(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const doRestock = async (item) => {
@@ -66,7 +74,7 @@ const MerchantInventory = () => {
           title={<><span>Inventory </span><span className="text-teal">Management</span></>}
           subtitle="Track and update stock levels"
         />
-        <button onClick={load} className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded border border-transparent px-4 py-1.5 text-[0.8rem] font-bold transition-colors">
+        <button onClick={() => load(currentPage)} className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1.5 rounded border border-transparent px-4 py-1.5 text-[0.8rem] font-bold transition-colors">
           <RefreshCw size={14} strokeWidth={2.5} /> Refresh
         </button>
       </div>
@@ -116,6 +124,14 @@ const MerchantInventory = () => {
           </table>
         </div>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalItems={totalItems}
+        itemsPerPage={itemsPerPage}
+        onPageChange={(page) => load(page)}
+        loading={loading}
+      />
     </div>
   );
 };

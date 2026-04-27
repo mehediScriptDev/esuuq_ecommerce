@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Download, Check, X } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
 import MerchantPill from '../components/MerchantPill';
+import Pagination from '../../admin/components/Pagination';
 import OrderDetailsModal from '../../../components/merchant/OrderDetailsModal';
 import OrderDetailsButton from '../../../components/merchant/OrderDetailsButton';
 import { getMyMerchantOrders, updateMerchantOrderStatus } from '../../../services/merchantService';
@@ -85,14 +86,24 @@ const MerchantOrders = () => {
   const [query, setQuery] = useState('');
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const itemsPerPage = 10;
 
-  const load = async () => {
+  const load = async (nextStatus = statusFilter, nextQuery = query, page = currentPage) => {
     try {
       setLoading(true);
       setError('');
-      const payload = await getMyMerchantOrders({ page: 1, limit: 120 });
+      const payload = await getMyMerchantOrders({
+        page,
+        limit: itemsPerPage,
+        ...(nextStatus !== 'all' ? { status: nextStatus } : {}),
+        ...(nextQuery.trim() ? { search: nextQuery.trim() } : {}),
+      });
       const list = Array.isArray(payload?.data) ? payload.data : [];
       setRows(list);
+      setTotalOrders(Number(payload?.meta?.total || list.length));
+      setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load merchant orders.');
     } finally {
@@ -101,7 +112,8 @@ const MerchantOrders = () => {
   };
 
   useEffect(() => {
-    load();
+    load('all', '', 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const groupedOrders = useMemo(() => buildOrderGroups(rows), [rows]);
@@ -240,7 +252,10 @@ const MerchantOrders = () => {
       {Object.keys(byStatus).map((status, i) => (
         <button
           key={status}
-          onClick={() => setStatusFilter(status)}
+          onClick={() => {
+            setStatusFilter(status);
+            load(status, query, 1);
+          }}
           className={`rounded px-3 py-1.5 text-[0.75rem] font-medium transition-colors ${statusFilter === status ? 'bg-teal text-navy hover:bg-teal2' : 'text-gray2 hover:border-teal hover:text-teal border border-white/[0.07]'}`}
         >
           {status === 'all' ? 'All' : statusLabel(status)} ({byStatus[status] || 0})
@@ -255,6 +270,9 @@ const MerchantOrders = () => {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') load(statusFilter, query, 1);
+            }}
             className="bg-navy3 placeholder:text-gray focus:border-teal rounded border border-white/[0.07] px-3 py-1.5 text-[0.8rem] text-white outline-none transition-colors"
             placeholder="Search orders..."
           />
@@ -418,6 +436,14 @@ const MerchantOrders = () => {
           </div>
         ))}
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalItems={totalOrders}
+        itemsPerPage={itemsPerPage}
+        onPageChange={(page) => load(statusFilter, query, page)}
+        loading={loading}
+      />
     </div>
 
     {/* Order Details Modal */}
