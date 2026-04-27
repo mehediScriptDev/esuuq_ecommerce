@@ -50,7 +50,7 @@ const AdminMerchants = () => {
         ...(nextSearch.trim() ? { search: nextSearch.trim() } : {}),
       });
       setItems(Array.isArray(payload?.data) ? payload.data : []);
-      setTotalMerchants(Number(payload?.total || 0));
+      setTotalMerchants(Number(payload?.meta?.total || 0));
       setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load merchants.');

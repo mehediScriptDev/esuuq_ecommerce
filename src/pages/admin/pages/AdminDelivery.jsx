@@ -41,7 +41,7 @@ const AdminDelivery = () => {
       const all = Array.isArray(payload?.data) ? payload.data : [];
       const filtered = nextStatus ? all.filter((d) => String(d.status) === nextStatus) : all;
       setItems(filtered);
-      setTotalDelivery(Number(payload?.total || 0));
+      setTotalDelivery(Number(payload?.meta?.total || 0));
       setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load delivery partners.');

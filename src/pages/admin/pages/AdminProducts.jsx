@@ -34,7 +34,7 @@ const AdminProducts = () => {
       
       const payload = await getAdminProducts(params);
       setAllProducts(Array.isArray(payload?.data) ? payload.data : []);
-      setTotalProducts(Number(payload?.total || 0));
+      setTotalProducts(Number(payload?.meta?.total || 0));
       setCurrentPage(page);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load products.');
@@ -44,8 +44,11 @@ const AdminProducts = () => {
   };
 
   useEffect(() => {
-    load();
-  }, [statusFilter]); // Reload when filter changes
+    const timer = setTimeout(() => {
+      load(1);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [statusFilter, query]); // Reload when filter or query changes, with debounce
 
   const filtered = useMemo(() => {
     // Search is now handled by the server for better performance, 
@@ -125,7 +128,7 @@ const AdminProducts = () => {
       </div>
 
       <div className="bg-card overflow-hidden rounded-lg border border-white/[0.07]">
-        <div className="hidden min-[860px]:block overflow-x-auto">
+        <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead className="bg-navy3/50 text-gray text-[0.7rem] font-bold tracking-widest uppercase">
               <tr className="border-b border-white/[0.07]">
