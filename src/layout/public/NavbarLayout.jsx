@@ -150,6 +150,21 @@ const NavbarLayout = () => {
     return cat ? cat.name : 'All Departments';
   };
 
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const profileBtnRef = useRef(null);
+
+  // Close dropdown on outside click (mobile)
+  useEffect(() => {
+    if (!profileDropdownOpen) return;
+    const handler = (e) => {
+      if (profileBtnRef.current && !profileBtnRef.current.contains(e.target)) {
+        setProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [profileDropdownOpen]);
+
   return (
     <>
       <div className="bg-teal text-navy px-4 py-2 text-center text-[0.6rem] font-medium tracking-[0.05em] max-[580px]:hidden lg:text-[0.78rem]">
@@ -259,12 +274,14 @@ const NavbarLayout = () => {
         </div>
 
         <div className="flex items-center gap-1.5 min-[640px]:gap-2">
-          <div className="group relative order-last min-[640px]:order-first">
-
+          <div className="relative order-last min-[640px]:order-first" ref={profileBtnRef}>
             {currentUser ? (
               <button
                 className="icon-btn text-gray2 hover:text-teal rounded-sm px-2 py-2 transition hover:bg-[rgba(0,201,167,0.15)]"
                 title="Account"
+                onClick={() => setProfileDropdownOpen((v) => !v)}
+                aria-haspopup="true"
+                aria-expanded={profileDropdownOpen}
               >
                 <User size={20} />
               </button>
@@ -280,8 +297,13 @@ const NavbarLayout = () => {
 
             {/* Auth Status Display */}
             {currentUser && (
-              <div className="invisible absolute top-full right-0 z-400 pt-2 group-hover:visible">
-                <div className="w-64 overflow-hidden rounded-md border border-white/10 bg-[#0D1626] shadow-2xl backdrop-blur-xl">
+              <div
+                className={`absolute top-full right-0 z-400 pt-2 w-64 transition-opacity duration-150 ${
+                  profileDropdownOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+                } min-[900px]:invisible min-[900px]:group-hover:visible min-[900px]:opacity-100`}
+                style={{ pointerEvents: profileDropdownOpen ? 'auto' : 'none' }}
+              >
+                <div className="overflow-hidden rounded-md border border-white/10 bg-[#0D1626] shadow-2xl backdrop-blur-xl">
                   <div className="border-b border-white/10 px-4 py-3">
                     <div className="text-[0.88rem] leading-none font-bold text-teal capitalize">
                       {currentUser.firstName} {currentUser.lastName}
@@ -298,6 +320,7 @@ const NavbarLayout = () => {
                       <Link
                         to="/dashboard"
                         className="text-gray2 hover:bg-teal/10 hover:text-teal flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition"
+                        onClick={() => setProfileDropdownOpen(false)}
                       >
                         <User size={14} /> My Dashboard
                       </Link>
@@ -306,6 +329,7 @@ const NavbarLayout = () => {
                       <Link
                         to="/admin"
                         className="text-gray2 hover:bg-teal/10 hover:text-teal flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition"
+                        onClick={() => setProfileDropdownOpen(false)}
                       >
                         <Smartphone size={14} /> Admin Portal
                       </Link>
@@ -314,13 +338,17 @@ const NavbarLayout = () => {
                       <Link
                         to="/merchant"
                         className="text-gray2 hover:bg-teal/10 hover:text-teal flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition"
+                        onClick={() => setProfileDropdownOpen(false)}
                       >
                         <ShoppingBag size={14} /> Merchant Portal
                       </Link>
                     )}
                     <div className="my-1 h-px bg-white/10" />
                     <button
-                      onClick={handleLogout}
+                      onClick={() => {
+                        setProfileDropdownOpen(false);
+                        handleLogout();
+                      }}
                       className="bg-red-500/20 hover:bg-red-500/30 text-red-300 hover:text-red-200 flex w-full items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] font-bold no-underline transition"
                     >
                       <LogOut size={14} /> Sign Out

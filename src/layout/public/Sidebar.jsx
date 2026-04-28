@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { User, Package, Smartphone, ShoppingBag } from 'lucide-react';
+import { getCurrentUser } from '../../services/authService';
+import { getToken } from '../../utils/storage';
 
 const Sidebar = ({ categories, selectedCategory, mobileMenuOpen, onSelectCategory }) => {
   const location = useLocation();
@@ -34,30 +36,74 @@ const Sidebar = ({ categories, selectedCategory, mobileMenuOpen, onSelectCategor
         Account & Portals
       </div>
 
-      {[
-        { path: '/login', name: 'Sign In / register', icon: User, color: 'text-teal' },
-        { path: '/dashboard', name: 'My Dashboard', icon: Package, color: 'text-white' },
-        { path: '/admin', name: 'Admin Portal', icon: Smartphone, color: 'text-white' },
-        { path: '/merchant', name: 'Merchant Portal', icon: ShoppingBag, color: 'text-white' },
-      ].map((item) => {
-        const Icon = item.icon;
-        const isActive = location.pathname === item.path;
-        return (
-          <Link
-            key={item.path}
-            to={item.path}
-            onClick={() => onSelectCategory({ path: item.path })}
-            className={`mt-4 flex w-full items-center gap-3 border-l-4 px-4 py-3 text-[0.85rem] lg:text-[0.875rem] tracking-[0.04em] no-underline transition-colors ${
-              isActive
-                ? 'border-teal text-teal bg-[rgba(0,201,167,0.1)]'
-                : 'text-gray2 hover:text-teal border-transparent hover:bg-[rgba(0,201,167,0.05)]'
-            }`}
-          >
-            <Icon size={18} />
-            {item.name}
-          </Link>
-        );
-      })}
+      {(() => {
+        const token = getToken && getToken();
+        const user = getCurrentUser && getCurrentUser();
+        if (!token || !user) {
+          // Not logged in
+          return (
+            <Link
+              to="/auth/login"
+              onClick={() => onSelectCategory({ path: '/auth/login' })}
+              className={`mt-4 flex w-full items-center gap-3 border-l-4 px-4 py-3 text-[0.85rem] lg:text-[0.875rem] tracking-[0.04em] no-underline transition-colors ${
+                location.pathname === '/auth/login'
+                  ? 'border-teal text-teal bg-[rgba(0,201,167,0.1)]'
+                  : 'text-gray2 hover:text-teal border-transparent hover:bg-[rgba(0,201,167,0.05)]'
+              }`}
+            >
+              <User size={18} /> Sign In / register
+            </Link>
+          );
+        }
+        // Logged in: show only the portal for their role
+        const role = user.role;
+        if (role === 'customer' || role === 'delivery_partner') {
+          return (
+            <Link
+              to="/dashboard"
+              onClick={() => onSelectCategory({ path: '/dashboard' })}
+              className={`mt-4 flex w-full items-center gap-3 border-l-4 px-4 py-3 text-[0.85rem] lg:text-[0.875rem] tracking-[0.04em] no-underline transition-colors ${
+                location.pathname === '/dashboard'
+                  ? 'border-teal text-teal bg-[rgba(0,201,167,0.1)]'
+                  : 'text-gray2 hover:text-teal border-transparent hover:bg-[rgba(0,201,167,0.05)]'
+              }`}
+            >
+              <Package size={18} /> My Dashboard
+            </Link>
+          );
+        }
+        if (role === 'admin' || role === 'sub_admin') {
+          return (
+            <Link
+              to="/admin"
+              onClick={() => onSelectCategory({ path: '/admin' })}
+              className={`mt-4 flex w-full items-center gap-3 border-l-4 px-4 py-3 text-[0.85rem] lg:text-[0.875rem] tracking-[0.04em] no-underline transition-colors ${
+                location.pathname === '/admin'
+                  ? 'border-teal text-teal bg-[rgba(0,201,167,0.1)]'
+                  : 'text-gray2 hover:text-teal border-transparent hover:bg-[rgba(0,201,167,0.05)]'
+              }`}
+            >
+              <Smartphone size={18} /> Admin Portal
+            </Link>
+          );
+        }
+        if (role === 'merchant') {
+          return (
+            <Link
+              to="/merchant"
+              onClick={() => onSelectCategory({ path: '/merchant' })}
+              className={`mt-4 flex w-full items-center gap-3 border-l-4 px-4 py-3 text-[0.85rem] lg:text-[0.875rem] tracking-[0.04em] no-underline transition-colors ${
+                location.pathname === '/merchant'
+                  ? 'border-teal text-teal bg-[rgba(0,201,167,0.1)]'
+                  : 'text-gray2 hover:text-teal border-transparent hover:bg-[rgba(0,201,167,0.05)]'
+              }`}
+            >
+              <ShoppingBag size={18} /> Merchant Portal
+            </Link>
+          );
+        }
+        return null;
+      })()}
     </div>
   );
 };
