@@ -300,7 +300,7 @@ const NavbarLayout = () => {
                         <User size={14} /> My Dashboard
                       </Link>
                     )}
-                    {(currentUser.role === 'admin' || currentUser.role === 'sub_admin' || currentUser.role === 'super_admin') && (
+                    {(currentUser.role === 'admin' || currentUser.role === 'sub_admin') && (
                       <Link
                         to="/admin"
                         className="text-gray2 hover:bg-teal/10 hover:text-teal flex items-center gap-2.5 rounded px-3 py-2 text-[0.82rem] no-underline transition"
