@@ -24,6 +24,7 @@ import Sidebar from './Sidebar';
 import { getCurrentUser, logout } from '../../services/authService';
 import { getTrendingSearches, searchAutocomplete } from '../../services/productService';
 import { getCartItems, getWishlistItems } from '../../services/shopStorageService';
+import { getToken } from '../../utils/storage';
 
 const NavbarLayout = () => {
   const navigate = useNavigate();
@@ -45,9 +46,10 @@ const NavbarLayout = () => {
   };
 
   useEffect(() => {
-    // Load current user from localStorage on mount
+    // Only treat session as authenticated if both token and user are present.
     const user = getCurrentUser();
-    setCurrentUser(user);
+    const token = getToken();
+    setCurrentUser(user && token ? user : null);
     refreshCounts();
   }, [location]);
 
@@ -269,7 +271,7 @@ const NavbarLayout = () => {
             ) : (
               <button
                 onClick={() => navigate('/auth/login')}
-                className="icon-btn text-gray2 hover:text-teal rounded-sm px-2 py-2 transition hover:bg-[rgba(0,201,167,0.15)]"
+                className="hidden icon-btn text-gray2 hover:text-teal rounded-sm px-2 py-2 transition hover:bg-[rgba(0,201,167,0.15)]"
                 title="Sign In"
               >
                 <User size={20} />
