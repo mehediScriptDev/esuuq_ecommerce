@@ -58,7 +58,7 @@ const Pagination = ({
   const pages = getPageNumbers();
 
   return (
-    <div className="mt-8 flex flex-col gap-4 py-6">
+    <div className="mt-8 flex flex-col gap-4 py-6 mx-2 md:mx-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-center">
         {/* Left Box - Info Text */}
         <div className="flex justify-start">

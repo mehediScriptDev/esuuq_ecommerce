@@ -181,13 +181,15 @@ const MerchantInventory = () => {
         </div>
       </div>
 
-      <Pagination
-        currentPage={currentPage}
-        totalItems={totalItems}
-        itemsPerPage={itemsPerPage}
-        onPageChange={(page) => load(page)}
-        loading={loading}
-      />
+      <div className="mx-2 sm:mx-4 my-4">
+        <Pagination
+          currentPage={currentPage}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          onPageChange={(page) => load(page)}
+          loading={loading}
+        />
+      </div>
     </div>
   );
 };
