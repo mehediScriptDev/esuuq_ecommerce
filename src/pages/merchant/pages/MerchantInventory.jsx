@@ -106,12 +106,14 @@ const MerchantInventory = () => {
 
       <DashboardStats stats={stats} />
 
+
       <div className="bg-card overflow-hidden rounded-lg border border-white/[0.07]">
         <div className="flex items-center justify-between border-b border-white/[0.07] px-6 py-4">
           <h3 className="font-syne text-[1rem] font-bold text-white">Stock Levels</h3>
           {loading ? <span className="text-xs text-gray2">Loading...</span> : null}
         </div>
 
+        {/* Desktop Table */}
         <div className="hidden min-[800px]:block overflow-x-auto">
           <table className="w-full text-left">
             <thead className="bg-navy3/50 text-gray text-[0.7rem] font-bold tracking-widest uppercase">
@@ -144,6 +146,38 @@ const MerchantInventory = () => {
               })}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile List */}
+        <div className="block min-[800px]:hidden">
+          {items.length === 0 && !loading ? (
+            <div className="text-gray2 p-4 text-center">No products found.</div>
+          ) : (
+            <ul className="divide-y divide-white/10">
+              {items.map((i, index) => {
+                const stock = Number(i.stock || 0);
+                const alertAt = Number(i.lowStockAt || 10);
+                const status = stock === 0 ? 'Out of Stock' : stock <= alertAt ? 'Low Stock' : 'In Stock';
+                const sc = stock === 0 ? 'text-red bg-red/10' : stock <= alertAt ? 'text-yellow bg-yellow/10' : 'text-green-500 bg-green-500/10';
+                return (
+                  <li key={i.id || `${i.sku || 'product'}-${index}`} className="flex flex-col gap-1 p-4">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-white text-[1rem] truncate max-w-[60%]">{i.name}</span>
+                      <Pill c={sc}>{status}</Pill>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 text-[0.85rem] text-gray2 mt-1">
+                      <span>SKU: <span className="text-white font-medium">{i.sku || '-'}</span></span>
+                      <span>Stock: <span className="text-white font-medium">{stock}</span></span>
+                      <span>Alert At: <span className="text-white font-medium">{alertAt}</span></span>
+                    </div>
+                    <div className="mt-2">
+                      <button onClick={() => doRestock(i)} className="bg-teal text-navy hover:bg-teal2 rounded px-3 py-1 text-[0.85rem] font-bold transition-all w-full">Restock</button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
       </div>
 
