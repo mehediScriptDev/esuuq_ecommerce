@@ -274,7 +274,12 @@ const NavbarLayout = () => {
         </div>
 
         <div className="flex items-center gap-1.5 min-[640px]:gap-2">
-          <div className="relative order-last min-[640px]:order-first" ref={profileBtnRef}>
+          <div
+            className="relative order-last min-[640px]:order-first group"
+            ref={profileBtnRef}
+            onMouseEnter={() => setProfileDropdownOpen(true)}
+            onMouseLeave={() => setProfileDropdownOpen(false)}
+          >
             {currentUser ? (
               <button
                 className="icon-btn text-gray2 hover:text-teal rounded-sm px-2 py-2 transition hover:bg-[rgba(0,201,167,0.15)]"
