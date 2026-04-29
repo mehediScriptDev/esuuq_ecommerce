@@ -132,7 +132,20 @@ const MerchantReviews = () => {
                   <div>
                     <div className="text-[0.95rem] font-bold text-white mb-0.5">
                       {[r.user?.firstName, r.user?.lastName].filter(Boolean).join(' ') || 'Customer'}
-                      <span className="text-gray text-[0.75rem] font-normal ml-1">· {r.product?.name || 'Product'}</span>
+                      <span className="text-gray text-[0.75rem] font-normal ml-1">· {
+                        r.product?.id
+                          ? (
+                              <a
+                                href={`/product/${r.product.id}`}
+                                className="text-teal hover:underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {r.product?.name || 'Product'}
+                              </a>
+                            )
+                          : (r.product?.name || 'Product')
+                      }</span>
                     </div>
                     <div className="flex items-center gap-0.5">
                       {[...Array(5)].map((_, j) => (
