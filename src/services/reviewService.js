@@ -14,7 +14,8 @@ const unwrapPayload = (response) => {
 
 export const getProductReviews = async (productId, params = {}) => {
   const response = await axiosInstance.get(`${apiBase}/reviews/product/${productId}`, { params });
-  return unwrapPayload(response);
+  // Return the full response object (data, breakdown, meta)
+  return response?.data;
 };
 
 export const submitProductReview = async (payload) => {

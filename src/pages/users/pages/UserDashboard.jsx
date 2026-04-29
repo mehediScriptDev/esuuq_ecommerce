@@ -193,7 +193,21 @@ const UserDashboard = ({ onNav }) => {
                       ))}
                     </div>
                     <div className="min-w-42.5 flex-1">
-                      <div className="text-[0.875rem] font-medium text-white lg:text-[1rem]">{order.desc}</div>
+                      {/* Make product name clickable if only one item */}
+                      <div className="text-[0.875rem] font-medium text-white lg:text-[1rem]">
+                        {order.desc && order.desc !== 'Order item' && order.desc.indexOf('+') === -1 && data?.recentOrders
+                          ? (
+                              <a
+                                href={
+                                  `/product/${order.id}`
+                                }
+                                className="text-teal hover:underline"
+                              >
+                                {order.desc}
+                              </a>
+                            )
+                          : order.desc}
+                      </div>
                       <div className="text-gray mt-0.5 text-[0.875rem]">{order.meta}</div>
                     </div>
                     <div className="ml-auto flex items-center gap-2">
