@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { searchProducts } from '../../../../services/productService';
+import { Smartphone, Shirt, Home, Palette, Trophy, Apple, BookOpen, Gamepad2, Zap } from 'lucide-react';
 
 const categoryIcons = {
-  'Electronics': '📱',
-  'Fashion': '👗',
-  'Home & Garden': '🏠',
-  'Beauty': '💄',
-  'Sports': '⚽',
-  'Food & Grocery': '🛒',
-  'Books': '📚',
-  'Toys & Kids': '🧸',
+  'Electronics': Smartphone,
+  'Fashion': Shirt,
+  'Home & Garden': Home,
+  'Beauty': Palette,
+  'Sports': Trophy,
+  'Food & Grocery': Apple,
+  'Books': BookOpen,
+  'Toys & Kids': Gamepad2,
 };
 
-const getIconForCategory = (name) => categoryIcons[name] || '🏷️';
+const getIconForCategory = (name) => categoryIcons[name] || Smartphone;
 
 const HeroSection = () => {
   const [categories, setCategories] = useState([]);
@@ -55,10 +56,10 @@ const HeroSection = () => {
   }, []);
 
   const displayCategories = categories.length > 0 ? categories : [
-    { icon: '📱', title: 'Electronics', desc: 'Loading...' },
-    { icon: '👗', title: 'Fashion', desc: 'Loading...' },
-    { icon: '🏠', title: 'Home & Garden', desc: 'Loading...' },
-    { icon: '💄', title: 'Beauty', desc: 'Loading...' },
+    { icon: Smartphone, title: 'Electronics', desc: 'Loading...' },
+    { icon: Shirt, title: 'Fashion', desc: 'Loading...' },
+    { icon: Home, title: 'Home & Garden', desc: 'Loading...' },
+    { icon: Palette, title: 'Beauty', desc: 'Loading...' },
   ];
 
   return (
@@ -69,7 +70,7 @@ const HeroSection = () => {
       <div className="container relative z-10 mx-auto grid items-center gap-8 min-[900px]:grid-cols-2">
         <div>
           <div className="mb-5 inline-flex items-center gap-2 rounded-xs border border-[rgba(0,201,167,0.3)] bg-[rgba(0,201,167,0.12)] px-4 py-1.5 text-[0.72rem] font-medium uppercase tracking-[0.12em] text-teal">
-            {'\u26A1'} New Marketplace {'\u2014'} Now Open
+            <Zap size={14} /> New Marketplace {'\u2014'} Now Open
           </div>
           <h1 className="font-['Syne'] text-[clamp(2.4rem,4vw,3.6rem)] font-extrabold leading-[1.1] text-white">
             Shop <span className="text-teal">Everything</span>
@@ -94,19 +95,22 @@ const HeroSection = () => {
 
         <div className="hidden grid-cols-2 gap-4 min-[900px]:grid">
           <div className="col-span-2 flex items-center gap-4 rounded-sm border border-[rgba(0,201,167,0.2)] bg-[rgba(0,201,167,0.07)] p-5">
-            <div className="text-3xl animate animate-pulse">{'\u26A1'}</div>
+            <Zap size={32} className="animate-pulse text-teal" />
             <div className=''>
               <div className="text-[0.82rem] lg:text-[1rem] font-medium text-white">Flash Deals Today</div>
               <div className="text-[0.72rem] lg:text-[0.87rem] text-teal">Up to 60% off </div>
             </div>
           </div>
-          {displayCategories.map((cat, idx) => (
-            <div key={idx} className="rounded-sm border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-teal">
-              <div className="text-3xl">{cat.icon}</div>
-              <div className="mt-2 text-[0.82rem] lg:text-[1rem] font-medium text-white">{cat.title}</div>
-              <div className="text-[0.72rem] lg:text-[0.87rem] text-teal">{cat.desc}</div>
-            </div>
-          ))}
+          {displayCategories.map((cat, idx) => {
+            const IconComponent = cat.icon;
+            return (
+              <div key={idx} className="rounded-sm border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-teal">
+                <IconComponent size={32} className="text-teal" />
+                <div className="mt-2 text-[0.82rem] lg:text-[1rem] font-medium text-white">{cat.title}</div>
+                <div className="text-[0.72rem] lg:text-[0.87rem] text-teal">{cat.desc}</div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

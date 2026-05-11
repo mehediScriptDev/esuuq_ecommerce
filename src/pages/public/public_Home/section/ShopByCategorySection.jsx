@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CategoryCard from '../../../../components/marketplace/CategoryCard';
 import { getCategoryCounts } from '../../../../services/productService';
+import { Smartphone, Shirt, Home, Palette, Apple, Trophy, BookOpen, Gamepad2, Wrench, Package, Heart, Car } from 'lucide-react';
 
 const ShopByCategorySection = () => {
   const [counts, setCounts] = useState({});
@@ -18,18 +19,18 @@ const ShopByCategorySection = () => {
   };
 
   const categories = [
-    { icon: '📱', name: 'Electronics',  slug: 'electronics',  path: '/electronics' },
-    { icon: '👗', name: 'Fashion',       slug: 'fashion',       path: '/fashion' },
-    { icon: '🏡', name: 'Home & Garden', slug: 'home-garden',   path: '/home-garden' },
-    { icon: '💄', name: 'Beauty',        slug: 'beauty',        path: '/beauty' },
-    { icon: '🍎', name: 'Grocery',       slug: 'food-grocery',  path: '/food-grocery' },
-    { icon: '⚽', name: 'Sports',        slug: 'sports',        path: '/sports' },
-    { icon: '📚', name: 'Books',         slug: 'books',         path: '/books' },
-    { icon: '🧸', name: 'Toys & Kids',   slug: 'toys-kids',     path: '/toys-kids' },
-    { icon: '🔧', name: 'Tools & DIY',   slug: 'tools-diy',     path: '/tools-diy' },
-    { icon: '🐾', name: 'Pet Supplies',  slug: 'pet-supplies',  path: '/pet-supplies' },
-    { icon: '💊', name: 'Health',        slug: 'health',        path: '/health' },
-    { icon: '🚗', name: 'Automotive',    slug: 'automotive' },
+    { icon: Smartphone, name: 'Electronics',  slug: 'electronics',  path: '/electronics' },
+    { icon: Shirt, name: 'Fashion',       slug: 'fashion',       path: '/fashion' },
+    { icon: Home, name: 'Home & Garden', slug: 'home-garden',   path: '/home-garden' },
+    { icon: Palette, name: 'Beauty',        slug: 'beauty',        path: '/beauty' },
+    { icon: Apple, name: 'Grocery',       slug: 'food-grocery',  path: '/food-grocery' },
+    { icon: Trophy, name: 'Sports',        slug: 'sports',        path: '/sports' },
+    { icon: BookOpen, name: 'Books',         slug: 'books',         path: '/books' },
+    { icon: Gamepad2, name: 'Toys & Kids',   slug: 'toys-kids',     path: '/toys-kids' },
+    { icon: Wrench, name: 'Tools & DIY',   slug: 'tools-diy',     path: '/tools-diy' },
+    { icon: Package, name: 'Pet Supplies',  slug: 'pet-supplies',  path: '/pet-supplies' },
+    { icon: Heart, name: 'Health',        slug: 'health',        path: '/health' },
+    { icon: Car, name: 'Automotive',    slug: 'automotive' },
   ];
 
   return (

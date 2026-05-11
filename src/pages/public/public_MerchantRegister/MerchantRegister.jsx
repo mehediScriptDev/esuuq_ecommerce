@@ -90,7 +90,7 @@ const SelectField = ({ label, required, options, placeholder, ...props }) => (
       {required && <span className="ml-0.5 text-teal">*</span>}
     </label>
     <select
-      className="w-full cursor-pointer appearance-none rounded-lg border border-white/[0.07] bg-navy3 bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20fill=%27%2364748B%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20d=%27M1.5%205.5l6.5%206%206.5-6%27/%3E%3C/svg%3E')] bg-[length:12px] bg-[right_13px_center] bg-no-repeat px-4 py-3 font-['DM_Sans'] text-base text-white outline-none transition-all duration-150 focus:border-teal focus:shadow-[0_0_0_3px_rgba(0,201,167,0.1)]"
+      className="w-full cursor-pointer appearance-none rounded-lg border border-white/[0.07] bg-navy3 bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20fill=%27%2364748B%27%20viewBox=%270%200%2016%2016%27%3E%3Cpath%20d=%27M1.5%205.5l6.5%206%206.5-6%27/%3E%3C/svg%3E')] bg-size-[12px] bg-position-[right_13px_center] bg-no-repeat px-4 py-3 font-['DM_Sans'] text-base text-white outline-none transition-all duration-150 focus:border-teal focus:shadow-[0_0_0_3px_rgba(0,201,167,0.1)]"
       {...props}
     >
       {placeholder && <option value="">{placeholder}</option>}
@@ -265,14 +265,14 @@ const MerchantRegister = () => {
 
       {/* ───── HERO ───── */}
       <div className="border-b border-white/[0.07] bg-[linear-gradient(135deg,var(--color-navy2)_0%,var(--color-navy)_100%)] px-4 py-12 text-center min-[640px]:px-10 min-[900px]:py-20">
-        <div className="mb-5 inline-flex items-center gap-2 rounded-[20px] border border-[rgba(0,201,167,0.25)] bg-[rgba(0,201,167,0.08)] px-4 py-1.5 text-[0.75rem] font-semibold tracking-[0.1em] text-teal">
+        <div className="mb-5 inline-flex items-center gap-2 rounded-[20px] border border-[rgba(0,201,167,0.25)] bg-[rgba(0,201,167,0.08)] px-4 py-1.5 text-[0.75rem] font-semibold tracking-widest text-teal">
           <Rocket size={14} />
           JOIN 500+ MERCHANTS ON ESUUQ
         </div>
         <h1 className="mb-4 font-['Syne'] text-[1.8rem] font-extrabold leading-[1.1] text-white min-[640px]:text-[3rem] min-[900px]:text-[3.6rem]">
           Start Selling on <span className="text-teal">ESUUQ</span>
         </h1>
-        <p className="mx-auto mb-8 max-w-[600px] text-base leading-[1.8] text-gray min-[640px]:text-lg">
+        <p className="mx-auto mb-8 max-w-150 text-base leading-[1.8] text-gray min-[640px]:text-lg">
           Reach thousands of East African customers. Set up your store in minutes and start earning today.
         </p>
 
@@ -297,7 +297,7 @@ const MerchantRegister = () => {
       </div>
 
       {/* ───── BODY ───── */}
-      <div className="mx-auto grid max-w-[1440px] items-start gap-8 px-4 py-10 min-[640px]:px-10 min-[900px]:grid-cols-[1fr_380px] min-[900px]:py-16">
+      <div className="mx-auto grid max-w-360 items-start gap-8 px-4 py-10 min-[640px]:px-10 min-[900px]:grid-cols-[1fr_380px] min-[900px]:py-16">
 
         {/* ─── FORM ─── */}
         <form className="overflow-hidden rounded-2xl border border-white/[0.07] bg-navy2 shadow-2xl" onSubmit={handleSubmit}>
@@ -317,7 +317,7 @@ const MerchantRegister = () => {
                 Store Description <span className="ml-0.5 text-teal">*</span>
               </label>
               <textarea
-                className="min-h-[110px] w-full resize-y rounded-lg border border-white/[0.07] bg-navy3 px-4 py-3 font-['DM_Sans'] text-base text-white outline-none placeholder:text-gray transition-all duration-150 focus:border-teal focus:shadow-[0_0_0_3px_rgba(0,201,167,0.1)]"
+                className="min-h-27.5 w-full resize-y rounded-lg border border-white/[0.07] bg-navy3 px-4 py-3 font-['DM_Sans'] text-base text-white outline-none placeholder:text-gray transition-all duration-150 focus:border-teal focus:shadow-[0_0_0_3px_rgba(0,201,167,0.1)]"
                 name="storeDescription" value={form.storeDescription} onChange={handleChange}
                 placeholder="Describe what you sell and what makes your store special..."
                 required
@@ -545,11 +545,11 @@ const MerchantRegister = () => {
       {/* ───── SUCCESS MODAL ───── */}
       {showModal && (
         <div
-          className="fixed inset-0 z-[200] flex animate-[fadeIn_0.25s_ease] items-center justify-center bg-black/80 px-4"
+          className="fixed inset-0 z-200 flex animate-[fadeIn_0.25s_ease] items-center justify-center bg-black/80 px-4"
           onClick={() => setShowModal(false)}
         >
           <div
-            className="w-full max-w-[440px] animate-[slideUp_0.35s_ease] rounded-3xl border border-[rgba(0,201,167,0.25)] bg-navy2 px-8 py-12 text-center shadow-2xl"
+            className="w-full max-w-110 animate-[slideUp_0.35s_ease] rounded-3xl border border-[rgba(0,201,167,0.25)] bg-navy2 px-8 py-12 text-center shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Success Content */}
@@ -590,7 +590,7 @@ const MerchantRegister = () => {
               
               <button
                 onClick={() => navigate('/')}
-                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/[0.1] bg-white/[0.05] px-6 py-4 font-['DM_Sans'] text-[1rem] font-semibold text-white transition-all duration-150 hover:bg-white/[0.1]"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-4 font-['DM_Sans'] text-[1rem] font-semibold text-white transition-all duration-150 hover:bg-white/10"
               >
                 <ArrowLeft size={18} />
                 Back to Home
