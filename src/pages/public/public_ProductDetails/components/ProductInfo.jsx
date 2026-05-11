@@ -191,8 +191,10 @@ const ProductInfo = ({ product }) => {
 
       {/* Buttons and Actions */}
       <div className="space-y-5 pt-1.5">
-        <div className="flex flex-wrap items-center gap-3.5">
-          <div className="bg-navy2/50 flex items-center rounded-xs border border-white/10 p-0.5">
+        {/* Row 1: Qty + Add to Cart + icon buttons all on one row */}
+        <div className="flex items-center gap-2">
+          {/* Quantity */}
+          <div className="bg-navy2/50 flex shrink-0 items-center rounded-xs border border-white/10 p-0.5">
             <button
               type="button"
               onClick={() => setQty((q) => Math.max(1, q - 1))}
@@ -209,42 +211,45 @@ const ProductInfo = ({ product }) => {
               <Plus size={14} />
             </button>
           </div>
-          
+
+          {/* Add to Cart */}
           <button
             type="button"
             onClick={handleAddToCart}
-            className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xs bg-teal px-6 text-xs lg:text-sm font-bold uppercase tracking-widest text-navy transition-all active:scale-95 lg:h-12 lg:px-8"
+            className="flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-xs bg-teal px-3 text-xs font-bold uppercase tracking-widest text-navy transition-all active:scale-95 lg:h-12 lg:px-8 lg:text-sm"
           >
-            <ShoppingCart size={16} /> {added ? 'Added to Cart' : 'Add to Cart'}
+            <ShoppingCart size={16} className="shrink-0" />
+            <span className="truncate">{added ? 'Added to Cart' : 'Add to Cart'}</span>
           </button>
 
+          {/* Icon buttons */}
           <button
             type="button"
             onClick={handleWishlist}
-            className="bg-navy2/50 hover:bg-navy2 flex h-11 w-11 items-center justify-center rounded-xs border border-white/10 text-gray2 transition-colors hover:text-white lg:h-12 lg:w-12"
+            className="bg-navy2/50 hover:bg-navy2 flex h-11 w-11 shrink-0 items-center justify-center rounded-xs border border-white/10 text-gray2 transition-colors hover:text-white lg:h-12 lg:w-12"
           >
             <Heart size={18} fill={wishlisted ? 'currentColor' : 'none'} className={wishlisted ? 'text-red' : ''} />
           </button>
           <button
             type="button"
             onClick={handleShare}
-            className="bg-navy2/50 hover:bg-navy2 flex h-11 w-11 items-center justify-center rounded-xs border border-white/10 text-gray2 transition-colors hover:text-white lg:h-12 lg:w-12"
+            className="bg-navy2/50 hover:bg-navy2 flex h-11 w-11 shrink-0 items-center justify-center rounded-xs border border-white/10 text-gray2 transition-colors hover:text-white lg:h-12 lg:w-12"
             aria-label="Share product link"
             title={shareCopied ? 'Link copied' : 'Share product'}
           >
             <Share2 size={18} />
           </button>
-          
+
           <div className="relative">
             <button
               type="button"
               onClick={() => setShowDropdown(!showDropdown)}
-              className="bg-navy2/50 hover:bg-navy2 flex h-11 w-11 items-center justify-center rounded-xs border border-white/10 text-gray2 transition-colors hover:text-white lg:h-12 lg:w-12"
+              className="bg-navy2/50 hover:bg-navy2 flex h-11 w-11 shrink-0 items-center justify-center rounded-xs border border-white/10 text-gray2 transition-colors hover:text-white lg:h-12 lg:w-12"
               aria-label="More options"
             >
               <MoreVertical size={18} />
             </button>
-            
+
             {showDropdown && (
               <div className="absolute right-0 bottom-full mb-2 w-48 bg-navy2 border border-white/10 rounded-xs shadow-xl z-10 animate-in fade-in slide-in-from-bottom-1">
                 <button
