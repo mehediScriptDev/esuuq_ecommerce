@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Upload, Plus, Edit, Trash2 } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
 import MerchantPill from '../components/MerchantPill';
@@ -89,6 +90,8 @@ const MerchantProducts = ({ onNav }) => {
   const [message, setMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, productId: null });
+  const [priceModal, setPriceModal] = useState({ isOpen: false, product: null, price: '' });
   const itemsPerPage = 10;
   const fileInputRef = useRef(null);
 
@@ -114,27 +117,34 @@ const MerchantProducts = ({ onNav }) => {
   }, []);
 
   const remove = async (id) => {
-    if (!window.confirm('Delete this product?')) return;
+    setConfirmModal({ isOpen: true, productId: id });
+  };
+
+  const handleConfirmDelete = async () => {
     try {
       setError('');
       setMessage('');
-      await deleteMyMerchantProduct(id);
+      await deleteMyMerchantProduct(confirmModal.productId);
       setMessage('Product deleted.');
-      setProducts((prev) => prev.filter((p) => p.id !== id));
+      setProducts((prev) => prev.filter((p) => p.id !== confirmModal.productId));
+      setConfirmModal({ isOpen: false, productId: null });
     } catch (err) {
       setError(err?.response?.data?.message || 'Delete failed.');
     }
   };
 
   const quickEdit = async (item) => {
-    const nextPrice = window.prompt('Enter new price', String(item.price || '0'));
-    if (nextPrice == null) return;
+    setPriceModal({ isOpen: true, product: item, price: String(item.price || '0') });
+  };
+
+  const handleSavePrice = async () => {
     try {
       setError('');
       setMessage('');
-      const updated = await updateMyMerchantProduct(item.id, { price: Number(nextPrice) });
+      const updated = await updateMyMerchantProduct(priceModal.product.id, { price: Number(priceModal.price) });
       setMessage('Product updated.');
-      setProducts((prev) => prev.map((p) => (p.id === item.id ? { ...p, ...updated } : p)));
+      setProducts((prev) => prev.map((p) => (p.id === priceModal.product.id ? { ...p, ...updated } : p)));
+      setPriceModal({ isOpen: false, product: null, price: '' });
     } catch (err) {
       setError(err?.response?.data?.message || 'Update failed.');
     }
@@ -318,6 +328,63 @@ const MerchantProducts = ({ onNav }) => {
         onPageChange={(page) => load(page)}
         loading={loading}
       />
+
+      {/* Delete Confirmation Modal */}
+      {confirmModal.isOpen && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-sm rounded-lg bg-card border border-white/10 p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Delete Product?</h3>
+            <p className="text-gray2 mb-6">This action cannot be undone.</p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setConfirmModal({ isOpen: false, productId: null })}
+                className="px-4 py-2 rounded border border-white/10 text-gray hover:text-white hover:border-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 rounded bg-red text-white hover:bg-red/80 font-medium transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Price Edit Modal */}
+      {priceModal.isOpen && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-sm rounded-lg bg-card border border-white/10 p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Edit Product Price</h3>
+            <p className="text-sm text-gray2 mb-4">Product: <span className="text-white font-medium">{priceModal.product?.name}</span></p>
+            <input
+              type="number"
+              value={priceModal.price}
+              onChange={(e) => setPriceModal({ ...priceModal, price: e.target.value })}
+              placeholder="Enter price"
+              className="bg-navy3 w-full rounded border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-teal transition-colors mb-6"
+            />
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setPriceModal({ isOpen: false, product: null, price: '' })}
+                className="px-4 py-2 rounded border border-white/10 text-gray hover:text-white hover:border-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSavePrice}
+                className="px-4 py-2 rounded bg-teal text-navy hover:bg-teal/80 font-medium transition-colors"
+              >
+                Save Price
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

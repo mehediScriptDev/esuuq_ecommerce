@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Tag, Plus, Calendar, Settings, Trash2 } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
 import MerchantPill from '../components/MerchantPill';
@@ -35,6 +36,7 @@ const MerchantPromotions = () => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [discountModal, setDiscountModal] = useState({ isOpen: false, mode: 'create', product: null, discount: '15' });
   const itemsPerPage = 10;
 
   const load = async (page = currentPage) => {
@@ -127,8 +129,6 @@ const MerchantPromotions = () => {
 
   const createPromotion = async (selectedProduct) => {
     try {
-      setError('');
-      setMessage('');
       const isClickEvent = selectedProduct && typeof selectedProduct === 'object' && 'preventDefault' in selectedProduct;
       const product = isClickEvent ? promotionCandidates[0] : (selectedProduct || promotionCandidates[0] || allProducts[0]);
       if (!product) {
@@ -136,18 +136,7 @@ const MerchantPromotions = () => {
         return;
       }
 
-      const discount = window.prompt(`Discount percent for "${product.name}"`, '15');
-      if (discount == null) return;
-
-      const percent = Math.max(1, Math.min(90, Number(discount)));
-      const comparePrice = Number(product.price) / (1 - percent / 100);
-      await updateMyMerchantProduct(product.id, {
-        comparePrice: Number(comparePrice.toFixed(2)),
-        isFeatured: true,
-      });
-
-      setMessage(`Promotion created for ${product.name} (${percent}% off).`);
-      await load(1);
+      setDiscountModal({ isOpen: true, mode: 'create', product, discount: '15' });
     } catch (err) {
       setError(err?.response?.data?.message || 'Could not create promotion.');
     }
@@ -167,21 +156,31 @@ const MerchantPromotions = () => {
 
   const editPromotion = async (item) => {
     try {
+      const discount = item.product.comparePrice
+        ? Math.round((1 - item.product.price / item.product.comparePrice) * 100)
+        : '10';
+      setDiscountModal({ isOpen: true, mode: 'edit', product: item.product, discount: String(discount) });
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Could not edit promotion.');
+    }
+  };
+
+  const handleSaveDiscount = async () => {
+    try {
       setError('');
       setMessage('');
-      const discount = window.prompt(`New discount percent for "${item.name}"`, '10');
-      if (discount == null) return;
-
-      const percent = Math.max(1, Math.min(90, Number(discount)));
-      const comparePrice = Number(item.product.price) / (1 - percent / 100);
-      await updateMyMerchantProduct(item.id, {
+      const percent = Math.max(1, Math.min(90, Number(discountModal.discount)));
+      const comparePrice = Number(discountModal.product.price) / (1 - percent / 100);
+      await updateMyMerchantProduct(discountModal.product.id, {
         comparePrice: Number(comparePrice.toFixed(2)),
         isFeatured: true,
       });
-      setMessage('Promotion updated.');
+
+      setMessage(`Promotion ${discountModal.mode === 'create' ? 'created' : 'updated'} for ${discountModal.product.name} (${percent}% off).`);
+      setDiscountModal({ isOpen: false, mode: 'create', product: null, discount: '15' });
       await load(currentPage);
     } catch (err) {
-      setError(err?.response?.data?.message || 'Could not update promotion.');
+      setError(err?.response?.data?.message || `Could not ${discountModal.mode === 'create' ? 'create' : 'update'} promotion.`);
     }
   };
 
@@ -302,6 +301,56 @@ const MerchantPromotions = () => {
           </table>
         </div>
       </div>
+
+      {/* Discount Modal */}
+      {discountModal.isOpen && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-lg bg-card border border-white/10 p-6">
+            <h3 className="text-lg font-semibold text-white mb-2">
+              {discountModal.mode === 'create' ? 'Create Promotion' : 'Edit Promotion'}
+            </h3>
+            <p className="text-sm text-gray2 mb-4">
+              Product: <span className="text-white font-semibold">{discountModal.product?.name}</span>
+            </p>
+            <p className="text-sm text-gray2 mb-4">
+              Price: <span className="text-teal font-semibold">${Number(discountModal.product?.price || 0).toFixed(2)}</span>
+            </p>
+            {error && <div className="mb-4 rounded border border-red/30 bg-red/10 px-3 py-2 text-sm text-red-300">{error}</div>}
+            <div className="mb-6">
+              <label className="text-sm text-gray2 block mb-2">Discount Percent (1-90%)</label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  min="1"
+                  max="90"
+                  value={discountModal.discount}
+                  onChange={(e) => setDiscountModal({ ...discountModal, discount: e.target.value })}
+                  className="bg-navy3 flex-1 rounded border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-teal transition-colors"
+                />
+                <span className="text-white font-semibold text-lg">%</span>
+              </div>
+              <p className="text-xs text-gray mt-2">
+                Discounted price: ${(Number(discountModal.product?.price || 0) * (1 - Number(discountModal.discount) / 100)).toFixed(2)}
+              </p>
+            </div>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDiscountModal({ isOpen: false, mode: 'create', product: null, discount: '15' })}
+                className="px-4 py-2 rounded border border-white/10 text-gray hover:text-white hover:border-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveDiscount}
+                className="px-4 py-2 rounded bg-teal text-navy hover:bg-teal/80 font-medium transition-colors"
+              >
+                {discountModal.mode === 'create' ? 'Create Promotion' : 'Update Promotion'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

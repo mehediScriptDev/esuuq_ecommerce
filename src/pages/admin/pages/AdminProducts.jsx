@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Search, Check, X, Trash2 } from 'lucide-react';
 import AdminPageHeader from '../components/AdminPageHeader';
 import AdminPill from '../components/AdminPill';
@@ -22,6 +23,7 @@ const AdminProducts = () => {
   const [statusFilter, setStatusFilter] = useState(''); // Empty means all
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProducts, setTotalProducts] = useState(89);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', action: null, item: null });
   const itemsPerPage = 10;
 
   const load = async (page = currentPage) => {
@@ -58,34 +60,45 @@ const AdminProducts = () => {
   }, [allProducts]);
 
   const del = async (item) => {
-    if (!window.confirm(`Delete ${item.name}?`)) return;
-    try {
-      setError('');
-      setMessage('');
-      await deleteAdminProduct(item.id);
-      setMessage('Product removed.');
-      setAllProducts((prev) => prev.filter((p) => p.id !== item.id));
-    } catch (err) {
-      setError(err?.response?.data?.message || 'Delete failed.');
-    }
+    setConfirmModal({
+      isOpen: true,
+      title: `Delete "${item.name}"?`,
+      action: 'delete',
+      item,
+    });
   };
 
   const moderate = async (item, status) => {
-    const actionLabel = status === 'active' ? 'approve' : 'reject';
-    if (!window.confirm(`Do you want to ${actionLabel} ${item.name}?`)) return;
+    const actionLabel = status === 'active' ? 'Approve' : 'Reject';
+    setConfirmModal({
+      isOpen: true,
+      title: `${actionLabel} "${item.name}"?`,
+      action: status === 'active' ? 'approve' : 'reject',
+      item,
+    });
+  };
 
+  const handleConfirm = async () => {
+    const { action, item } = confirmModal;
     try {
       setError('');
       setMessage('');
-      if (status === 'active') {
+      
+      if (action === 'delete') {
+        await deleteAdminProduct(item.id);
+        setMessage('Product removed.');
+      } else if (action === 'approve') {
         await approveAdminProduct(item.id);
-      } else {
+        setMessage('Product approved.');
+      } else if (action === 'reject') {
         await rejectAdminProduct(item.id);
+        setMessage('Product rejected.');
       }
-      setMessage(`Product ${status === 'active' ? 'approved' : 'rejected'}.`);
+      
       setAllProducts((prev) => prev.filter((p) => p.id !== item.id));
+      setConfirmModal({ isOpen: false, title: '', action: null, item: null });
     } catch (err) {
-      setError(err?.response?.data?.message || 'Moderation update failed.');
+      setError(err?.response?.data?.message || 'Action failed.');
     }
   };
 
@@ -184,6 +197,41 @@ const AdminProducts = () => {
         onPageChange={(page) => load(page)}
         loading={loading}
       />
+
+      {/* Confirmation Modal */}
+      {confirmModal.isOpen && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-sm rounded-lg bg-card border border-white/10 p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">{confirmModal.title}</h3>
+            <p className="text-gray2 mb-6">This action cannot be undone.</p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setConfirmModal({ isOpen: false, title: '', action: null, item: null })}
+                className="px-4 py-2 rounded border border-white/10 text-gray hover:text-white hover:border-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirm}
+                className={`px-4 py-2 rounded text-white font-medium transition-colors ${
+                  confirmModal.action === 'delete'
+                    ? 'bg-red hover:bg-red/80'
+                    : confirmModal.action === 'approve'
+                    ? 'bg-green hover:bg-green/80'
+                    : 'bg-yellow hover:bg-yellow/80'
+                }`}
+              >
+                {confirmModal.action === 'delete'
+                  ? 'Delete'
+                  : confirmModal.action === 'approve'
+                  ? 'Approve'
+                  : 'Reject'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

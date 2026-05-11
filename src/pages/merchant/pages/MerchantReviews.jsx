@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Star } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
 import {
@@ -14,6 +15,7 @@ const MerchantReviews = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [replyModal, setReplyModal] = useState({ isOpen: false, review: null, text: '' });
 
   const load = async () => {
     try {
@@ -56,20 +58,27 @@ const MerchantReviews = () => {
   }, [rows]);
 
   const saveReply = async (row) => {
-    const text = window.prompt('Write your reply', row.merchantReply || '');
-    if (text == null || !text.trim()) return;
+    setReplyModal({ isOpen: true, review: row, text: row.merchantReply || '' });
+  };
+
+  const handleSaveReply = async () => {
+    if (!replyModal.text.trim()) {
+      setError('Reply cannot be empty.');
+      return;
+    }
 
     try {
       setError('');
       setMessage('');
-      if (row.merchantReply) {
-        await updateReplyToReview(row.id, text.trim());
+      if (replyModal.review.merchantReply) {
+        await updateReplyToReview(replyModal.review.id, replyModal.text.trim());
         setMessage('Reply updated.');
       } else {
-        await addReplyToReview(row.id, text.trim());
+        await addReplyToReview(replyModal.review.id, replyModal.text.trim());
         setMessage('Reply posted.');
       }
-      setRows((prev) => prev.map((item) => (item.id === row.id ? { ...item, merchantReply: text.trim() } : item)));
+      setRows((prev) => prev.map((item) => (item.id === replyModal.review.id ? { ...item, merchantReply: replyModal.text.trim() } : item)));
+      setReplyModal({ isOpen: false, review: null, text: '' });
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to save reply.');
     }
@@ -178,6 +187,43 @@ const MerchantReviews = () => {
           </div>
         </div>
       </div>
+
+      {/* Reply Modal */}
+      {replyModal.isOpen && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-lg bg-card border border-white/10 p-6 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold text-white mb-2">
+              {replyModal.review?.merchantReply ? 'Edit Reply' : 'Write Reply'}
+            </h3>
+            <p className="text-sm text-gray2 mb-4">
+              Rating: <span className="text-teal font-semibold">{replyModal.review?.rating} / 5</span>
+            </p>
+            <p className="text-sm text-gray2 mb-4 line-clamp-2">{replyModal.review?.text}</p>
+            {error && <div className="mb-4 rounded border border-red/30 bg-red/10 px-3 py-2 text-sm text-red-300">{error}</div>}
+            <textarea
+              value={replyModal.text}
+              onChange={(e) => setReplyModal({ ...replyModal, text: e.target.value })}
+              placeholder="Write your reply..."
+              className="bg-navy3 w-full rounded border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-teal transition-colors resize-none h-32 mb-6"
+            />
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setReplyModal({ isOpen: false, review: null, text: '' })}
+                className="px-4 py-2 rounded border border-white/10 text-gray hover:text-white hover:border-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveReply}
+                className="px-4 py-2 rounded bg-teal text-navy hover:bg-teal/80 font-medium transition-colors"
+              >
+                {replyModal.review?.merchantReply ? 'Update' : 'Post Reply'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

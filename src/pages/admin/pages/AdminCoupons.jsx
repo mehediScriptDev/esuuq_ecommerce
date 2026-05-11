@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Plus } from 'lucide-react';
 import DashboardPageHeader from '../components/DashboardPageHeader';
 import Pagination from '../components/Pagination';
@@ -35,6 +36,9 @@ const AdminCoupons = () => {
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCoupons, setTotalCoupons] = useState(23);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', action: null, coupon: null });
+  const [formModal, setFormModal] = useState({ isOpen: false, mode: 'create', coupon: null });
+  const [formData, setFormData] = useState({ code: '', type: 'percentage', value: '', minOrderValue: '', expiresAt: '', description: '', maxUses: '' });
   const itemsPerPage = 10;
 
   const load = async (page = currentPage) => {
@@ -57,87 +61,92 @@ const AdminCoupons = () => {
     load();
   }, []);
 
-  const createCoupon = async () => {
-    const code = window.prompt('Coupon code (e.g. SAVE20):', 'SAVE20');
-    if (!code) return;
-    const type = window.prompt('Type: percentage | flat | free_shipping', 'percentage');
-    if (!type) return;
-    const valueInput = window.prompt('Value (number):', '10');
-    if (valueInput == null) return;
-    const value = Number(valueInput);
-    const minOrderInput = window.prompt('Min order value (optional):', '0');
-    const minOrderValue = Number(minOrderInput || 0);
-    const expiresInput = window.prompt('Expires at (optional, YYYY-MM-DD or ISO datetime):', '');
-    const expiresAt = String(expiresInput || '').trim();
-
-    try {
-      setError('');
-      await createAdminCoupon({
-        code: code.trim().toUpperCase(),
-        type: type.trim(),
-        value,
-        minOrderValue,
-        scope: 'all',
-        ...(expiresAt ? { expiresAt: new Date(expiresAt).toISOString() } : {}),
-      });
-      load();
-    } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to create coupon.');
-    }
+  const createCoupon = () => {
+    setFormData({ code: 'SAVE20', type: 'percentage', value: '10', minOrderValue: '0', expiresAt: '', description: '', maxUses: '' });
+    setFormModal({ isOpen: true, mode: 'create', coupon: null });
   };
 
-  const editCoupon = async (coupon) => {
-    const type = window.prompt('Type: percentage | flat | free_shipping', coupon.type || 'percentage');
-    if (type == null) return;
-    const valueInput = window.prompt('Value (number):', String(coupon.value ?? 0));
-    if (valueInput == null) return;
-    const description = window.prompt('Update description:', coupon.description || '');
-    if (description == null) return;
-    const minOrderInput = window.prompt('Min order value:', String(coupon.minOrderValue ?? 0));
-    if (minOrderInput == null) return;
-    const expiresInput = window.prompt(
-      'Expires at (optional, YYYY-MM-DD or ISO datetime):',
-      coupon.expiresAt ? new Date(coupon.expiresAt).toISOString() : '',
-    );
-    if (expiresInput == null) return;
-    const maxUsesInput = window.prompt('Max uses (blank = unlimited):', coupon.maxUses ?? '');
-    if (maxUsesInput == null) return;
+  const editCoupon = (coupon) => {
+    setFormData({
+      code: coupon.code || '',
+      type: coupon.type || 'percentage',
+      value: String(coupon.value ?? ''),
+      minOrderValue: String(coupon.minOrderValue ?? '0'),
+      expiresAt: coupon.expiresAt ? new Date(coupon.expiresAt).toISOString().split('T')[0] : '',
+      description: coupon.description || '',
+      maxUses: String(coupon.maxUses ?? ''),
+    });
+    setFormModal({ isOpen: true, mode: 'edit', coupon });
+  };
 
+  const handleSubmitCouponForm = async () => {
     try {
       setError('');
-      await updateAdminCoupon(coupon.id, {
-        type: String(type).trim(),
-        value: Number(valueInput),
-        description,
-        minOrderValue: Number(minOrderInput || 0),
-        ...(String(expiresInput).trim() ? { expiresAt: new Date(String(expiresInput).trim()).toISOString() } : { expiresAt: null }),
-        ...(String(maxUsesInput).trim() ? { maxUses: Number(maxUsesInput) } : {}),
-      });
+      if (formModal.mode === 'create') {
+        if (!formData.code.trim() || !formData.type.trim() || !formData.value) {
+          setError('Code, type, and value are required.');
+          return;
+        }
+        await createAdminCoupon({
+          code: formData.code.trim().toUpperCase(),
+          type: formData.type.trim(),
+          value: Number(formData.value),
+          minOrderValue: Number(formData.minOrderValue || 0),
+          scope: 'all',
+          ...(formData.expiresAt ? { expiresAt: new Date(formData.expiresAt).toISOString() } : {}),
+        });
+      } else if (formModal.mode === 'edit' && formModal.coupon) {
+        if (!formData.type.trim() || !formData.value) {
+          setError('Type and value are required.');
+          return;
+        }
+        await updateAdminCoupon(formModal.coupon.id, {
+          type: String(formData.type).trim(),
+          value: Number(formData.value),
+          description: formData.description,
+          minOrderValue: Number(formData.minOrderValue || 0),
+          ...(String(formData.expiresAt).trim() ? { expiresAt: new Date(String(formData.expiresAt).trim()).toISOString() } : { expiresAt: null }),
+          ...(String(formData.maxUses).trim() ? { maxUses: Number(formData.maxUses) } : {}),
+        });
+      }
+      setFormModal({ isOpen: false, mode: 'create', coupon: null });
       load();
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to update coupon.');
+      setError(err?.response?.data?.message || 'Failed to save coupon.');
     }
   };
 
   const deactivateCoupon = async (coupon) => {
-    if (!window.confirm(`Deactivate coupon ${coupon.code}?`)) return;
-    try {
-      setError('');
-      await deactivateAdminCoupon(coupon.id);
-      load();
-    } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to deactivate coupon.');
-    }
+    setConfirmModal({
+      isOpen: true,
+      title: `Deactivate coupon "${coupon.code}"?`,
+      action: 'deactivate',
+      coupon,
+    });
   };
 
   const reactivateCoupon = async (coupon) => {
-    if (!window.confirm(`Reactivate coupon ${coupon.code}?`)) return;
+    setConfirmModal({
+      isOpen: true,
+      title: `Reactivate coupon "${coupon.code}"?`,
+      action: 'reactivate',
+      coupon,
+    });
+  };
+
+  const handleConfirm = async () => {
+    const { action, coupon } = confirmModal;
     try {
       setError('');
-      await updateAdminCoupon(coupon.id, { isActive: true });
+      if (action === 'deactivate') {
+        await deactivateAdminCoupon(coupon.id);
+      } else if (action === 'reactivate') {
+        await updateAdminCoupon(coupon.id, { isActive: true });
+      }
+      setConfirmModal({ isOpen: false, title: '', action: null, coupon: null });
       load();
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to reactivate coupon.');
+      setError(err?.response?.data?.message || 'Failed to update coupon.');
     }
   };
 
@@ -237,6 +246,140 @@ const AdminCoupons = () => {
         onPageChange={(page) => load(page)}
         loading={loading}
       />
+
+      {/* Confirmation Modal */}
+      {confirmModal.isOpen && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-sm rounded-lg bg-card border border-white/10 p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">{confirmModal.title}</h3>
+            <p className="text-gray2 mb-6">This action cannot be undone.</p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setConfirmModal({ isOpen: false, title: '', action: null, coupon: null })}
+                className="px-4 py-2 rounded border border-white/10 text-gray hover:text-white hover:border-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirm}
+                className={`px-4 py-2 rounded text-white font-medium transition-colors ${
+                  confirmModal.action === 'deactivate'
+                    ? 'bg-red hover:bg-red/80'
+                    : 'bg-teal hover:bg-teal/80'
+                }`}
+              >
+                {confirmModal.action === 'deactivate' ? 'Deactivate' : 'Reactivate'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Coupon Form Modal */}
+      {formModal.isOpen && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-lg bg-card border border-white/10 p-6 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold text-white mb-4">
+              {formModal.mode === 'create' ? 'Create Coupon' : 'Edit Coupon'}
+            </h3>
+            {error && <div className="mb-4 rounded border border-red/30 bg-red/10 px-3 py-2 text-sm text-red-300">{error}</div>}
+            <div className="space-y-3">
+              {formModal.mode === 'create' && (
+                <div>
+                  <label className="text-sm text-gray2 block mb-1">Coupon Code</label>
+                  <input
+                    type="text"
+                    value={formData.code}
+                    onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                    placeholder="e.g. SAVE20"
+                    className="bg-navy3 w-full rounded border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-teal transition-colors"
+                  />
+                </div>
+              )}
+              <div>
+                <label className="text-sm text-gray2 block mb-1">Type</label>
+                <select
+                  value={formData.type}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                  className="bg-navy3 w-full rounded border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-teal transition-colors"
+                >
+                  <option value="percentage">Percentage (%)</option>
+                  <option value="flat">Flat ($)</option>
+                  <option value="free_shipping">Free Shipping</option>
+                </select>
+              </div>
+              {formData.type !== 'free_shipping' && (
+                <div>
+                  <label className="text-sm text-gray2 block mb-1">Value</label>
+                  <input
+                    type="number"
+                    value={formData.value}
+                    onChange={(e) => setFormData({ ...formData, value: e.target.value })}
+                    placeholder="e.g. 10"
+                    className="bg-navy3 w-full rounded border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-teal transition-colors"
+                  />
+                </div>
+              )}
+              <div>
+                <label className="text-sm text-gray2 block mb-1">Min Order Value</label>
+                <input
+                  type="number"
+                  value={formData.minOrderValue}
+                  onChange={(e) => setFormData({ ...formData, minOrderValue: e.target.value })}
+                  placeholder="0"
+                  className="bg-navy3 w-full rounded border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-teal transition-colors"
+                />
+              </div>
+              <div>
+                <label className="text-sm text-gray2 block mb-1">Expires At (optional)</label>
+                <input
+                  type="date"
+                  value={formData.expiresAt}
+                  onChange={(e) => setFormData({ ...formData, expiresAt: e.target.value })}
+                  className="bg-navy3 w-full rounded border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-teal transition-colors"
+                />
+              </div>
+              <div>
+                <label className="text-sm text-gray2 block mb-1">Description (optional)</label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Coupon description"
+                  className="bg-navy3 w-full rounded border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-teal transition-colors resize-none h-20"
+                />
+              </div>
+              {formModal.mode === 'edit' && (
+                <div>
+                  <label className="text-sm text-gray2 block mb-1">Max Uses (optional)</label>
+                  <input
+                    type="number"
+                    value={formData.maxUses}
+                    onChange={(e) => setFormData({ ...formData, maxUses: e.target.value })}
+                    placeholder="Leave blank for unlimited"
+                    className="bg-navy3 w-full rounded border border-white/10 px-3 py-2 text-sm text-white outline-none focus:border-teal transition-colors"
+                  />
+                </div>
+              )}
+            </div>
+            <div className="flex gap-3 justify-end mt-6">
+              <button
+                onClick={() => setFormModal({ isOpen: false, mode: 'create', coupon: null })}
+                className="px-4 py-2 rounded border border-white/10 text-gray hover:text-white hover:border-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmitCouponForm}
+                className="px-4 py-2 rounded bg-teal text-navy hover:bg-teal/80 font-medium transition-colors"
+              >
+                {formModal.mode === 'create' ? 'Create' : 'Update'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };
