@@ -215,11 +215,11 @@ const ProductTabs = ({ product }) => {
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:gap-10">
               <div className="space-y-3">
                 <h3 className="text-xs lg:text-sm font-bold uppercase tracking-wider text-white">Materials</h3>
-                <p className="text-sm leading-relaxed text-gray/60">{product.materials}</p>
+                <p className="text-sm leading-relaxed text-gray2">{product.materials}</p>
               </div>
               <div className="space-y-3">
                 <h3 className="text-xs lg:text-sm font-bold uppercase tracking-wider text-white">Care Instructions</h3>
-                <p className="text-sm leading-relaxed text-gray/60">{product.care}</p>
+                <p className="text-sm leading-relaxed text-gray2">{product.care}</p>
               </div>
             </div>
           </div>
@@ -530,7 +530,7 @@ const ProductTabs = ({ product }) => {
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 space-y-8 lg:space-y-10">
             <div className="space-y-3">
               <h3 className="text-xs lg:text-sm font-bold uppercase tracking-wider text-white">Delivery Information</h3>
-              <ul className="space-y-1.5 text-sm text-gray/60 lg:space-y-2">
+              <ul className="space-y-1.5 text-sm text-gray2 lg:space-y-2">
                 <li>• Inside Dhaka: {product.shipping?.dhaka}</li>
                 <li>• Outside Dhaka: {product.shipping?.outside}</li>
                 <li>• Free delivery on orders over {'$'}{product.shipping?.free_threshold}</li>
@@ -538,7 +538,7 @@ const ProductTabs = ({ product }) => {
             </div>
             <div className="space-y-3">
               <h3 className="text-xs lg:text-sm font-bold uppercase tracking-wider text-white">Return Policy</h3>
-              <ul className="space-y-1.5 text-sm text-gray/60 lg:space-y-2">
+              <ul className="space-y-1.5 text-sm text-gray2 lg:space-y-2">
                 <li>• 7-day easy return policy</li>
                 <li>• Product must be unused and in original packaging</li>
                 <li>• Refund processed within 3-5 business days</li>
