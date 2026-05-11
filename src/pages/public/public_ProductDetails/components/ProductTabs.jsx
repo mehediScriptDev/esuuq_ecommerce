@@ -200,7 +200,7 @@ const ProductTabs = ({ product }) => {
           >
             {tab.label}
             {activeTab === tab.id && (
-              <span className="absolute -bottom-px left-0 h-[2px] w-full bg-teal shadow-[0_-2px_6px_rgba(0,201,167,0.3)]" />
+              <span className="absolute -bottom-px left-0 h-0.5 w-full bg-teal shadow-[0_-2px_6px_rgba(0,201,167,0.3)]" />
             )}
           </button>
         ))}
@@ -242,7 +242,7 @@ const ProductTabs = ({ product }) => {
                       />
                     ))}
                   </div>
-                  <p className="text-xs lg:text-sm font-medium text-gray/40">
+                  <p className="text-xs lg:text-sm font-medium text-gray2">
                     {reviewsState.breakdown?.total || 0} verified reviews
                   </p>
                 </div>
@@ -251,7 +251,7 @@ const ProductTabs = ({ product }) => {
                   {[5, 4, 3, 2, 1].map((rating) => {
                     const percent = reviewsState.breakdown?.percentages?.[rating] || 0;
                     return (
-                      <div key={rating} className="flex items-center gap-3 text-xs text-gray/50">
+                      <div key={rating} className="flex items-center gap-3 text-xs text-gray2">
                         <span className="w-4">{rating}</span>
                         <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/5">
                           <div className="h-full rounded-full bg-teal" style={{ width: `${percent}%` }} />
@@ -270,9 +270,9 @@ const ProductTabs = ({ product }) => {
                 <div className="mb-4 flex items-center justify-between gap-4">
                   <div>
                     <h3 className="text-sm font-bold uppercase tracking-widest text-white">Leave a review</h3>
-                    <p className="mt-1 text-xs text-gray/40">Only delivered purchases for this product can be reviewed.</p>
+                    <p className="mt-1 text-[13px] text-gray2">Only delivered purchases for this product can be reviewed.</p>
                   </div>
-                  <span className="rounded-full border border-white/10 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-widest text-gray/50">
+                  <span className="rounded-full border border-white/10 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-widest text-gray2">
                     Verified purchase only
                   </span>
                 </div>
@@ -303,7 +303,7 @@ const ProductTabs = ({ product }) => {
                     </label>
 
                     <div>
-                      <span className="mb-2 block text-xs font-bold uppercase tracking-widest text-gray/50">Rating</span>
+                      <span className="mb-2 block text-xs font-bold uppercase tracking-widest text-gray2">Rating</span>
                       <div className="flex flex-wrap gap-2">
                         {[5, 4, 3, 2, 1].map((rating) => (
                           <button
@@ -325,7 +325,7 @@ const ProductTabs = ({ product }) => {
 
                     <div className="grid gap-4 sm:grid-cols-2">
                       <label className="block space-y-2 sm:col-span-2">
-                        <span className="text-xs font-bold uppercase tracking-widest text-gray/50">Title</span>
+                        <span className="text-xs font-bold uppercase tracking-widest text-gray2">Title</span>
                         <input
                           value={reviewForm.title}
                           onChange={(event) => setReviewForm((prev) => ({ ...prev, title: event.target.value }))}
@@ -336,7 +336,7 @@ const ProductTabs = ({ product }) => {
                       </label>
 
                       <label className="block space-y-2 sm:col-span-2">
-                        <span className="text-xs font-bold uppercase tracking-widest text-gray/50">Comment</span>
+                        <span className="text-xs font-bold uppercase tracking-widest text-gray2">Comment</span>
                         <textarea
                           value={reviewForm.comment}
                           onChange={(event) => setReviewForm((prev) => ({ ...prev, comment: event.target.value }))}
@@ -348,7 +348,7 @@ const ProductTabs = ({ product }) => {
                       </label>
 
                       <label className="block space-y-2 sm:col-span-2">
-                        <span className="text-xs font-bold uppercase tracking-widest text-gray/50">Image URLs</span>
+                        <span className="text-xs font-bold uppercase tracking-widest text-gray2">Image URLs</span>
                         <textarea
                           value={reviewForm.images}
                           onChange={(event) => setReviewForm((prev) => ({ ...prev, images: event.target.value }))}
@@ -391,7 +391,7 @@ const ProductTabs = ({ product }) => {
 
             <div className="space-y-6 lg:space-y-8">
               {reviewsState.loading ? (
-                <p className="text-sm text-gray/50">Loading reviews...</p>
+                <p className="text-sm text-gray2">Loading reviews...</p>
               ) : reviewsState.items.length === 0 ? (
                 <div className="rounded-xs border border-white/10 bg-white/5 px-4 py-5 text-sm text-gray2">
                   No reviews yet. Be the first verified buyer to leave feedback.
@@ -429,7 +429,7 @@ const ProductTabs = ({ product }) => {
                           </div>
                           <div className="flex flex-col">
                             <span className="text-sm font-bold leading-none text-white">{reviewName}</span>
-                            <div className="mt-1 flex flex-wrap items-center gap-2 text-[0.65rem] lg:text-xs text-gray/40 font-medium">
+                            <div className="mt-1 flex flex-wrap items-center gap-2 text-[0.65rem] lg:text-xs text-gray2 font-medium">
                               <span>{review.createdAt ? new Date(review.createdAt).toLocaleDateString() : 'Recently'}</span>
                               {review.isVerifiedPurchase && (
                                 <span className="rounded-full border border-teal/20 bg-teal/10 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider text-teal">
@@ -444,7 +444,7 @@ const ProductTabs = ({ product }) => {
                           type="button"
                           onClick={() => handleHelpful(review.id)}
                           disabled={!isAuthenticated || helpfulBusyId === review.id}
-                          className="rounded-full border border-white/10 px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-widest text-gray/50 transition hover:border-teal/30 hover:text-teal disabled:cursor-not-allowed disabled:opacity-60"
+                          className="rounded-full border border-white/10 px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-widest text-gray2 transition hover:border-teal/30 hover:text-teal disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           {helpfulBusyId === review.id ? '...' : 'Helpful'} ({review.helpfulCount || 0})
                         </button>
@@ -453,7 +453,7 @@ const ProductTabs = ({ product }) => {
                           <button
                             type="button"
                             onClick={() => setActiveDropdown(activeDropdown === review.id ? null : review.id)}
-                            className="text-gray/40 hover:text-white transition-colors p-1"
+                            className="text-gray2 hover:text-white transition-colors p-1"
                           >
                             <MoreVertical size={16} />
                           </button>
@@ -488,7 +488,7 @@ const ProductTabs = ({ product }) => {
 
                       <div className="space-y-2">
                         {review.title && <h4 className="text-sm font-bold text-white">{review.title}</h4>}
-                        <p className="text-sm leading-relaxed text-gray/70">{review.comment || review.text || ''}</p>
+                        <p className="text-sm leading-relaxed text-gray">{review.comment || review.text || ''}</p>
                       </div>
 
                       {Array.isArray(review.images) && review.images.length > 0 && (
@@ -510,9 +510,9 @@ const ProductTabs = ({ product }) => {
                       {review.merchantReply && (
                         <div className="rounded-xs border border-teal/20 bg-teal/5 p-4">
                           <div className="mb-1 text-[0.65rem] font-bold uppercase tracking-widest text-teal">Merchant reply</div>
-                          <p className="text-sm leading-relaxed text-gray/75">{review.merchantReply}</p>
+                          <p className="text-sm leading-relaxed text-gray">{review.merchantReply}</p>
                           {review.merchantRepliedAt && (
-                            <div className="mt-2 text-[0.65rem] text-gray/40">
+                            <div className="mt-2 text-[0.65rem] text-gray2">
                               {new Date(review.merchantRepliedAt).toLocaleDateString()}
                             </div>
                           )}

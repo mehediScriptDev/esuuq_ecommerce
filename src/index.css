@@ -79,16 +79,22 @@
   }
 
   html {
+    height: 100%;
     scroll-behavior: smooth;
   }
 
   body {
+    height: 100%;
     margin: 0;
     font-family: 'DM Sans', sans-serif;
     font-weight: 400;
     background: var(--color-navy);
     color: var(--color-white);
     overflow-x: hidden;
+  }
+
+  #root {
+    height: 100%;
   }
 }
 

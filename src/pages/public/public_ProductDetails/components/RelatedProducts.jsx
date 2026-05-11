@@ -29,7 +29,7 @@ const RelatedProducts = ({ items = [] }) => {
         <h2 className="font-['Syne'] text-2xl font-bold text-white sm:text-3xl">Related Products</h2>
         <Link
           to="/"
-          className="text-gray/40 hover:text-white transition-colors text-[0.7rem] font-bold uppercase tracking-widest flex items-center gap-1"
+          className="text-gray2 hover:text-teal transition-colors text-[0.8rem] font-bold uppercase tracking-widest flex items-center gap-1"
         >
           View All <ArrowRight size={14} />
         </Link>

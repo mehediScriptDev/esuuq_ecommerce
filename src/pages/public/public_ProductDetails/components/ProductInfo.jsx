@@ -114,7 +114,7 @@ const ProductInfo = ({ product }) => {
               />
             ))}
           </div>
-          <span className="text-gray/50 text-xs lg:text-sm font-medium">({product.reviews} reviews)</span>
+          <span className="text-gray2 text-xs lg:text-sm font-medium">({product.reviews} reviews)</span>
         </div>
       </div>
 
@@ -124,7 +124,7 @@ const ProductInfo = ({ product }) => {
           <span className="font-['Syne'] text-2xl font-bold text-white lg:text-3xl">
             ${Number(product.price).toLocaleString()}
           </span>
-          <span className="text-gray/30 text-base line-through lg:text-lg">
+          <span className="text-gray text-base line-through lg:text-lg">
             ${Number(product.oldPrice).toLocaleString()}
           </span>
           <span className="bg-teal/10 text-teal px-2 py-0.5 text-xs lg:text-sm font-bold leading-none">
@@ -287,7 +287,7 @@ const ProductInfo = ({ product }) => {
             <item.icon size={18} className={item.color} />
             <div className="flex flex-col">
               <span className="text-[14px] font-bold text-white leading-tight mb-0.5 uppercase tracking-wide">{item.title}</span>
-              <span className="text-[14px] font-medium text-gray/50 leading-tight">{item.text}</span>
+              <span className="text-[14px] font-medium text-gray2 leading-tight">{item.text}</span>
             </div>
           </div>
         ))}
@@ -301,23 +301,23 @@ const ProductInfo = ({ product }) => {
           <ul className="space-y-2.5">
             <li className="flex items-start gap-3">
               <span className="text-teal text-lg leading-none mt-0.5">•</span>
-              <span className="text-white/80 text-sm">Processing Time: 1-2 Business Days</span>
+              <span className="text-gray2 text-sm">Processing Time: 1-2 Business Days</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-teal text-lg leading-none mt-0.5">•</span>
-              <span className="text-white/80 text-sm">Shipping: {product?.shipping?.dhaka || '24-48 hours'} (Dhaka)</span>
+              <span className="text-gray2 text-sm">Shipping: {product?.shipping?.dhaka || '24-48 hours'} (Dhaka)</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-teal text-lg leading-none mt-0.5">•</span>
-              <span className="text-white/80 text-sm">{product?.shipping?.outside || '2-5 days'} (Outside Dhaka)</span>
+              <span className="text-gray2 text-sm">{product?.shipping?.outside || '2-5 days'} (Outside Dhaka)</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-teal text-lg leading-none mt-0.5">•</span>
-              <span className="text-white/80 text-sm">Free Shipping on orders over ${product?.shipping?.free_threshold || 2000}</span>
+              <span className="text-gray2 text-sm">Free Shipping on orders over ${product?.shipping?.free_threshold || 2000}</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-teal text-lg leading-none mt-0.5">•</span>
-              <span className="text-white/80 text-sm">Real-time Tracking Available</span>
+              <span className="text-gray2 text-sm">Real-time Tracking Available</span>
             </li>
           </ul>
         </div>
@@ -328,23 +328,23 @@ const ProductInfo = ({ product }) => {
           <ul className="space-y-2.5">
             <li className="flex items-start gap-3">
               <span className="text-teal text-lg leading-none mt-0.5">•</span>
-              <span className="text-white/80 text-sm">7 Days Return Window from Delivery</span>
+              <span className="text-gray2 text-sm">7 Days Return Window from Delivery</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-teal text-lg leading-none mt-0.5">•</span>
-              <span className="text-white/80 text-sm">Product Must Be Unused & Original</span>
+              <span className="text-gray2 text-sm">Product Must Be Unused & Original</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-teal text-lg leading-none mt-0.5">•</span>
-              <span className="text-white/80 text-sm">Packaging Must Be Intact</span>
+              <span className="text-gray2 text-sm">Packaging Must Be Intact</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-teal text-lg leading-none mt-0.5">•</span>
-              <span className="text-white/80 text-sm">Full Refund Within 5-7 Business Days</span>
+              <span className="text-gray2 text-sm">Full Refund Within 5-7 Business Days</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-teal text-lg leading-none mt-0.5">•</span>
-              <span className="text-white/80 text-sm">Free Return Shipping for Defective Items</span>
+              <span className="text-gray2 text-sm">Free Return Shipping for Defective Items</span>
             </li>
           </ul>
         </div>
