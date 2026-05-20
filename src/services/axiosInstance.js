@@ -62,6 +62,14 @@ const refreshAccessToken = async () => {
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
+    // Let the browser set multipart boundaries for FormData uploads.
+    if (config?.data instanceof FormData) {
+      if (config.headers) {
+        delete config.headers['Content-Type'];
+        delete config.headers['content-type'];
+      }
+    }
+
     const token = getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

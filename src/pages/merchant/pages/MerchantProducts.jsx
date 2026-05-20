@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { Upload, Plus, Edit, Trash2 } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
@@ -136,6 +137,8 @@ const MerchantProducts = ({ onNav }) => {
   const quickEdit = async (item) => {
     setPriceModal({ isOpen: true, product: item, price: String(item.price || '0') });
   };
+
+  const navigate = useNavigate();
 
   const handleSavePrice = async () => {
     try {
@@ -299,13 +302,13 @@ const MerchantProducts = ({ onNav }) => {
                 const meta = moderationMeta(p);
                 return (
                   <tr key={p.id || `${p.sku || 'product'}-${index}`} className="border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-white/2">
-                    <td className="px-6 py-4 font-bold max-w-[220px] truncate">{p.name}</td>
+                    <td className="px-6 py-4 font-bold max-w-55 truncate">{p.name}</td>
                     <td className="px-6 py-4 font-black">{toPrice(p.price)}</td>
                     <td className="px-6 py-4">{stock}</td>
                     <td className="px-6 py-4"><Pill c={meta.className}>{meta.label}</Pill></td>
                     <td className="px-6 py-4">
                       <div className="flex gap-1">
-                        <button onClick={() => quickEdit(p)} className="text-gray hover:text-teal hover:border-teal rounded border border-white/10 p-1.5 transition-colors">
+                        <button onClick={() => navigate(`/merchant/edit-product/${p.id}`)} className="text-gray hover:text-teal hover:border-teal rounded border border-white/10 p-1.5 transition-colors">
                           <Edit size={14} />
                         </button>
                         <button onClick={() => remove(p.id)} className="text-gray hover:text-red hover:border-red rounded border border-white/10 p-1.5 transition-colors">

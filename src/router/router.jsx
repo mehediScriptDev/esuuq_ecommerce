@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { createBrowserRouter, createRoutesFromElements, Route, useNavigate } from 'react-router-dom';
+import { createBrowserRouter, createRoutesFromElements, Route, useNavigate, useParams } from 'react-router-dom';
 
 import RootLayout from '../layout/public/RootLayout';
 import LoadingFallback from './components/LoadingFallback';
@@ -144,6 +144,12 @@ const MerchantAddProductRoute = () => {
   return <MerchantAddProduct onNav={(id) => navigate(merchantPathMap[id] || '/merchant/add-product')} />;
 };
 
+const MerchantEditProductRoute = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  return <MerchantAddProduct onNav={(id) => navigate(merchantPathMap[id] || '/merchant/products')} productId={id} />;
+};
+
 const AdminPlaceholder = ({ title, icon }) => (
   <div className="bg-card rounded-md border border-white/[0.07] p-12 text-center">
     <div className="mb-3 text-4xl">{icon}</div>
@@ -239,6 +245,7 @@ const router = createBrowserRouter(
         <Route path="earnings" element={wrapElement(<MerchantEarningsRoute />)} />
         <Route path="payouts" element={wrap(MerchantPayouts)} />
         <Route path="add-product" element={wrapElement(<MerchantAddProductRoute />)} />
+        <Route path="edit-product/:id" element={wrapElement(<MerchantEditProductRoute />)} />
         <Route path="reviews" element={wrap(MerchantReviews)} />
         <Route path="promotions" element={wrap(MerchantPromotions)} />
         <Route path="profile" element={wrap(MerchantProfile)} />

@@ -72,6 +72,7 @@ export const getProductBySlug = async (slug) => {
 };
 
 export const createProduct = async (payload) => {
+  // When sending FormData, let the browser/axios set the Content-Type (boundary)
   const response = await axiosInstance.post(`${apiBase}/products`, payload);
   return unwrapPayload(response);
 };

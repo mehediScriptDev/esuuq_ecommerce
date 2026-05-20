@@ -1,4 +1,5 @@
 import React, { memo, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X, MapPin, Package } from 'lucide-react';
 
 const statusColor = (s = '') => {
@@ -27,7 +28,6 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
-
   const customer = order?.customer || {};
   const items = Array.isArray(order?.items) ? order.items : [];
 
@@ -48,9 +48,9 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
 
   const handleOverlay = (e) => { if (e.target === e.currentTarget) onClose(); };
 
-  return (
+  const modalContent = (
     <div
-      className="fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm p-3 sm:p-6 h-[100vh]"
+      className="fixed inset-0 z-200 flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm p-3 sm:p-6 h-screen"
       onClick={handleOverlay}
       role="dialog"
       aria-modal="true"
@@ -116,7 +116,7 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
             )}
             {addrText && (
               <div className="flex items-start gap-1.5 pt-1">
-                <MapPin size={12} className="text-teal mt-0.5 flex-shrink-0" />
+                <MapPin size={12} className="text-teal mt-0.5 shrink-0" />
                 <p className="text-gray2 text-xs leading-relaxed">{addrText}</p>
               </div>
             )}
@@ -137,9 +137,9 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
                 return (
                   <div key={idx} className="flex items-center gap-3 px-3 py-2.5">
                     {img ? (
-                      <img src={img} alt={name} className="w-10 h-10 rounded object-cover bg-navy3 flex-shrink-0" />
+                      <img src={img} alt={name} className="w-10 h-10 rounded object-cover bg-navy3 shrink-0" />
                     ) : (
-                      <div className="w-10 h-10 rounded bg-navy3/60 flex-shrink-0 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded bg-navy3/60 shrink-0 flex items-center justify-center">
                         <Package size={14} className="text-gray2" />
                       </div>
                     )}
@@ -150,7 +150,7 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
                         {item?.sku && <span className="ml-2 opacity-60">SKU: {item.sku}</span>}
                       </p>
                     </div>
-                    <p className="text-teal text-sm font-bold flex-shrink-0">${lineTotal.toFixed(2)}</p>
+                    <p className="text-teal text-sm font-bold shrink-0">${lineTotal.toFixed(2)}</p>
                   </div>
                 );
               }) : (
@@ -190,6 +190,8 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 });
 
 OrderDetailsModal.displayName = 'OrderDetailsModal';

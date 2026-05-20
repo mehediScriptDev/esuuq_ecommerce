@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Package, AlertTriangle, XCircle, RefreshCw } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
 import MerchantPill from '../components/MerchantPill';
@@ -62,9 +63,21 @@ const MerchantInventory = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const doRestock = async (item) => {
-    const quantity = window.prompt(`Restock quantity for ${item.name}`, '10');
-    if (quantity == null) return;
+  const [restockModal, setRestockModal] = useState({ isOpen: false, item: null, quantity: '10' });
+
+  const doRestock = (item) => {
+    setRestockModal({ isOpen: true, item, quantity: '10' });
+  };
+
+  const handleConfirmRestock = async () => {
+    const { item, quantity } = restockModal;
+    if (!item) return;
+    const qty = Number(quantity);
+    if (!Number.isFinite(qty) || qty <= 0) {
+      setError('Please enter a valid quantity greater than 0.');
+      return;
+    }
+
     try {
       setError('');
       setMessage('');
@@ -72,6 +85,7 @@ const MerchantInventory = () => {
       setMessage(`Restocked ${item.name}. New stock: ${result.newStock}`);
       setItems((prev) => prev.map((p) => (p.id === item.id ? { ...p, stock: result.newStock } : p)));
       setAllItems((prev) => prev.map((p) => (p.id === item.id ? { ...p, stock: result.newStock } : p)));
+      setRestockModal({ isOpen: false, item: null, quantity: '10' });
     } catch (err) {
       setError(err?.response?.data?.message || 'Restock failed.');
     }
@@ -131,7 +145,7 @@ const MerchantInventory = () => {
                 const sc = stock === 0 ? 'text-red bg-red/10' : stock <= alertAt ? 'text-yellow bg-yellow/10' : 'text-green-500 bg-green-500/10';
                 return (
                   <tr key={i.id || `${i.sku || 'product'}-${index}`} className="border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-white/2">
-                    <td className="px-6 py-4 max-w-[220px] font-bold truncate">{i.name}</td>
+                    <td className="px-6 py-4 max-w-55 font-bold truncate">{i.name}</td>
                     <td className="text-gray px-6 py-4 text-[0.8rem] tracking-wider">{i.sku || '-'}</td>
                     <td className="px-6 py-4">{stock}</td>
                     <td className="text-gray2 px-6 py-4">{alertAt}</td>
@@ -190,6 +204,28 @@ const MerchantInventory = () => {
           loading={loading}
         />
       </div>
+
+      {restockModal.isOpen && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-sm rounded-lg bg-card border border-white/10 p-6">
+            <h3 className="text-lg font-semibold text-white mb-2">Restock Product</h3>
+            <p className="text-sm text-gray2 mb-4">Product: <span className="text-white font-semibold">{restockModal.item?.name}</span></p>
+            <label className="text-sm text-gray2 block mb-2">Quantity</label>
+            <input
+              type="number"
+              min="1"
+              value={restockModal.quantity}
+              onChange={(e) => setRestockModal({ ...restockModal, quantity: e.target.value })}
+              className="w-full mb-4 rounded border border-white/10 bg-navy3 px-3 py-2 text-white outline-none focus:border-teal"
+            />
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setRestockModal({ isOpen: false, item: null, quantity: '10' })} className="px-4 py-2 rounded border border-white/10 text-gray hover:text-white hover:border-white transition-colors">Cancel</button>
+              <button onClick={handleConfirmRestock} className="px-4 py-2 rounded bg-teal text-navy hover:bg-teal/80 font-medium transition-colors">Confirm</button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

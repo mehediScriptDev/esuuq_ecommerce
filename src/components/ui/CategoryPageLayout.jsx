@@ -49,14 +49,20 @@ const CategoryPageLayout = ({ title, description, products = [] }) => {
         setLoading(true);
         setError('');
 
-        const result = await browseCategory(slug, {
+        const params = {
           page: 1,
           limit: 32,
-          sort: toApiSort(filters.sort),
           ...priceRangeToBounds(filters.priceRange),
           minRating: filters.rating || undefined,
           minDiscount: filters.discount || undefined,
-        });
+        };
+
+        // Only include sort param when it's not the default 'popular'
+        if (filters.sort && filters.sort !== 'popular') {
+          params.sort = toApiSort(filters.sort);
+        }
+
+        const result = await browseCategory(slug, params);
 
         if (!active) return;
         setItems((result?.products || []).map(mapProductToCard));

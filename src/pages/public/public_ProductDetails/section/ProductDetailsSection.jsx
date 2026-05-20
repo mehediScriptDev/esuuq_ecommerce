@@ -36,8 +36,12 @@ const toUiProduct = (item = {}) => {
     oldPrice,
     price,
     off,
-    colors: colors.map((variant) => variant.value || variant.label).filter(Boolean),
-    sizes: sizes.map((variant) => variant.value || variant.label).filter(Boolean),
+    colors: colors
+      .map((variant) => (typeof variant === 'string' ? variant : variant.value || variant.label))
+      .filter(Boolean),
+    sizes: sizes
+      .map((variant) => (typeof variant === 'string' ? variant : variant.value || variant.label))
+      .filter(Boolean),
     materials: item.metadata?.materials || 'Standard materials',
     care: item.metadata?.care || 'Handle with care',
     shipping: item.metadata?.shipping || {

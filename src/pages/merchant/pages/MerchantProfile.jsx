@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Store, MapPin, Phone, Mail, Globe, Clock, Save, Plus, Image as ImageIcon } from 'lucide-react';
+import { Store, MapPin, Phone, Mail, Globe, Clock, Save } from 'lucide-react';
 import MerchantPageHeader from '../components/MerchantPageHeader';
 import {
   getMyMerchantStore,
@@ -133,25 +133,9 @@ const MerchantProfile = () => {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
         <div className="space-y-6">
-          <div className="bg-card hover:border-teal/20 transition-colors relative h-48 overflow-hidden rounded-lg border border-white/[0.07]">
-            {form.bannerUrl ? <img src={form.bannerUrl} alt="Store banner" className="h-full w-full object-cover" /> : null}
-            {!form.bannerUrl ? (
-              <div className="from-teal/10 text-teal/40 absolute inset-0 flex items-center justify-center bg-linear-to-br to-blue-500/10 transition-colors">
-                <ImageIcon size={48} />
-              </div>
-            ) : null}
+          {/* Banner and logo preview removed per UX request */}
 
-            <div className="absolute -bottom-10 left-8">
-              <div className="border-navy from-teal text-navy relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-4 bg-linear-to-br to-blue-500 font-syne text-[2.5rem] font-black shadow-xl">
-                {form.logoUrl ? <img src={form.logoUrl} alt="Store logo" className="h-full w-full object-cover" /> : (form.storeName || 'S').slice(0, 1).toUpperCase()}
-                <span className="bg-navy border-navy absolute right-0 bottom-0 rounded-full border-2 p-1 text-white">
-                  <Plus size={14} strokeWidth={3} />
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-6 pt-10">
+          <div className="space-y-6">
             <div className="bg-card hover:border-teal/20 transition-colors rounded-lg border border-white/[0.07] p-6 lg:p-8">
               <h3 className="mb-6 flex items-center gap-2 font-syne text-[1.1rem] font-bold text-white">
                 <Store size={18} className="text-teal" /> General Info
@@ -168,16 +152,7 @@ const MerchantProfile = () => {
                   <textarea value={form.description} onChange={(e) => update('description', e.target.value)} className="bg-navy3 focus:border-teal h-28 w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none transition-colors resize-none leading-relaxed" />
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 min-[640px]:grid-cols-2">
-                  <div>
-                    <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">Logo URL</label>
-                    <input value={form.logoUrl} onChange={(e) => update('logoUrl', e.target.value)} className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none transition-colors" />
-                  </div>
-                  <div>
-                    <label className="text-gray mb-2 block text-[0.7rem] font-bold tracking-widest uppercase">Banner URL</label>
-                    <input value={form.bannerUrl} onChange={(e) => update('bannerUrl', e.target.value)} className="bg-navy3 focus:border-teal w-full rounded border border-white/[0.07] px-4 py-3 text-[0.88rem] text-white outline-none transition-colors" />
-                  </div>
-                </div>
+                {/* Logo and Banner URL inputs removed per UX request */}
               </div>
             </div>
 

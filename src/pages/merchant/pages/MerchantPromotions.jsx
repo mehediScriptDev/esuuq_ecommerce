@@ -36,8 +36,10 @@ const MerchantPromotions = () => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [candidatesPage, setCandidatesPage] = useState(1);
   const [discountModal, setDiscountModal] = useState({ isOpen: false, mode: 'create', product: null, discount: '15' });
   const itemsPerPage = 10;
+  const candidatesPerPage = 10;
 
   const load = async (page = currentPage) => {
     try {
@@ -100,7 +102,6 @@ const MerchantPromotions = () => {
   const promotionCandidates = useMemo(() => {
     return allProducts
       .filter((p) => !(Number(p.comparePrice || 0) > Number(p.price || 0) || p.isFeatured))
-      .slice(0, 50)
       .map((p) => ({
         id: p.id,
         name: p.name,
@@ -109,6 +110,11 @@ const MerchantPromotions = () => {
         price: Number(p.price || 0),
       }));
   }, [allProducts]);
+
+  const pagedCandidates = useMemo(() => {
+    const start = (candidatesPage - 1) * candidatesPerPage;
+    return promotionCandidates.slice(start, start + candidatesPerPage);
+  }, [promotionCandidates, candidatesPage]);
 
   const stats = useMemo(() => {
     const active = allPromos.filter((x) => x.status === 'Active').length;
@@ -253,15 +259,17 @@ const MerchantPromotions = () => {
             </tbody>
           </table>
         </div>
-      </div>
 
-      <Pagination
-        currentPage={currentPage}
-        totalItems={totalPromotions}
-        itemsPerPage={itemsPerPage}
-        onPageChange={(page) => setCurrentPage(page)}
-        loading={loading}
-      />
+        <div className="px-6">
+          <Pagination
+            currentPage={currentPage}
+            totalItems={totalPromotions}
+            itemsPerPage={itemsPerPage}
+            onPageChange={(page) => setCurrentPage(page)}
+            loading={loading}
+          />
+        </div>
+      </div>
 
       <div className="bg-card mt-8 overflow-hidden rounded-lg border border-white/[0.07]">
         <div className="border-b border-white/[0.07] px-6 py-4 flex items-center justify-between">
@@ -279,7 +287,7 @@ const MerchantPromotions = () => {
               </tr>
             </thead>
             <tbody className="text-[0.88rem] text-white">
-              {promotionCandidates.map((p) => (
+              {pagedCandidates.map((p) => (
                 <tr key={p.id} className="border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-white/2">
                   <td className="px-6 py-4 font-bold max-w-[220px] truncate">{p.name}</td>
                   <td className="text-teal px-6 py-4 font-black">{p.sku}</td>
@@ -299,6 +307,15 @@ const MerchantPromotions = () => {
               ) : null}
             </tbody>
           </table>
+        </div>
+        <div className="px-6">
+          <Pagination
+            currentPage={candidatesPage}
+            totalItems={promotionCandidates.length}
+            itemsPerPage={candidatesPerPage}
+            onPageChange={(page) => setCandidatesPage(page)}
+            loading={loading}
+          />
         </div>
       </div>
 
