@@ -35,7 +35,8 @@ const baseNavSections = [
           badgeColor: 'bg-teal text-navy',
         },
         { id: 'customers', icon: Users, label: 'Customers', to: '/admin/customers' },
-        { id: 'delivery', icon: Truck, label: 'Delivery', to: '/admin/delivery' },
+        // Temporarily hide Delivery from admin sidebar
+        // { id: 'delivery', icon: Truck, label: 'Delivery', to: '/admin/delivery' },
       ],
     },
     {

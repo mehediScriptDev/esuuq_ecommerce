@@ -1,6 +1,8 @@
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X, MapPin, Package } from 'lucide-react';
+import { getUser } from '../../utils/storage';
+import { updateMerchantOrderStatus } from '../../services/merchantService';
 
 const statusColor = (s = '') => {
   const n = String(s).toLowerCase();
@@ -18,6 +20,13 @@ const statusLabel = (s = '') =>
 
 const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }) => {
   const modalRef = useRef(null);
+  const [localStatus, setLocalStatus] = useState(order?.status);
+  const [busy, setBusy] = useState(false);
+  const [actionError, setActionError] = useState('');
+
+  useEffect(() => {
+    setLocalStatus(order?.status);
+  }, [order?.status]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -48,6 +57,29 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
 
   const handleOverlay = (e) => { if (e.target === e.currentTarget) onClose(); };
 
+  // Allowed transitions (client-side mirror of backend rules)
+  const allowedTransitions = {
+    confirmed:    ['processing', 'cancelled'],
+    processing:   ['ready_for_pickup', 'cancelled'],
+    ready_for_pickup: ['picked_up'],
+    picked_up:    ['in_transit'],
+    in_transit:   ['delivered'],
+    delivered:    ['return_requested'],
+    return_requested: ['returned'],
+    returned:     ['refunded'],
+    disputed:     ['cancelled', 'refunded'],
+  };
+
+  const currentStatus = String(order?.status || '').toLowerCase();
+  const role = getUser()?.role;
+  // merchant is allowed to request cancellation in backend regardless of the current mapping
+  const allowedNext = new Set([...(allowedTransitions[currentStatus] || [])]);
+  if (role === 'merchant') allowedNext.add('cancelled');
+
+  // Build options: show current status first, then allowed next statuses
+  const options = [currentStatus, ...Array.from(allowedNext).filter((s) => s && s !== currentStatus)];
+  const selectedIsAllowed = allowedNext.has(localStatus) || localStatus === currentStatus;
+
   const modalContent = (
     <div
       className="fixed inset-0 z-200 flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm p-3 sm:p-6 h-screen"
@@ -70,8 +102,8 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
             <p className="text-gray text-xs mt-0.5">#{orderId}</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border capitalize ${statusColor(order?.status)}`}>
-              {statusLabel(order?.status)}
+            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border capitalize ${statusColor(localStatus || order?.status)}`}>
+              {statusLabel(localStatus || order?.status)}
             </span>
             <button
               onClick={onClose}
@@ -179,13 +211,67 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
         </div>
 
         {/* ── Footer ── */}
-        <div className="flex justify-end gap-2 px-5 py-3 border-t border-white/[0.07]">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray2 text-sm hover:bg-white/5 rounded-lg transition-colors"
-          >
-            Close
-          </button>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 px-5 py-3 border-t border-white/[0.07]">
+            <div className="text-sm text-red-300">
+                {actionError?.message || actionError}
+                {actionError && actionError.details ? (
+                  <div className="text-xs text-red-200 mt-1 whitespace-pre-wrap">{actionError.details}</div>
+                ) : null}
+              </div>
+          <div className="flex items-center gap-2 ml-auto">
+              {/* Merchant dropdown to update status */}
+              {getUser()?.role === 'merchant' ? (
+                <>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={localStatus}
+                    onChange={(e) => setLocalStatus(e.target.value)}
+                    className="bg-navy3 text-white rounded border border-white/[0.07] px-3 py-1 text-sm outline-none"
+                    disabled={busy || options.length <= 1}
+                  >
+                    {options.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {statusLabel(opt)}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={async () => {
+                      setActionError(''); setBusy(true);
+                      try {
+                        // Only attempt update if server-side transition is expected to accept it
+                        if (!selectedIsAllowed) {
+                          setActionError('This status transition is not allowed.');
+                          return;
+                        }
+                        const res = await updateMerchantOrderStatus(orderId, localStatus);
+                        const next = res?.status || localStatus;
+                        setLocalStatus(next);
+                      } catch (err) {
+                        const status = err?.response?.status;
+                        const body = err?.response?.data;
+                        const message = err?.response?.data?.message || err?.message || String(err);
+                        setActionError({ message, details: JSON.stringify({ status, body }, null, 2) });
+                      } finally { setBusy(false); }
+                    }}
+                    disabled={busy || !selectedIsAllowed}
+                    className="bg-teal text-navy hover:bg-teal2 flex items-center gap-1 rounded border border-transparent px-3 py-1 text-[0.85rem] font-bold transition-colors"
+                  >Update</button>
+                </div>
+                {/* Helper when waiting for payment */}
+                {currentStatus === 'pending_payment' && (
+                  <p className="text-xs text-gray2 ml-1">Order is awaiting payment confirmation. The merchant cannot advance it to processing until payment succeeds or an admin confirms the order.</p>
+                )}
+                </>
+              ) : null}
+
+              <button
+                onClick={onClose}
+                className="px-4 py-2 text-gray2 text-sm hover:bg-white/5 rounded-lg transition-colors"
+              >
+                Close
+              </button>
+          </div>
         </div>
       </div>
     </div>

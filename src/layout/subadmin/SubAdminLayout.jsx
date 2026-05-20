@@ -50,14 +50,15 @@ const SubAdminLayout = () => {
       label: 'Moderation',
       items: [
         { id: 'dashboard', icon: ChartNoAxesColumn, label: 'Dashboard', to: '/subadmin' },
-        {
-          id: 'support-tickets',
-          icon: Ticket,
-          label: 'Support Tickets',
-          to: '/subadmin/support-tickets',
-          badge: stats.openTickets > 0 ? String(stats.openTickets) : null,
-          badgeColor: 'bg-red text-white',
-        },
+        // Temporarily hide Support Tickets from sub-admin sidebar
+        // {
+        //   id: 'support-tickets',
+        //   icon: Ticket,
+        //   label: 'Support Tickets',
+        //   to: '/subadmin/support-tickets',
+        //   badge: stats.openTickets > 0 ? String(stats.openTickets) : null,
+        //   badgeColor: 'bg-red text-white',
+        // },
         {
           id: 'review-moderation',
           icon: Star,
