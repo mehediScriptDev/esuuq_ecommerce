@@ -3,20 +3,20 @@ import { createPortal } from 'react-dom';
 import { X, MapPin, Package } from 'lucide-react';
 import { getUser } from '../../utils/storage';
 import { updateMerchantOrderStatus } from '../../services/merchantService';
+import { getMerchantNextStatusActions, getOrderStatusLabel, normalizeOrderStatus } from '../../utils/orderStatus';
 
 const statusColor = (s = '') => {
-  const n = String(s).toLowerCase();
+  const n = normalizeOrderStatus(s);
+  if (n === 'pending_payment') return 'text-yellow bg-yellow/10 border-yellow/30';
   if (n === 'confirmed') return 'text-teal bg-teal/10 border-teal/30';
   if (n === 'processing') return 'text-blue-400 bg-blue-500/10 border-blue-500/30';
   if (['ready_for_pickup', 'picked_up', 'in_transit', 'out_for_delivery'].includes(n))
     return 'text-purple-300 bg-purple-500/10 border-purple-500/30';
   if (n === 'delivered') return 'text-green-400 bg-green-500/10 border-green-500/30';
-  if (['cancelled', 'returned', 'refunded'].includes(n)) return 'text-red bg-red/10 border-red/30';
+  if (n === 'return_requested') return 'text-orange-300 bg-orange-500/10 border-orange-500/30';
+  if (['cancelled', 'returned', 'refunded', 'disputed'].includes(n)) return 'text-red bg-red/10 border-red/30';
   return 'text-gray2 bg-white/10 border-white/10';
 };
-
-const statusLabel = (s = '') =>
-  String(s).replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
 const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }) => {
   const modalRef = useRef(null);
@@ -26,7 +26,7 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
 
   useEffect(() => {
     setLocalStatus(order?.status);
-  }, [order?.status]);
+  }, [order?.status, orderId, isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -57,28 +57,17 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
 
   const handleOverlay = (e) => { if (e.target === e.currentTarget) onClose(); };
 
-  // Allowed transitions (client-side mirror of backend rules)
-  const allowedTransitions = {
-    confirmed:    ['processing', 'cancelled'],
-    processing:   ['ready_for_pickup', 'cancelled'],
-    ready_for_pickup: ['picked_up'],
-    picked_up:    ['in_transit'],
-    in_transit:   ['delivered'],
-    delivered:    ['return_requested'],
-    return_requested: ['returned'],
-    returned:     ['refunded'],
-    disputed:     ['cancelled', 'refunded'],
-  };
-
   const currentStatus = String(order?.status || '').toLowerCase();
   const role = getUser()?.role;
-  // merchant is allowed to request cancellation in backend regardless of the current mapping
-  const allowedNext = new Set([...(allowedTransitions[currentStatus] || [])]);
-  if (role === 'merchant') allowedNext.add('cancelled');
+  const merchantActions = getMerchantNextStatusActions(currentStatus);
+  const options = merchantActions.map((action) => action.next);
+  const selectedIsAllowed = options.includes(localStatus);
 
-  // Build options: show current status first, then allowed next statuses
-  const options = [currentStatus, ...Array.from(allowedNext).filter((s) => s && s !== currentStatus)];
-  const selectedIsAllowed = allowedNext.has(localStatus) || localStatus === currentStatus;
+  useEffect(() => {
+    if (!isOpen) return;
+    const nextStatus = options[0] || currentStatus;
+    setLocalStatus(nextStatus);
+  }, [currentStatus, isOpen]);
 
   const modalContent = (
     <div
@@ -103,7 +92,7 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
           </div>
           <div className="flex items-center gap-2">
             <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border capitalize ${statusColor(localStatus || order?.status)}`}>
-              {statusLabel(localStatus || order?.status)}
+              {getOrderStatusLabel(localStatus || order?.status)}
             </span>
             <button
               onClick={onClose}
@@ -231,7 +220,7 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
                   >
                     {options.map((opt) => (
                       <option key={opt} value={opt}>
-                        {statusLabel(opt)}
+                        {getOrderStatusLabel(opt)}
                       </option>
                     ))}
                   </select>
@@ -261,6 +250,9 @@ const OrderDetailsModal = memo(({ isOpen = false, onClose, orderId, order = {} }
                 {/* Helper when waiting for payment */}
                 {currentStatus === 'pending_payment' && (
                   <p className="text-xs text-gray2 ml-1">Order is awaiting payment confirmation. The merchant cannot advance it to processing until payment succeeds or an admin confirms the order.</p>
+                )}
+                {!merchantActions.length && (
+                  <p className="text-xs text-gray2 ml-1">No merchant status change is available for this order.</p>
                 )}
                 </>
               ) : null}

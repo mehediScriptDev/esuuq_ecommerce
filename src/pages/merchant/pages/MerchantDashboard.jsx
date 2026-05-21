@@ -22,6 +22,7 @@ import {
   getMyMerchantStore,
   updateMerchantOrderStatus,
 } from '../../../services/merchantService';
+import { getMerchantNextStatusAction, getOrderStatusLabel, normalizeOrderStatus } from '../../../utils/orderStatus';
 
 const statusColor = (status = '') => {
   const normalized = String(status || '').toLowerCase();
@@ -163,15 +164,13 @@ const MerchantDashboard = ({ onNav }) => {
         setStore(merchantStore);
         const earningsPayload = earningsRes.status === 'fulfilled' ? earningsRes.value : null;
         const ordersPayload = ordersRes.status === 'fulfilled' ? ordersRes.value : [];
-        const productsPayload = productsRes.status === 'fulfilled'
-          ? productsRes.value
-          : { rows: [], total: 0 };
+        const productsPayload = productsRes.status === 'fulfilled' ? productsRes.value : { rows: [], total: 0 };
         const reviewsPayload = reviewsRes.status === 'fulfilled' ? reviewsRes.value : { data: [] };
 
         setEarnings(earningsPayload || null);
         setOrders(Array.isArray(ordersPayload) ? ordersPayload : []);
-        setProducts(Array.isArray(productsPayload?.rows) ? productsPayload.rows : []);
-        setProductsTotal(Number(productsPayload?.total || 0));
+        setProducts(Array.isArray(productsPayload?.rows) ? productsPayload.rows : (Array.isArray(productsPayload) ? productsPayload : []));
+        setProductsTotal(Number(productsPayload?.total || (Array.isArray(productsPayload?.rows) ? productsPayload.rows.length : 0)));
         setReviews(Array.isArray(reviewsPayload?.data) ? reviewsPayload.data : []);
       } catch (err) {
         setError('Failed to fetch dashboard data. Please try again later.');
@@ -184,10 +183,10 @@ const MerchantDashboard = ({ onNav }) => {
   }, []);
 
   const orderSummaries = useMemo(() => summarizeOrders(orders), [orders]);
+  const totalOrders = orderSummaries.length;
 
   const stats = useMemo(() => {
     const summary = earnings?.summary || {};
-    const totalOrders = orderSummaries.length;
     return [
       {
         icon: DollarSign,

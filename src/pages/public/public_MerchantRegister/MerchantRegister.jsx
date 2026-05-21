@@ -329,20 +329,7 @@ const MerchantRegister = () => {
               <SelectField label="Return Policy" required name="returnPolicy" value={form.returnPolicy} onChange={handleChange} options={RETURN_POLICIES} />
             </div>
 
-            <div className="mt-2 grid gap-4 min-[640px]:grid-cols-2">
-              <div>
-                <label className="mb-1.5 block text-[0.82rem] font-semibold text-gray2 min-[640px]:text-[0.875rem]">
-                  Store Logo <span className="ml-1 text-[0.72rem] font-normal text-gray">(optional)</span>
-                </label>
-                <UploadZone icon={ImageIcon} text="Upload store logo" sub="PNG, JPG — max 2MB" />
-              </div>
-              <div>
-                <label className="mb-1.5 block text-[0.82rem] font-semibold text-gray2 min-[640px]:text-[0.875rem]">
-                  Store Banner <span className="ml-1 text-[0.72rem] font-normal text-gray">(optional)</span>
-                </label>
-                <UploadZone icon={Palette} text="Upload banner image" sub="PNG, JPG — max 5MB" />
-              </div>
-            </div>
+            {/* Store logo and banner removed per request */}
           </div>
 
 

@@ -67,8 +67,8 @@ export const getMyMerchantOrders = async (params = {}) => {
   return unwrapPayload(response);
 };
 
-export const updateMerchantOrderStatus = async (orderId, status, note) => {
-  const response = await axiosInstance.put(`${apiBase}/orders/${orderId}/status`, { status, note });
+export const updateMerchantOrderStatus = async (orderId, status) => {
+  const response = await axiosInstance.put(`${apiBase}/orders/${orderId}/status`, { status });
   return unwrapPayload(response);
 };
 

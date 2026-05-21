@@ -7,7 +7,13 @@ const ProductGallery = ({ product }) => {
     setSelectedImage(0);
   }, [product.name]);
 
-  const images = Array.isArray(product.images) && product.images.length > 0 ? product.images : ['/img/home/default.jpg'];
+  const rawImages = Array.isArray(product?.images) ? product.images : [];
+  const images = rawImages
+    .filter((x) => x !== null && x !== undefined && x !== false && x !== '')
+    .map((x) => String(x))
+    .filter(Boolean);
+
+  const finalImages = images.length > 0 ? images : ['/img/home/default.jpg'];
 
   return (
     <div className="flex flex-col space-y-3 lg:space-y-4 lg:sticky lg:top-24 lg:self-start">
@@ -29,7 +35,7 @@ const ProductGallery = ({ product }) => {
 
       {/* Thumbnails */}
       <div className="no-scrollbar flex gap-3 lg:gap-4 overflow-x-auto pb-2 lg:pb-4">
-        {images.map((img, idx) => (
+        {finalImages.map((img, idx) => (
           <button
             key={`${img}-${idx}`}
             type="button"
@@ -38,7 +44,7 @@ const ProductGallery = ({ product }) => {
               selectedImage === idx ? 'border-teal ring-1 ring-teal/20' : 'border-white/10 hover:border-white/30'
             }`}
           >
-            <img src={img} alt="" className="h-full w-full object-contain p-1.5 lg:p-2 transition-transform duration-500 group-hover:scale-110" />
+            <img src={img} alt={product.name || ''} className="h-full w-full object-contain p-1.5 lg:p-2 transition-transform duration-500 group-hover:scale-110" />
           </button>
         ))}
       </div>

@@ -6,34 +6,35 @@ import Pagination from '../../admin/components/Pagination';
 import OrderDetailsModal from '../../../components/merchant/OrderDetailsModal';
 import OrderDetailsButton from '../../../components/merchant/OrderDetailsButton';
 import { getMyMerchantOrders, updateMerchantOrderStatus } from '../../../services/merchantService';
+import { getMerchantNextStatusAction, getOrderStatusLabel, normalizeOrderStatus } from '../../../utils/orderStatus';
 
 const Pill = ({ children, c }) => (
   <MerchantPill className={c}>{children}</MerchantPill>
 );
 const statusColor = (status) => {
-  if (status === 'confirmed') return 'text-teal bg-teal/10';
-  if (status === 'processing') return 'text-blue-500 bg-blue-500/10';
-  if (status === 'ready_for_pickup' || status === 'picked_up' || status === 'in_transit' || status === 'out_for_delivery') {
+  const normalized = normalizeOrderStatus(status);
+  if (normalized === 'pending_payment') return 'text-yellow bg-yellow/10';
+  if (normalized === 'confirmed') return 'text-teal bg-teal/10';
+  if (normalized === 'processing') return 'text-blue-500 bg-blue-500/10';
+  if (normalized === 'ready_for_pickup' || normalized === 'picked_up' || normalized === 'in_transit' || normalized === 'out_for_delivery') {
     return 'text-purple-300 bg-purple-500/10';
   }
-  if (status === 'delivered') return 'text-green-500 bg-green-500/10';
-  if (status === 'cancelled' || status === 'returned' || status === 'refunded') return 'text-red bg-red/10';
+  if (normalized === 'delivered') return 'text-green-500 bg-green-500/10';
+  if (normalized === 'return_requested') return 'text-orange-300 bg-orange-500/10';
+  if (normalized === 'cancelled' || normalized === 'returned' || normalized === 'refunded' || normalized === 'disputed') return 'text-red bg-red/10';
   return 'text-gray2 bg-white/10';
 };
 
 const statusLabel = (status) => {
-  const normalized = String(status || '').toLowerCase();
-  if (normalized === 'ready_for_pickup') return 'ready for delivery';
-  if (normalized === 'picked_up') return 'picked up';
-  if (normalized === 'in_transit' || normalized === 'out_for_delivery') return 'in transit';
-  return String(status || '').replace(/_/g, ' ');
+  const normalized = normalizeOrderStatus(status);
+  if (normalized === 'ready_for_pickup') return 'Ready for Delivery';
+  if (normalized === 'picked_up') return 'Picked Up';
+  if (normalized === 'in_transit' || normalized === 'out_for_delivery') return 'In Transit';
+  return getOrderStatusLabel(status);
 };
 
 const getNextStatusAction = (status = '') => {
-  const normalized = String(status || '').toLowerCase();
-  if (normalized === 'confirmed') return { next: 'processing', label: 'Accept' };
-  if (normalized === 'processing') return { next: 'ready_for_pickup', label: 'Ready for Delivery' };
-  return null;
+  return getMerchantNextStatusAction(status);
 };
 
 const buildOrderGroups = (rows = []) => {
